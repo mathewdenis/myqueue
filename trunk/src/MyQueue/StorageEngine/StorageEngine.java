@@ -7,16 +7,19 @@ package MyQueue.StorageEngine;
 public class StorageEngine
 {
 
-    public StorageEngine()
+    private String fLocation;
+
+    public StorageEngine(String location)
     {
+        fLocation = location;
     }
 
-    public byte[] Dequeue(long messageID)
+    public byte[] Dequeue()
     {
         return null;
     }
 
-    public byte[] Peek(long messageID)
+    public byte[] Peek()
     {
         return null;
     }
@@ -29,5 +32,10 @@ public class StorageEngine
     public boolean Enqueue(byte[] bytes)
     {
         return false;
+    }
+
+    public String getLocation()
+    {
+        return fLocation;
     }
 }

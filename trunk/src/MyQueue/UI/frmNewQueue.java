@@ -1,43 +1,73 @@
 package MyQueue.UI;
 
+import Extasys.Network.TCP.Server.Listener.TCPListener;
+import MyQueue.Core.QueueManager;
+import java.io.File;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author  Nikos Siatras
  */
-public class frmNewQueue extends javax.swing.JInternalFrame {
+public class frmNewQueue extends javax.swing.JInternalFrame
+{
 
     /** Creates new form frmNewQueue */
-    public frmNewQueue() {
+    private frmMain fMain;
+
+    public frmNewQueue(frmMain frm)
+    {
+        fMain = frm;
         initComponents();
     }
 
-   
+    public void ImportListener(String IP, String port, String maxConnections)
+    {
+        Object[] item = new Object[3];
+        item[0] = IP;
+        item[1] = port;
+        item[2] = maxConnections;
+        ((DefaultTableModel) this.jTableListeners.getModel()).addRow(item);
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jFileChooser1 = new javax.swing.JFileChooser();
+        jFileChooser2 = new javax.swing.JFileChooser();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jTextFieldName = new javax.swing.JTextField();
-        jTextFieldName1 = new javax.swing.JTextField();
+        jTextFieldDescription = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jTextFieldCorePoolSize = new javax.swing.JTextField();
+        jTextFieldMaxPoolSize = new javax.swing.JTextField();
+        jButtonCreate = new javax.swing.JButton();
+        jButtonCancel = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        jTableListeners = new javax.swing.JTable();
+        jButtonAddListener = new javax.swing.JButton();
+        jButtonRemoveListener = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        jTextFieldLocation = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         setClosable(true);
         setIconifiable(true);
         setTitle("New Message Queue");
-        setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
+        setFont(new java.awt.Font("Verdana", 0, 11));
         try {
             setSelected(true);
         } catch (java.beans.PropertyVetoException e1) {
@@ -45,18 +75,18 @@ public class frmNewQueue extends javax.swing.JInternalFrame {
         }
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Descriptive"));
-        jPanel1.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
+        jPanel1.setFont(new java.awt.Font("Verdana", 0, 11));
 
-        jLabel1.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Verdana", 0, 11));
         jLabel1.setText("Name:");
 
-        jLabel2.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Verdana", 0, 11));
         jLabel2.setText("Description:");
 
-        jTextFieldName.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
+        jTextFieldName.setFont(new java.awt.Font("Verdana", 0, 11));
         jTextFieldName.setText("MyQueue");
 
-        jTextFieldName1.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
+        jTextFieldDescription.setFont(new java.awt.Font("Verdana", 0, 11));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -70,7 +100,7 @@ public class frmNewQueue extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTextFieldName, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextFieldName1, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE))
+                    .addComponent(jTextFieldDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -82,22 +112,22 @@ public class frmNewQueue extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextFieldName1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldDescription, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Thread Pool"));
-        jPanel2.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
+        jPanel2.setFont(new java.awt.Font("Verdana", 0, 11));
 
-        jLabel4.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Verdana", 0, 11));
         jLabel4.setText("Max. pool size:");
 
-        jLabel3.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Verdana", 0, 11));
         jLabel3.setText("Core pool size:");
 
-        jTextField1.setText("50");
+        jTextFieldCorePoolSize.setText("50");
 
-        jTextField2.setText("100");
+        jTextFieldMaxPoolSize.setText("100");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -106,38 +136,42 @@ public class frmNewQueue extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel3))
                 .addGap(14, 14, 14)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextField2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(jTextFieldMaxPoolSize)
+                    .addComponent(jTextFieldCorePoolSize, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(275, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jTextFieldCorePoolSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(33, 33, 33))
+                    .addComponent(jTextFieldMaxPoolSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jButton1.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
-        jButton1.setText("Create");
+        jButtonCreate.setFont(new java.awt.Font("Verdana", 0, 11));
+        jButtonCreate.setText("Create");
+        jButtonCreate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCreateActionPerformed(evt);
+            }
+        });
 
-        jButton2.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
-        jButton2.setText("Cancel");
+        jButtonCancel.setFont(new java.awt.Font("Verdana", 0, 11));
+        jButtonCancel.setText("Cancel");
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Listeners"));
 
-        jTable1.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTableListeners.setFont(new java.awt.Font("Verdana", 0, 11));
+        jTableListeners.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -145,13 +179,23 @@ public class frmNewQueue extends javax.swing.JInternalFrame {
                 "IP Address", "Port", "Max. Connections"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(jTableListeners);
 
-        jButton3.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
-        jButton3.setText("Add");
+        jButtonAddListener.setFont(new java.awt.Font("Verdana", 0, 11));
+        jButtonAddListener.setText("Add");
+        jButtonAddListener.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAddListenerActionPerformed(evt);
+            }
+        });
 
-        jButton4.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
-        jButton4.setText("Remove");
+        jButtonRemoveListener.setFont(new java.awt.Font("Verdana", 0, 11));
+        jButtonRemoveListener.setText("Remove");
+        jButtonRemoveListener.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonRemoveListenerActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -162,9 +206,9 @@ public class frmNewQueue extends javax.swing.JInternalFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jButton3)
+                        .addComponent(jButtonAddListener)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4)))
+                        .addComponent(jButtonRemoveListener)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -173,8 +217,47 @@ public class frmNewQueue extends javax.swing.JInternalFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4))
+                    .addComponent(jButtonAddListener)
+                    .addComponent(jButtonRemoveListener))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Queue Folder"));
+
+        jLabel5.setFont(new java.awt.Font("Verdana", 0, 11));
+        jLabel5.setText("Path:");
+
+        jTextFieldLocation.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
+
+        jButton1.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
+        jButton1.setText("...");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTextFieldLocation, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jButton1)
+                    .addComponent(jTextFieldLocation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -185,13 +268,14 @@ public class frmNewQueue extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButtonCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)))
+                        .addComponent(jButtonCancel))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -199,39 +283,104 @@ public class frmNewQueue extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButtonCreate)
+                    .addComponent(jButtonCancel))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+private void jButtonAddListenerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddListenerActionPerformed
+    new frmNewListener(fMain, true, this).setVisible(true);
+}//GEN-LAST:event_jButtonAddListenerActionPerformed
 
+private void jButtonRemoveListenerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRemoveListenerActionPerformed
+    try
+    {
+        ((DefaultTableModel) this.jTableListeners.getModel()).removeRow(jTableListeners.getSelectedRow());
+    }
+    catch (Exception ex)
+    {
+    }
+}//GEN-LAST:event_jButtonRemoveListenerActionPerformed
+private void jButtonCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCreateActionPerformed
+
+    String name = jTextFieldName.getText();
+    String description = jTextFieldDescription.getText();
+
+    int corePoolSize = Integer.parseInt(jTextFieldCorePoolSize.getText());
+    int maxPoolSize = Integer.parseInt(jTextFieldMaxPoolSize.getText());
+
+    ArrayList listeners = new ArrayList();
+
+    for (int i = 0; i < jTableListeners.getRowCount(); i++)
+    {
+        try
+        {
+            InetAddress ip = InetAddress.getByName(jTableListeners.getValueAt(i, 0).toString());
+            int port = Integer.parseInt(jTableListeners.getValueAt(i, 1).toString());
+            int maxConnections = Integer.parseInt(jTableListeners.getValueAt(i, 2).toString());
+
+            TCPListener listener = new TCPListener("Listener " + String.valueOf(i), ip, port, maxConnections, 65535, 20000, 100, "#!" + String.valueOf(((char) 2)) + "!#");
+            listeners.add(listener);
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+
+    try
+    {
+        QueueManager.CreateNewQueue(jTextFieldName.getText(), jTextFieldDescription.getText(), jTextFieldLocation.getText(), Integer.parseInt(jTextFieldCorePoolSize.getText()), Integer.parseInt(jTextFieldMaxPoolSize.getText()), listeners);
+    }//GEN-LAST:event_jButtonCreateActionPerformed
+    catch (Exception ex)
+    {
+        JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}                                             
+
+private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    JFileChooser fc = new JFileChooser();
+    JList list = new JList();
+    fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    if (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(list))
+    {
+        File file = fc.getSelectedFile();
+        jTextFieldLocation.setText(file.getPath());
+    }
+}//GEN-LAST:event_jButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButtonAddListener;
+    private javax.swing.JButton jButtonCancel;
+    private javax.swing.JButton jButtonCreate;
+    private javax.swing.JButton jButtonRemoveListener;
+    private javax.swing.JFileChooser jFileChooser1;
+    private javax.swing.JFileChooser jFileChooser2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTable jTableListeners;
+    private javax.swing.JTextField jTextFieldCorePoolSize;
+    private javax.swing.JTextField jTextFieldDescription;
+    private javax.swing.JTextField jTextFieldLocation;
+    private javax.swing.JTextField jTextFieldMaxPoolSize;
     private javax.swing.JTextField jTextFieldName;
-    private javax.swing.JTextField jTextFieldName1;
     // End of variables declaration//GEN-END:variables
-
 }

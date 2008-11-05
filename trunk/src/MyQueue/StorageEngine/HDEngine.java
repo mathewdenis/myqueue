@@ -14,22 +14,23 @@ public class HDEngine extends StorageEngine
 
     private DataReader fDataReader;
     private DataWriter fDataWriter;
-    private String fLocation;
     private long fLastMessageID = 0; // This long holds the last message id.
+    private String fLocation;
 
     public HDEngine(String location)
     {
+        super(location);
         fLocation = location;
         fDataReader = new DataReader(location, "mqf");
         fDataWriter = new DataWriter(location, "mqf");
     }
 
     @Override
-    public byte[] Dequeue(long messageID)
+    public byte[] Dequeue()
     {
         try
         {
-            String fileName = "F_" + String.valueOf(messageID);
+            String fileName = "F_" + String.valueOf(fLastMessageID);
             byte[] bytes = fDataReader.ReadBytes(fileName);
             File file = new File(fLocation + "\\" + fileName + ".mqf");
             file.delete();
@@ -42,11 +43,11 @@ public class HDEngine extends StorageEngine
     }
 
     @Override
-    public byte[] Peek(long messageID)
+    public byte[] Peek()
     {
         try
         {
-            String fileName = "F_" + String.valueOf(messageID);
+            String fileName = "F_" + String.valueOf(fLastMessageID);
             return fDataReader.ReadBytes(fileName);
         }
         catch (Exception ex)

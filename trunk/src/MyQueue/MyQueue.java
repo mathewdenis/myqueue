@@ -12,8 +12,9 @@ import java.io.IOException;
 public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
 {
 
-    public String fName,  fDescription;
-    public StorageEngine fEngine;
+    private String fName,  fDescription;
+    private StorageEngine fEngine;
+    private int fCorePoolsSize,fMaxPoolSize;
 
     public MyQueue(String name, String description, StorageEngine engine, int corePoolSize, int maxPoolSize)
     {
@@ -21,6 +22,8 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
         fName = name;
         fDescription = description;
         fEngine = engine;
+        fCorePoolsSize = corePoolSize;
+        fMaxPoolSize = maxPoolSize;
     }
 
     @Override
@@ -54,4 +57,16 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     {
         return fEngine;
     }
+    
+    public int getCorePoolSize()
+    {
+        return fCorePoolsSize;
+    }
+    
+    public int getMaxPoolSize()
+    {
+        return fMaxPoolSize;
+    }
+    
+    
 }

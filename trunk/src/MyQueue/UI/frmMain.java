@@ -23,6 +23,7 @@ public class frmMain extends javax.swing.JFrame
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("MyQueue");
 
         jDesktopPane1.setBackground(new java.awt.Color(153, 153, 153));
 
@@ -52,14 +53,14 @@ public class frmMain extends javax.swing.JFrame
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
+            .addComponent(jDesktopPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
 private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-    frmNewQueue frm = new frmNewQueue();
+    frmNewQueue frm = new frmNewQueue(this);
     jDesktopPane1.add(frm);
     frm.setVisible(true);
 }//GEN-LAST:event_jMenuItem1ActionPerformed
