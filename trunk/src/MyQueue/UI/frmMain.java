@@ -1,5 +1,7 @@
 package MyQueue.UI;
 
+import MyQueue.Core.QueueManager;
+
 /**
  *
  * @author Nikos Siatras
@@ -10,6 +12,7 @@ public class frmMain extends javax.swing.JFrame
     public frmMain()
     {
         initComponents();
+        QueueManager.Load();
     }
 
     @SuppressWarnings("unchecked")

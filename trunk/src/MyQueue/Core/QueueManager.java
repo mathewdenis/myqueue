@@ -5,12 +5,15 @@ import MyQueue.MyQueue;
 import MyQueue.StorageEngine.HDEngine;
 
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import net.sf.sojo.interchange.json.JsonSerializer;
 
@@ -111,7 +114,6 @@ public class QueueManager
 
     private static void Save()
     {
-
         ArrayList dataToSave = new ArrayList();
 
         for (Enumeration e = fQueues.keys(); e.hasMoreElements();)
@@ -126,7 +128,7 @@ public class QueueManager
                 queue.put("description", tmp.getDescription() + " ");
                 queue.put("corepoolsize", tmp.getCorePoolSize());
                 queue.put("maxpoolsize", tmp.getMaxPoolSize());
-                queue.put("location", tmp.getEngine().getLocation());
+                queue.put("location", FixToJSONString(tmp.getEngine().getLocation()));
 
                 // Listeners.
                 ArrayList listeners = new ArrayList();
@@ -172,8 +174,57 @@ public class QueueManager
         }
     }
 
-    static void Load()
+    public static void Load()
     {
-        
+        try
+        {
+            FileReader input = new FileReader("QueueManager.dat");
+            BufferedReader bufRead = new BufferedReader(input);
+
+            String line;
+            line = bufRead.readLine();
+            bufRead.close();
+
+            JsonSerializer serializer = new JsonSerializer();
+            ArrayList tmpList = new ArrayList();
+            tmpList = (ArrayList) serializer.deserialize(line);
+
+            for (int i = 0; i < tmpList.size(); i++)
+            {
+                HashMap queue = (HashMap) tmpList.get(i);
+
+                String name = queue.get("name").toString();
+                String description = queue.get("description").toString();
+                String corepoolsize = queue.get("corepoolsize").toString();
+                String maxPoolSize = queue.get("maxpoolsize").toString();
+                String location = FixFromJSONString(queue.get("location").toString());
+
+                ArrayList listeners = (ArrayList) queue.get("listeners");
+
+                for (int x = 0; x < listeners.size(); x++)
+                {
+                    HashMap listener = (HashMap) listeners.get(x);
+                    String ip = listener.get("ip").toString();
+                    String port = listener.get("port").toString();
+                    String maxconnections = listener.get("maxconnections").toString();
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+
+    private static String FixToJSONString(String str)
+    {
+        str = str.replace("\\", "___backSlash");
+        return str;
+    }
+
+    private static String FixFromJSONString(String str)
+    {
+        str = str.replace("___backSlash", "\\");
+        return str;
     }
 }
