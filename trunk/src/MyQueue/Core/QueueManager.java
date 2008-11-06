@@ -191,28 +191,36 @@ public class QueueManager
 
             for (int i = 0; i < tmpList.size(); i++)
             {
+
                 HashMap queue = (HashMap) tmpList.get(i);
 
                 String name = queue.get("name").toString();
                 String description = queue.get("description").toString();
-                String corepoolsize = queue.get("corepoolsize").toString();
+                String corePoolSize = queue.get("corepoolsize").toString();
                 String maxPoolSize = queue.get("maxpoolsize").toString();
                 String location = FixFromJSONString(queue.get("location").toString());
 
-                ArrayList listeners = (ArrayList) queue.get("listeners");
+                ArrayList tmpListeners = (ArrayList) queue.get("listeners");
+                ArrayList listeners = new ArrayList();
 
-                for (int x = 0; x < listeners.size(); x++)
+                for (int x = 0; x < tmpListeners.size(); x++)
                 {
-                    HashMap listener = (HashMap) listeners.get(x);
+                    HashMap listener = (HashMap) tmpListeners.get(x);
                     String ip = listener.get("ip").toString();
                     String port = listener.get("port").toString();
                     String maxconnections = listener.get("maxconnections").toString();
+
+                    TCPListener tmpListener = new TCPListener("Listener " + String.valueOf(x), InetAddress.getByName(ip.replace("/", "")), Integer.parseInt(port), Integer.parseInt(maxconnections), 65535, 20000, 100, "#!" + String.valueOf(((char) 2)) + "!#");
+                    listeners.add(tmpListener);
                 }
+
+                CreateNewQueue(name, description, location, Integer.parseInt(corePoolSize), Integer.parseInt(maxPoolSize), listeners);
 
             }
         }
         catch (Exception ex)
         {
+            System.out.println(ex);
         }
     }
 
