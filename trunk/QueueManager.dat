@@ -1,1 +1,0 @@
-[{"location":"C:___backSlashMy Queue Storage","name":"MyQueue","listeners":[{"maxconnections":50,"port":5001,"ip":"\/127.0.0.1"}],"description":" ","maxpoolsize":100,"corepoolsize":50}]
