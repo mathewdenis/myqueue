@@ -1,10 +1,12 @@
 package myqueue.Core.StorageEngines;
 
+
+
 /**
  *
  * @author Nikos Siatras
  */
-public class StorageEngine
+public class StorageEngine 
 {
 
     private String fLocation;

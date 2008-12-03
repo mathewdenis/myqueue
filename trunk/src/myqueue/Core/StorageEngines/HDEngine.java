@@ -1,13 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package myqueue.Core.StorageEngines;
 
-/**
- *
- * @author Administrator
- */
 import java.io.File;
 import java.io.IOException;
 import myqueue.Core.File.DataReader;

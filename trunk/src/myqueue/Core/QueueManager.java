@@ -1,11 +1,17 @@
 package myqueue.Core;
 
+import myqueue.Core.Serializable.MyQueueSerializable;
 import Extasys.Network.TCP.Server.Listener.TCPListener;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import myqueue.Core.Serializable.TCPListenerSerializable;
 import myqueue.Core.StorageEngines.HDEngine;
+import myqueue.Core.StorageEngines.StorageEngine;
 
 /**
  *
@@ -14,7 +20,7 @@ import myqueue.Core.StorageEngines.HDEngine;
 public class QueueManager
 {
 
-    private static Hashtable fQueues = new Hashtable();
+    private static Hashtable<String, MyQueue> fQueues = new Hashtable<String, MyQueue>();
 
     public QueueManager()
     {
@@ -76,6 +82,7 @@ public class QueueManager
 
         fQueues.put(name, queue);
         StartQueue(name);
+        Save();
     }
 
     public static void StartQueue(String name) throws IOException, Exception
@@ -113,5 +120,59 @@ public class QueueManager
         {
             throw new Exception("Queue " + name + " does not exist.");
         }
+    }
+
+    private static void Save()
+    {
+        // Check if file QueueData exists.
+        File tmpFolder = new File("QueueData");
+        if (!tmpFolder.exists())
+        {
+            tmpFolder.mkdirs();
+        }
+
+        for (MyQueue queue : fQueues.values())
+        {
+            MyQueueSerializable tmp = new MyQueueSerializable();
+
+            tmp.Name = queue.getName();
+            tmp.Description = queue.getDescription();
+            tmp.Location = queue.getEngine().getLocation();
+            if (queue.getEngine().getClass().equals(new HDEngine("").getClass()))
+            {
+                tmp.Engine = EStorageEngine.HDEngine;
+            }
+
+            // Listeners.
+            for (int i = 0; i < queue.getListeners().size(); i++)
+            {
+                TCPListenerSerializable tmpListener = new TCPListenerSerializable();
+                TCPListener listener = (TCPListener) queue.getListeners().get(i);
+                tmpListener.IPAddress = listener.getIPAddress();
+                tmpListener.MaxConnections = listener.getMaxConnections();
+                tmpListener.Port = listener.getPort();
+
+                tmp.ConnectionsTimeOut = listener.getConnectionTimeOut();
+                tmp.TCPListeners.add(tmpListener);
+            }
+
+            FileOutputStream fos = null;
+            ObjectOutputStream out = null;
+            try
+            {
+                fos = new FileOutputStream("QueueData\\" + tmp.Name + ".queue");
+                out = new ObjectOutputStream(fos);
+                out.writeObject(tmp);
+                out.close();
+            }
+            catch (IOException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+    }
+
+    public static void Load()
+    {
     }
 }

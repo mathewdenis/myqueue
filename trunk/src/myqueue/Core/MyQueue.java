@@ -24,6 +24,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
         fEngine = engine;
         fCorePoolsSize = corePoolSize;
         fMaxPoolSize = maxPoolSize;
+
     }
 
     @Override
