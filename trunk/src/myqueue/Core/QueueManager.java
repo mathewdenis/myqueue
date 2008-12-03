@@ -3,15 +3,16 @@ package myqueue.Core;
 import myqueue.Core.Serializable.MyQueueSerializable;
 import Extasys.Network.TCP.Server.Listener.TCPListener;
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import myqueue.Core.Serializable.TCPListenerSerializable;
 import myqueue.Core.StorageEngines.HDEngine;
-import myqueue.Core.StorageEngines.StorageEngine;
 
 /**
  *
@@ -81,7 +82,6 @@ public class QueueManager
         }
 
         fQueues.put(name, queue);
-        StartQueue(name);
         Save();
     }
 
@@ -138,6 +138,9 @@ public class QueueManager
             tmp.Name = queue.getName();
             tmp.Description = queue.getDescription();
             tmp.Location = queue.getEngine().getLocation();
+            tmp.Running = queue.isRunning();
+            tmp.CorePoolsSize = queue.getCorePoolSize();
+            tmp.MaxPoolSize = queue.getMaxPoolSize();
             if (queue.getEngine().getClass().equals(new HDEngine("").getClass()))
             {
                 tmp.Engine = EStorageEngine.HDEngine;
@@ -151,7 +154,7 @@ public class QueueManager
                 tmpListener.IPAddress = listener.getIPAddress();
                 tmpListener.MaxConnections = listener.getMaxConnections();
                 tmpListener.Port = listener.getPort();
-
+                tmpListener.Splitter = listener.getMessageSplitter();
                 tmp.ConnectionsTimeOut = listener.getConnectionTimeOut();
                 tmp.TCPListeners.add(tmpListener);
             }
@@ -174,5 +177,55 @@ public class QueueManager
 
     public static void Load()
     {
+        File dir = new File("QueueData");
+        File[] files = dir.listFiles();
+
+        // This filter only returns directories
+        FileFilter fileFilter = new FileFilter()
+        {
+
+            @Override
+            public boolean accept(File file)
+            {
+                return !file.isDirectory() && file.getName().endsWith("queue");
+            }
+        };
+        files = dir.listFiles(fileFilter);
+
+        FileInputStream fis = null;
+        ObjectInputStream in = null;
+        for (File file : files)
+        {
+            try
+            {
+                fis = new FileInputStream(file.getPath());
+                in = new ObjectInputStream(fis);
+                MyQueueSerializable tmp = (MyQueueSerializable) in.readObject();
+
+                // Listeners.
+                ArrayList listeners = new ArrayList();
+                for (int i = 0; i < tmp.TCPListeners.size(); i++)
+                {
+                    TCPListenerSerializable tmpListener = (TCPListenerSerializable) tmp.TCPListeners.get(i);
+                    TCPListener listener = new TCPListener("", tmpListener.IPAddress, tmpListener.Port, tmpListener.MaxConnections, 65535, tmp.ConnectionsTimeOut, 100, tmpListener.Splitter);
+                    listeners.add(listener);
+                }
+
+                CreateNewQueue(tmp.Name, tmp.Description, tmp.Location, tmp.CorePoolsSize, tmp.MaxPoolSize, listeners);
+
+                if (tmp.Running)
+                {
+                    StartQueue(tmp.Name);
+                }
+
+                in.close();
+            }
+            catch (Exception ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+
+
     }
 }

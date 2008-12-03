@@ -273,7 +273,7 @@ public class frmNewQueue extends javax.swing.JInternalFrame
                 int port = Integer.parseInt(jTableListeners.getValueAt(i, 1).toString());
                 int maxConnections = Integer.parseInt(jTableListeners.getValueAt(i, 2).toString());
 
-                TCPListener listener = new TCPListener("Listener " + String.valueOf(i), ip, port, maxConnections, 65535, 20000, 100, "#!" + String.valueOf(((char) 2)) + "!#");
+                TCPListener listener = new TCPListener("Listener " + String.valueOf(i), ip, port, maxConnections, 65535, 30000, 100, "#!" + String.valueOf(((char) 2)) + "!#");
                 listeners.add(listener);
             }
             catch (Exception ex)

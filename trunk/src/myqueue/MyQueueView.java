@@ -14,6 +14,7 @@ import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import myqueue.Core.QueueManager;
 import myqueue.UI.frmNewQueue;
 import myqueue.UI.frmQueueManager;
 
@@ -103,6 +104,8 @@ public class MyQueueView extends FrameView
                 }
             }
         });
+
+        QueueManager.Load();
     }
 
     @Action

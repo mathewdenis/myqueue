@@ -15,6 +15,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     private String fName,  fDescription;
     private StorageEngine fEngine;
     private int fCorePoolsSize,  fMaxPoolSize;
+    private boolean fRunning = false;
 
     public MyQueue(String name, String description, StorageEngine engine, int corePoolSize, int maxPoolSize)
     {
@@ -24,19 +25,20 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
         fEngine = engine;
         fCorePoolsSize = corePoolSize;
         fMaxPoolSize = maxPoolSize;
-
     }
 
     @Override
     public void Start() throws IOException, Exception
     {
         super.Start();
+        fRunning = true;
     }
 
     @Override
     public void Stop()
     {
         super.Stop();
+        fRunning = false;
     }
 
     @Override
@@ -67,5 +69,10 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     public int getMaxPoolSize()
     {
         return fMaxPoolSize;
+    }
+
+    public boolean isRunning()
+    {
+        return fRunning;
     }
 }
