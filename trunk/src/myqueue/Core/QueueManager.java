@@ -1,6 +1,7 @@
 package myqueue.Core;
 
 import Extasys.Network.TCP.Server.Listener.TCPListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -51,6 +52,19 @@ public class QueueManager
             throw new Exception("Please add one or more listeners to this queue.");
         }
 
+        try
+        {
+            File tmpFile = new File(location);
+            if (!tmpFile.exists())
+            {
+                throw new Exception("Please select a valid location for this queue.");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Please select a valid location for this queue.");
+        }
+
         HDEngine engine = new HDEngine(location);
         MyQueue queue = new MyQueue(name, description, engine, corePoolSize, maxPoolSize);
 
@@ -62,7 +76,6 @@ public class QueueManager
 
         fQueues.put(name, queue);
         StartQueue(name);
-
     }
 
     public static void StartQueue(String name) throws IOException, Exception
