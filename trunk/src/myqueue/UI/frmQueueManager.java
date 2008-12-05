@@ -10,7 +10,14 @@
  */
 package myqueue.UI;
 
-import java.lang.Object;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Label;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.util.Vector;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import myqueue.Core.MyQueue;
@@ -50,6 +57,8 @@ public class frmQueueManager extends javax.swing.JInternalFrame
                 }
             }
         });
+        // Fix JTable rendered for icons.
+        jTableQueues.getColumnModel().getColumn(0).setCellRenderer(new ImageTableCellRenderer());
         fUpdateThread.start();
     }
 
@@ -67,34 +76,49 @@ public class frmQueueManager extends javax.swing.JInternalFrame
             boolean existsInTable = false;
             for (int i = 0; i < model.getRowCount(); i++)
             {
-                
-                if (jTableQueues.getValueAt(i, 0).equals(name))
+
+                if (jTableQueues.getValueAt(i, 1).equals(name))
                 {
                     existsInTable = true;
                 }
             }
 
-            if (!existsInTable)
+            if (!existsInTable) // Add new row.
             {
-
                 description = queue.getDescription();
                 location = queue.getEngine().getLocation();
                 poolSize = String.valueOf(queue.getCorePoolSize()) + "/" + String.valueOf(queue.getMaxPoolSize());
 
-                Object[] tmp = new Object[4];
+                Vector tmp = new Vector();
 
-                tmp[0] = name;
-                tmp[1] = description;
-                tmp[2] = location;
-                tmp[3] = poolSize;
+                try
+                {
+                    ImageIcon img;
+                    if (queue.isRunning())
+                    {
+                        img = new ImageIcon(getClass().getResource("/Images/enable-server-16x16.png"));
+                    }
+                    else
+                    {
+                        img = new ImageIcon(getClass().getResource("/Images/desable-server-16x16.png"));
+                    }
+                    tmp.addElement(img);
+                }
+                catch (Exception ex)
+                {
+                }
+                tmp.addElement(name);
+                tmp.addElement(description);
+                tmp.addElement(location);
+                tmp.addElement(poolSize);
 
                 model.addRow(tmp);
             }
+            else // Update row.
+            {
 
-
+            }
         }
-
-
     }
 
     @SuppressWarnings("unchecked")
@@ -141,11 +165,11 @@ public class frmQueueManager extends javax.swing.JInternalFrame
 
             },
             new String [] {
-                "Name", "Description", "Location", "Pool Size (Core/Max)"
+                "", "Name", "Description", "Location", "Pool Size (Core/Max)"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -155,14 +179,16 @@ public class frmQueueManager extends javax.swing.JInternalFrame
         jTableQueues.setName("jTableQueues"); // NOI18N
         jTableQueues.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTableQueues);
-        jTableQueues.getColumnModel().getColumn(0).setPreferredWidth(130);
-        jTableQueues.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("jTableQueues.columnModel.title0")); // NOI18N
-        jTableQueues.getColumnModel().getColumn(1).setPreferredWidth(220);
-        jTableQueues.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("jTableQueues.columnModel.title1")); // NOI18N
-        jTableQueues.getColumnModel().getColumn(2).setPreferredWidth(120);
-        jTableQueues.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("jTableQueues.columnModel.title2")); // NOI18N
-        jTableQueues.getColumnModel().getColumn(3).setPreferredWidth(60);
-        jTableQueues.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("jTableQueues.columnModel.title3")); // NOI18N
+        jTableQueues.getColumnModel().getColumn(0).setPreferredWidth(16);
+        jTableQueues.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("jTableQueues.columnModel.title4")); // NOI18N
+        jTableQueues.getColumnModel().getColumn(1).setPreferredWidth(130);
+        jTableQueues.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("jTableQueues.columnModel.title0")); // NOI18N
+        jTableQueues.getColumnModel().getColumn(2).setPreferredWidth(220);
+        jTableQueues.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("jTableQueues.columnModel.title1")); // NOI18N
+        jTableQueues.getColumnModel().getColumn(3).setPreferredWidth(120);
+        jTableQueues.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("jTableQueues.columnModel.title2")); // NOI18N
+        jTableQueues.getColumnModel().getColumn(4).setPreferredWidth(60);
+        jTableQueues.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("jTableQueues.columnModel.title3")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -170,14 +196,14 @@ public class frmQueueManager extends javax.swing.JInternalFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 799, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
