@@ -228,4 +228,9 @@ public class QueueManager
 
 
     }
+
+    public static Hashtable<String, MyQueue> getQueues()
+    {
+        return fQueues;
+    }
 }
