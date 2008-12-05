@@ -76,10 +76,24 @@ public class frmQueueManager extends javax.swing.JInternalFrame
             boolean existsInTable = false;
             for (int i = 0; i < model.getRowCount(); i++)
             {
-
                 if (jTableQueues.getValueAt(i, 1).equals(name))
                 {
                     existsInTable = true;
+                    // Update row.
+                    ImageIcon img;
+                    if (queue.isRunning())
+                    {
+                        img = new ImageIcon(getClass().getResource("/Images/enable-server-16x16.png"));
+                        jTableQueues.setValueAt(img, i, 0);
+                    }
+                    else
+                    {
+                        img = new ImageIcon(getClass().getResource("/Images/desable-server-16x16.png"));
+                        jTableQueues.setValueAt(img, i, 0);
+                    }
+                    jTableQueues.setValueAt(queue.getDescription(), i, 2);
+                    jTableQueues.setValueAt(queue.getEngine().getLocation(), i, 3);
+                    jTableQueues.setValueAt(String.valueOf(queue.getCorePoolSize()) + "/" + String.valueOf(queue.getMaxPoolSize()), i, 4);
                 }
             }
 
@@ -114,10 +128,7 @@ public class frmQueueManager extends javax.swing.JInternalFrame
 
                 model.addRow(tmp);
             }
-            else // Update row.
-            {
 
-            }
         }
     }
 
