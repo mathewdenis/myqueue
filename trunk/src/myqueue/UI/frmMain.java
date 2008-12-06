@@ -2,6 +2,7 @@ package myqueue.UI;
 
 import java.util.Vector;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import myqueue.Core.MyQueue;
@@ -32,6 +33,12 @@ public class frmMain extends javax.swing.JFrame
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        jMenuItemStart = new javax.swing.JMenuItem();
+        jMenuItemStop = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        jMenuItemEdit = new javax.swing.JMenuItem();
+        jMenuItemDelete = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableQueues = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -39,6 +46,48 @@ public class frmMain extends javax.swing.JFrame
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+
+        jPopupMenu1.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+                jPopupMenu1PopupMenuWillBecomeVisible(evt);
+            }
+        });
+
+        jMenuItemStart.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Button-Play-16x16.png"))); // NOI18N
+        jMenuItemStart.setText("Start");
+        jMenuItemStart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemStartActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItemStart);
+
+        jMenuItemStop.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Button-Stop-16x16.png"))); // NOI18N
+        jMenuItemStop.setText("Stop");
+        jMenuItemStop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemStopActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItemStop);
+        jPopupMenu1.add(jSeparator1);
+
+        jMenuItemEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/notes-edit-16x16.png"))); // NOI18N
+        jMenuItemEdit.setText("Edit");
+        jMenuItemEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemEditActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItemEdit);
+
+        jMenuItemDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Button-Delete-16x16.png"))); // NOI18N
+        jMenuItemDelete.setText("Delete");
+        jPopupMenu1.add(jMenuItemDelete);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("myQueue");
@@ -59,6 +108,7 @@ public class frmMain extends javax.swing.JFrame
                 return canEdit [columnIndex];
             }
         });
+        jTableQueues.setComponentPopupMenu(jPopupMenu1);
         jTableQueues.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTableQueues);
         jTableQueues.getColumnModel().getColumn(0).setMinWidth(20);
@@ -120,6 +170,91 @@ public class frmMain extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jMenuItem2ActionPerformed
         this.dispose();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jPopupMenu1PopupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt)//GEN-FIRST:event_jPopupMenu1PopupMenuWillBecomeVisible
+    {//GEN-HEADEREND:event_jPopupMenu1PopupMenuWillBecomeVisible
+        try
+        {
+            String selectedServer = "";
+            if (jTableQueues.getSelectedRow() >= 0)
+            {
+                selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
+
+                MyQueue queue = QueueManager.getQueues().get(selectedServer);
+
+                if (queue.isRunning())
+                {
+                    jMenuItemStart.setVisible(false);
+                    jMenuItemStop.setVisible(true);
+                }
+                else
+                {
+                    jMenuItemStart.setVisible(true);
+                    jMenuItemStop.setVisible(false);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+        }
+    }//GEN-LAST:event_jPopupMenu1PopupMenuWillBecomeVisible
+
+    // Start queue.
+    private void jMenuItemStartActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemStartActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemStartActionPerformed
+        try
+        {
+            String selectedServer = "";
+            if (jTableQueues.getSelectedRow() >= 0)
+            {
+                selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
+                QueueManager.StartQueue(selectedServer);
+                Update();
+            }
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR);
+        }
+
+    }//GEN-LAST:event_jMenuItemStartActionPerformed
+
+    // Stop queue.
+    private void jMenuItemStopActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemStopActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemStopActionPerformed
+        try
+        {
+            String selectedServer = "";
+            if (jTableQueues.getSelectedRow() >= 0)
+            {
+                selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
+                QueueManager.StopQueue(selectedServer);
+                Update();
+            }
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR);
+        }
+    }//GEN-LAST:event_jMenuItemStopActionPerformed
+
+    // Edit queue.
+    private void jMenuItemEditActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemEditActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemEditActionPerformed
+        try
+        {
+            String selectedServer = "";
+            if (jTableQueues.getSelectedRow() >= 0)
+            {
+                selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
+
+            }
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR);
+        }
+    }//GEN-LAST:event_jMenuItemEditActionPerformed
 
     public static void main(String args[])
     {
@@ -216,7 +351,13 @@ public class frmMain extends javax.swing.JFrame
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItemDelete;
+    private javax.swing.JMenuItem jMenuItemEdit;
+    private javax.swing.JMenuItem jMenuItemStart;
+    private javax.swing.JMenuItem jMenuItemStop;
+    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jTableQueues;
     // End of variables declaration//GEN-END:variables
 }
