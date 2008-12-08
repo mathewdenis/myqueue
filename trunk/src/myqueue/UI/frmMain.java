@@ -45,7 +45,6 @@ public class frmMain extends javax.swing.JFrame
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
 
         jPopupMenu1.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
             public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
@@ -87,6 +86,11 @@ public class frmMain extends javax.swing.JFrame
 
         jMenuItemDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Button-Delete-16x16.png"))); // NOI18N
         jMenuItemDelete.setText("Delete");
+        jMenuItemDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemDeleteActionPerformed(evt);
+            }
+        });
         jPopupMenu1.add(jMenuItemDelete);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -133,9 +137,6 @@ public class frmMain extends javax.swing.JFrame
         jMenu1.add(jMenuItem2);
 
         jMenuBar1.add(jMenu1);
-
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -256,6 +257,29 @@ public class frmMain extends javax.swing.JFrame
         }
     }//GEN-LAST:event_jMenuItemEditActionPerformed
 
+    // Delete queue.
+    private void jMenuItemDeleteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemDeleteActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemDeleteActionPerformed
+        try
+        {
+            String selectedServer = "";
+            if (jTableQueues.getSelectedRow() >= 0)
+            {
+                selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
+                int answer = JOptionPane.showConfirmDialog(null, "Delete " + selectedServer + "?", "Delete", JOptionPane.YES_NO_OPTION);
+                if (answer == JOptionPane.YES_OPTION)
+                {
+                    QueueManager.DeleteQueue(selectedServer);
+                    Update();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR);
+        }
+    }//GEN-LAST:event_jMenuItemDeleteActionPerformed
+
     public static void main(String args[])
     {
         try
@@ -342,12 +366,19 @@ public class frmMain extends javax.swing.JFrame
 
                 model.addRow(tmp);
             }
+        }
 
+        // Remove deleted queues.
+        for (int i = model.getRowCount()-1; i >= 0; i--)
+        {
+            if(!QueueManager.getQueues().containsKey(jTableQueues.getValueAt(i, 1).toString()))
+            {
+                model.removeRow(i);
+            }
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;

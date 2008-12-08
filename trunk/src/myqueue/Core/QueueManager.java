@@ -115,6 +115,15 @@ public class QueueManager
         {
             StopQueue(name);
             fQueues.remove(name);
+
+            try
+            {
+                File savedQueueFile = new File("QueueData\\" + name + ".queue");
+                savedQueueFile.delete();
+            }
+            catch (Exception ex)
+            {
+            }
         }
         else
         {
@@ -210,8 +219,9 @@ public class QueueManager
                     TCPListener listener = new TCPListener("", tmpListener.IPAddress, tmpListener.Port, tmpListener.MaxConnections, 65535, tmp.ConnectionsTimeOut, 100, tmpListener.Splitter);
                     listeners.add(listener);
                 }
-
-                CreateNewQueue(tmp.Name, tmp.Description, tmp.Location, tmp.CorePoolsSize, tmp.MaxPoolSize, listeners);
+                
+                String queueFileName = file.getName().substring(0, file.getName().lastIndexOf("."));
+                CreateNewQueue(queueFileName, tmp.Description, tmp.Location, tmp.CorePoolsSize, tmp.MaxPoolSize, listeners);
 
                 if (tmp.Running)
                 {
