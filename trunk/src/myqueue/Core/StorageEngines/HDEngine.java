@@ -35,6 +35,10 @@ public class HDEngine extends StorageEngine
             byte[] bytes = fDataReader.ReadBytes(fileName);
             File file = new File(fLocation + "\\" + fileName + ".mqf");
             file.delete();
+            if (fLastMessageID > 0)
+            {
+                fLastMessageID--;
+            }
             return bytes;
         }
         catch (Exception ex)
@@ -58,34 +62,15 @@ public class HDEngine extends StorageEngine
     }
 
     @Override
-    public synchronized boolean Enqueue(String data)
-    {
-        try
-        {
-            fLastMessageID++;
-            String lastMessageIDStr = String.valueOf(fLastMessageID);
-            data = lastMessageIDStr + "\n" + data;
-            fDataWriter.WriteFile(data, "F_" + lastMessageIDStr);
-            return true;
-        }
-        catch (IOException ex)
-        {
-            return false;
-        }
-    }
-
-    @Override
     public synchronized boolean Enqueue(byte[] bytes)
     {
         try
         {
-            String message = new String(bytes);
             fLastMessageID++;
             String lastMessageIDStr = String.valueOf(fLastMessageID);
 
             byte[] finalBytes = new byte[bytes.length + lastMessageIDStr.length() + 1];
 
-            //System.arraycopy(bytes, 0, finalBytes, lastMessageIDStr.length(), finalBytes.length - 1);
             System.arraycopy(bytes, 0, finalBytes, lastMessageIDStr.length() + 1, bytes.length);
 
             for (int i = 0; i < lastMessageIDStr.length(); i++)
@@ -93,7 +78,6 @@ public class HDEngine extends StorageEngine
                 finalBytes[i] = (byte) lastMessageIDStr.charAt(i);
             }
             finalBytes[lastMessageIDStr.length()] = '\n';
-
 
             fDataWriter.WriteFile(finalBytes, "F_" + String.valueOf(fLastMessageID));
             return true;

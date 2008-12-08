@@ -26,11 +26,7 @@ public class StorageEngine
         return null;
     }
 
-    public boolean Enqueue(String data)
-    {
-        return false;
-    }
-
+   
     public boolean Enqueue(byte[] bytes)
     {
         return false;

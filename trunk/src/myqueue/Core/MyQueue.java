@@ -97,9 +97,15 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     break;
 
                 case 3: // Dequeue.
+                    byte[] dequeuedBytes = fEngine.Dequeue();
+                    String dequeuedMessage = "";
+                    if (dequeuedBytes != null)
+                    {
+                        dequeuedMessage = new String(dequeuedBytes);
+                    }
+                    client.SendData("2" + dequeuedMessage + fSplitter);
                     break;
             }
-
         }
         catch (Exception ex)
         {
@@ -114,6 +120,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
         }
     }
 
+    // Clear all message queue messages from disk.
     public void Clear()
     {
         File dir = new File(fEngine.getLocation());
