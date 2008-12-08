@@ -2,7 +2,6 @@ package myqueue.Core.StorageEngines;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import myqueue.Core.File.DataReader;
 import myqueue.Core.File.DataWriter;
 
@@ -15,9 +14,10 @@ public class HDEngine extends StorageEngine
 
     private DataReader fDataReader;
     private DataWriter fDataWriter;
-    private long fLastMessageID = 0; // This long holds the last message id.
-    private long fFirstInMessage = 1;
+    private long fLastMessageID = 0;  // This long holds the last message id.
+    private long fFirstInMessage = 1; // This long holds the first message id.
     private String fLocation;
+    private final Object fSyncObject = new Object();
 
     public HDEngine(String location)
     {
@@ -30,61 +30,72 @@ public class HDEngine extends StorageEngine
     @Override
     public synchronized byte[] Dequeue()
     {
-        try
+        synchronized (fSyncObject)
         {
-            String fileName = "F_" + String.valueOf(fFirstInMessage);
-            byte[] bytes = fDataReader.ReadBytes(fileName);
-            File file = new File(fLocation + "\\" + fileName + ".mqf");
-            file.delete();
+            try
+            {
 
-            fFirstInMessage++;
+                String fileName = "F_" + String.valueOf(fFirstInMessage);
+                byte[] bytes = fDataReader.ReadBytes(fileName);
+                File file = new File(fLocation + "\\" + fileName + ".mqf");
+                file.delete();
 
-            return bytes;
-        }
-        catch (Exception ex)
-        {
-            return null;
+                fFirstInMessage++;
+
+                return bytes;
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 
     @Override
     public synchronized byte[] Peek()
     {
-        try
+        synchronized (fSyncObject)
         {
-            String fileName = "F_" + String.valueOf(fFirstInMessage);
-            return fDataReader.ReadBytes(fileName);
-        }
-        catch (Exception ex)
-        {
-            return null;
+            try
+            {
+                String fileName = "F_" + String.valueOf(fFirstInMessage);
+                return fDataReader.ReadBytes(fileName);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 
     @Override
     public synchronized boolean Enqueue(byte[] bytes)
     {
-        try
+        synchronized (fSyncObject)
         {
-            fLastMessageID++;
-            String lastMessageIDStr = String.valueOf(fLastMessageID);
-
-            byte[] finalBytes = new byte[bytes.length + lastMessageIDStr.length() + 1];
-
-            System.arraycopy(bytes, 0, finalBytes, lastMessageIDStr.length() + 1, bytes.length);
-
-            for (int i = 0; i < lastMessageIDStr.length(); i++)
+            try
             {
-                finalBytes[i] = (byte) lastMessageIDStr.charAt(i);
-            }
-            finalBytes[lastMessageIDStr.length()] = '\n';
+                fLastMessageID++;
+                String lastMessageIDStr = String.valueOf(fLastMessageID);
 
-            fDataWriter.WriteFile(finalBytes, "F_" + String.valueOf(fLastMessageID));
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
+                byte[] finalBytes = new byte[bytes.length + lastMessageIDStr.length() + 1];
+
+                System.arraycopy(bytes, 0, finalBytes, lastMessageIDStr.length() + 1, bytes.length);
+
+                for (int i = 0; i < lastMessageIDStr.length(); i++)
+                {
+                    finalBytes[i] = (byte) lastMessageIDStr.charAt(i);
+                }
+                finalBytes[lastMessageIDStr.length()] = '\n';
+
+                fDataWriter.WriteFile(finalBytes, "F_" + String.valueOf(fLastMessageID));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 
@@ -108,7 +119,6 @@ public class HDEngine extends StorageEngine
                 }
             };
             files = dir.listFiles(fileFilter);
-
 
             long maxID = 0;
             long minID = 0;
