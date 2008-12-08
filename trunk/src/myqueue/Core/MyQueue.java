@@ -51,6 +51,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     @Override
     public void OnClientDisconnect(TCPClientConnection client)
     {
+
     }
 
     @Override
