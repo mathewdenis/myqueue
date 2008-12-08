@@ -141,6 +141,18 @@ public class QueueManager
         }
     }
 
+    public static void ClearQueue(String name) throws Exception
+    {
+        if (fQueues.containsKey(name))
+        {
+            ((MyQueue) fQueues.get(name)).Clear();
+        }
+        else
+        {
+            throw new Exception("Queue " + name + " does not exist.");
+        }
+    }
+
     private static void Save()
     {
         // Check if file QueueData exists.
@@ -220,7 +232,7 @@ public class QueueManager
         File dir = new File("QueueData");
         File[] files = dir.listFiles();
 
-        // This filter only returns directories
+        // This filter only returns files.
         FileFilter fileFilter = new FileFilter()
         {
 

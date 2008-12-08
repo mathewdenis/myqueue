@@ -39,6 +39,7 @@ public class frmMain extends javax.swing.JFrame
         jSeparator1 = new javax.swing.JSeparator();
         jMenuItemEdit = new javax.swing.JMenuItem();
         jMenuItemDelete = new javax.swing.JMenuItem();
+        jMenuItemClear = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableQueues = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -92,6 +93,15 @@ public class frmMain extends javax.swing.JFrame
             }
         });
         jPopupMenu1.add(jMenuItemDelete);
+
+        jMenuItemClear.setText("Clear");
+        jMenuItemClear.setToolTipText("Clear all messages stored by this queue.");
+        jMenuItemClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemClearActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItemClear);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("myQueue");
@@ -282,6 +292,29 @@ public class frmMain extends javax.swing.JFrame
         }
     }//GEN-LAST:event_jMenuItemDeleteActionPerformed
 
+    // Clear queue.
+    private void jMenuItemClearActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemClearActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemClearActionPerformed
+        try
+        {
+            String selectedServer = "";
+            if (jTableQueues.getSelectedRow() >= 0)
+            {
+                selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
+                int answer = JOptionPane.showConfirmDialog(null, "Clear " + selectedServer + " messages?", "Clear Queue", JOptionPane.YES_NO_OPTION);
+                if (answer == JOptionPane.YES_OPTION)
+                {
+                    QueueManager.ClearQueue(selectedServer);
+                    Update();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR);
+        }
+    }//GEN-LAST:event_jMenuItemClearActionPerformed
+
     public static void main(String args[])
     {
         try
@@ -384,6 +417,7 @@ public class frmMain extends javax.swing.JFrame
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItemClear;
     private javax.swing.JMenuItem jMenuItemDelete;
     private javax.swing.JMenuItem jMenuItemEdit;
     private javax.swing.JMenuItem jMenuItemStart;

@@ -2,6 +2,8 @@ package myqueue.Core;
 
 import Extasys.DataFrame;
 import Extasys.Network.TCP.Server.Listener.TCPClientConnection;
+import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import myqueue.Core.StorageEngines.StorageEngine;
 
@@ -51,7 +53,6 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     @Override
     public void OnClientDisconnect(TCPClientConnection client)
     {
-
     }
 
     @Override
@@ -111,6 +112,37 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
             {
             }
         }
+    }
+
+    public void Clear()
+    {
+        File dir = new File(fEngine.getLocation());
+        File[] files = dir.listFiles();
+
+        // This filter only returns files.
+        FileFilter fileFilter = new FileFilter()
+        {
+
+            @Override
+            public boolean accept(File file)
+            {
+                return !file.isDirectory() && file.getName().endsWith("mqf");
+            }
+        };
+        files = dir.listFiles(fileFilter);
+
+        for (File file : files)
+        {
+            try
+            {
+                file.delete();
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        fEngine.StartEngine();
     }
 
     public StorageEngine getEngine()
