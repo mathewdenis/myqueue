@@ -16,6 +16,7 @@ public class HDEngine extends StorageEngine
     private DataReader fDataReader;
     private DataWriter fDataWriter;
     private long fLastMessageID = 0; // This long holds the last message id.
+    private long fFirstInMessage = 1;
     private String fLocation;
 
     public HDEngine(String location)
@@ -31,14 +32,13 @@ public class HDEngine extends StorageEngine
     {
         try
         {
-            String fileName = "F_" + String.valueOf(fLastMessageID);
+            String fileName = "F_" + String.valueOf(fFirstInMessage);
             byte[] bytes = fDataReader.ReadBytes(fileName);
             File file = new File(fLocation + "\\" + fileName + ".mqf");
             file.delete();
-            if (fLastMessageID > 0)
-            {
-                fLastMessageID--;
-            }
+
+            fFirstInMessage++;
+
             return bytes;
         }
         catch (Exception ex)
@@ -52,7 +52,7 @@ public class HDEngine extends StorageEngine
     {
         try
         {
-            String fileName = "F_" + String.valueOf(fLastMessageID);
+            String fileName = "F_" + String.valueOf(fFirstInMessage);
             return fDataReader.ReadBytes(fileName);
         }
         catch (Exception ex)
@@ -110,23 +110,35 @@ public class HDEngine extends StorageEngine
             files = dir.listFiles(fileFilter);
 
 
-            int fileID = 0;
+            long maxID = 0;
+            long minID = 0;
             for (File file : files)
             {
                 try
                 {
                     int tmpID = Integer.parseInt(file.getName().replace("F_", "").replace(".mqf", ""));
-                    if (tmpID > fileID)
+
+                    maxID = Math.max(maxID, tmpID);
+
+                    if (minID == 0)
                     {
-                        fileID = tmpID;
+                        minID = tmpID;
+                    }
+                    else
+                    {
+                        minID = Math.min(tmpID, minID);
                     }
                 }
                 catch (Exception ex)
                 {
                 }
             }
-            fLastMessageID = fileID;
-
+            fLastMessageID = maxID;
+            fFirstInMessage = minID;
+            if (fFirstInMessage == 0)
+            {
+                fFirstInMessage = 1;
+            }
         }
         catch (Exception ex)
         {
