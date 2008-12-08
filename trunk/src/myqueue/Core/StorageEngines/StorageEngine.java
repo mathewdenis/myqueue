@@ -36,6 +36,11 @@ public class StorageEngine
         return false;
     }
 
+    public void StartEngine()
+    {
+        
+    }
+
     public String getLocation()
     {
         return fLocation;

@@ -1,6 +1,7 @@
 package myqueue.Core.StorageEngines;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import myqueue.Core.File.DataReader;
 import myqueue.Core.File.DataWriter;
@@ -26,7 +27,7 @@ public class HDEngine extends StorageEngine
     }
 
     @Override
-    public byte[] Dequeue()
+    public synchronized byte[] Dequeue()
     {
         try
         {
@@ -43,7 +44,7 @@ public class HDEngine extends StorageEngine
     }
 
     @Override
-    public byte[] Peek()
+    public synchronized byte[] Peek()
     {
         try
         {
@@ -57,7 +58,7 @@ public class HDEngine extends StorageEngine
     }
 
     @Override
-    public boolean Enqueue(String data)
+    public synchronized boolean Enqueue(String data)
     {
         try
         {
@@ -72,7 +73,7 @@ public class HDEngine extends StorageEngine
     }
 
     @Override
-    public boolean Enqueue(byte[] bytes)
+    public synchronized boolean Enqueue(byte[] bytes)
     {
         try
         {
@@ -83,6 +84,51 @@ public class HDEngine extends StorageEngine
         catch (IOException ex)
         {
             return false;
+        }
+    }
+
+    @Override
+    public void StartEngine()
+    {
+        try
+        {
+            // Find the last message id in the engine location.
+            File dir = new File(fLocation);
+            File[] files = dir.listFiles();
+
+            // This filter only returns directories
+            FileFilter fileFilter = new FileFilter()
+            {
+
+                @Override
+                public boolean accept(File file)
+                {
+                    return !file.isDirectory() && file.getName().endsWith("mqf");
+                }
+            };
+            files = dir.listFiles(fileFilter);
+
+
+            int fileID = 0;
+            for (File file : files)
+            {
+                try
+                {
+                    int tmpID = Integer.parseInt(file.getName().replace("F_", "").replace(".mqf", ""));
+                    if (tmpID > fileID)
+                    {
+                        fileID = tmpID;
+                    }
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+            fLastMessageID = fileID;
+
+        }
+        catch (Exception ex)
+        {
         }
     }
 }

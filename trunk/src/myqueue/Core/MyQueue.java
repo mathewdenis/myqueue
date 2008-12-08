@@ -16,6 +16,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     private StorageEngine fEngine;
     private int fCorePoolsSize,  fMaxPoolSize;
     private boolean fRunning = false;
+    private String fSplitter = "#!" + String.valueOf(((char) 2)) + "!#";
 
     public MyQueue(String name, String description, StorageEngine engine, int corePoolSize, int maxPoolSize)
     {
@@ -31,6 +32,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     public void Start() throws IOException, Exception
     {
         super.Start();
+        fEngine.StartEngine();
         fRunning = true;
     }
 
@@ -54,6 +56,47 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     @Override
     public void OnDataReceive(TCPClientConnection client, DataFrame data)
     {
+        try
+        {
+            String commandIDStr = new String(data.getBytes(), 0, 1);
+            int commandID = Integer.valueOf(commandIDStr);
+
+            byte[] messageBytes = new byte[data.getLength() - 1];
+
+            switch (commandID)
+            {
+                case 1: // Enqueue.
+                    try
+                    {
+                        System.arraycopy(data.getBytes(), 1, messageBytes, 0, data.getLength() - 1);
+                        fEngine.Enqueue(messageBytes);
+                        client.SendData("0" + fSplitter); // Message enqueued successfully!
+                    }
+                    catch (Exception ex)
+                    {
+                        client.SendData("1" + fSplitter); // An error occured during during the message enqueue proccess.
+                    }
+                    break;
+
+                case 2: // Peek.
+                    break;
+
+                case 3: // Dequeue.
+                    break;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            System.err.println(ex.getMessage());
+            try
+            {
+                client.SendData("9" + fSplitter); // A fatal error occured.
+            }
+            catch (Exception fatalException)
+            {
+            }
+        }
     }
 
     public StorageEngine getEngine()
