@@ -90,6 +90,7 @@ public class QueueManager
         if (fQueues.containsKey(name))
         {
             ((MyQueue) fQueues.get(name)).Start();
+            SaveQueue(name);
         }
         else
         {
@@ -102,10 +103,19 @@ public class QueueManager
         if (fQueues.containsKey(name))
         {
             ((MyQueue) fQueues.get(name)).Stop();
+            SaveQueue(name);
         }
         else
         {
             throw new Exception("Queue " + name + " does not exist.");
+        }
+    }
+
+    public static void StopAllQueues()
+    {
+        for (MyQueue queue : fQueues.values())
+        {
+            queue.Stop();
         }
     }
 
@@ -142,46 +152,67 @@ public class QueueManager
 
         for (MyQueue queue : fQueues.values())
         {
-            MyQueueSerializable tmp = new MyQueueSerializable();
-
-            tmp.Name = queue.getName();
-            tmp.Description = queue.getDescription();
-            tmp.Location = queue.getEngine().getLocation();
-            tmp.Running = queue.isRunning();
-            tmp.CorePoolsSize = queue.getCorePoolSize();
-            tmp.MaxPoolSize = queue.getMaxPoolSize();
-            if (queue.getEngine().getClass().equals(new HDEngine("").getClass()))
-            {
-                tmp.Engine = EStorageEngine.HDEngine;
-            }
-
-            // Listeners.
-            for (int i = 0; i < queue.getListeners().size(); i++)
-            {
-                TCPListenerSerializable tmpListener = new TCPListenerSerializable();
-                TCPListener listener = (TCPListener) queue.getListeners().get(i);
-                tmpListener.IPAddress = listener.getIPAddress();
-                tmpListener.MaxConnections = listener.getMaxConnections();
-                tmpListener.Port = listener.getPort();
-                tmpListener.Splitter = listener.getMessageSplitter();
-                tmp.ConnectionsTimeOut = listener.getConnectionTimeOut();
-                tmp.TCPListeners.add(tmpListener);
-            }
-
-            FileOutputStream fos = null;
-            ObjectOutputStream out = null;
-            try
-            {
-                fos = new FileOutputStream("QueueData\\" + tmp.Name + ".queue");
-                out = new ObjectOutputStream(fos);
-                out.writeObject(tmp);
-                out.close();
-            }
-            catch (IOException ex)
-            {
-                System.err.println(ex.getMessage());
-            }
+            SaveQueue(queue.getName());
         }
+    }
+
+    private static void SaveQueue(String queueName)
+    {
+        // Check if file QueueData exists.
+        File tmpFolder = new File("QueueData");
+        if (!tmpFolder.exists())
+        {
+            tmpFolder.mkdirs();
+        }
+
+        MyQueue queue = null;
+        if (!fQueues.containsKey(queueName))
+        {
+            return;
+        }
+
+        queue = fQueues.get(queueName);
+
+        MyQueueSerializable tmp = new MyQueueSerializable();
+
+        tmp.Name = queue.getName();
+        tmp.Description = queue.getDescription();
+        tmp.Location = queue.getEngine().getLocation();
+        tmp.Running = queue.isRunning();
+        tmp.CorePoolsSize = queue.getCorePoolSize();
+        tmp.MaxPoolSize = queue.getMaxPoolSize();
+        if (queue.getEngine().getClass().equals(new HDEngine("").getClass()))
+        {
+            tmp.Engine = EStorageEngine.HDEngine;
+        }
+
+        // Listeners.
+        for (int i = 0; i < queue.getListeners().size(); i++)
+        {
+            TCPListenerSerializable tmpListener = new TCPListenerSerializable();
+            TCPListener listener = (TCPListener) queue.getListeners().get(i);
+            tmpListener.IPAddress = listener.getIPAddress();
+            tmpListener.MaxConnections = listener.getMaxConnections();
+            tmpListener.Port = listener.getPort();
+            tmpListener.Splitter = listener.getMessageSplitter();
+            tmp.ConnectionsTimeOut = listener.getConnectionTimeOut();
+            tmp.TCPListeners.add(tmpListener);
+        }
+
+        FileOutputStream fos = null;
+        ObjectOutputStream out = null;
+        try
+        {
+            fos = new FileOutputStream("QueueData\\" + tmp.Name + ".queue");
+            out = new ObjectOutputStream(fos);
+            out.writeObject(tmp);
+            out.close();
+        }
+        catch (IOException ex)
+        {
+            System.err.println(ex.getMessage());
+        }
+
     }
 
     public static void Load()
@@ -219,7 +250,7 @@ public class QueueManager
                     TCPListener listener = new TCPListener("", tmpListener.IPAddress, tmpListener.Port, tmpListener.MaxConnections, 65535, tmp.ConnectionsTimeOut, 100, tmpListener.Splitter);
                     listeners.add(listener);
                 }
-                
+
                 String queueFileName = file.getName().substring(0, file.getName().lastIndexOf("."));
                 CreateNewQueue(queueFileName, tmp.Description, tmp.Location, tmp.CorePoolsSize, tmp.MaxPoolSize, listeners);
 

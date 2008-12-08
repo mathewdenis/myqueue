@@ -169,6 +169,7 @@ public class frmMain extends javax.swing.JFrame
     // Exit.
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem2ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem2ActionPerformed
+        QueueManager.StopAllQueues();
         this.dispose();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 

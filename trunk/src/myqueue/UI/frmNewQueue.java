@@ -66,6 +66,8 @@ public class frmNewQueue extends javax.swing.JFrame
             TCPListener listener = (TCPListener) tmp.getListeners().get(i);
             AddListener(listener.getIPAddress().toString().substring(1), listener.getPort(), listener.getMaxConnections());
         }
+
+        this.setTitle("Edit " + queue);
     }
 
     @SuppressWarnings("unchecked")
