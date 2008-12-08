@@ -69,8 +69,14 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     try
                     {
                         System.arraycopy(data.getBytes(), 1, messageBytes, 0, data.getLength() - 1);
-                        fEngine.Enqueue(messageBytes);
-                        client.SendData("0" + fSplitter); // Message enqueued successfully!
+                        if (fEngine.Enqueue(messageBytes))
+                        {
+                            client.SendData("0" + fSplitter); // Message enqueued successfully!
+                        }
+                        else
+                        {
+                            client.SendData("1" + fSplitter); // An error occured during during the message enqueue proccess.
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -79,6 +85,13 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     break;
 
                 case 2: // Peek.
+                    byte[] peekedBytes = fEngine.Peek();
+                    String peekedMessage = "";
+                    if (peekedBytes != null)
+                    {
+                        peekedMessage = new String(peekedBytes);
+                    }
+                    client.SendData("2" + peekedMessage + fSplitter);
                     break;
 
                 case 3: // Dequeue.

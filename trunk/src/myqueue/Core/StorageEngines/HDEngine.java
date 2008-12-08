@@ -63,7 +63,9 @@ public class HDEngine extends StorageEngine
         try
         {
             fLastMessageID++;
-            fDataWriter.WriteFile(data, "F_" + String.valueOf(fLastMessageID));
+            String lastMessageIDStr = String.valueOf(fLastMessageID);
+            data = lastMessageIDStr + "\n" + data;
+            fDataWriter.WriteFile(data, "F_" + lastMessageIDStr);
             return true;
         }
         catch (IOException ex)
@@ -77,11 +79,26 @@ public class HDEngine extends StorageEngine
     {
         try
         {
+            String message = new String(bytes);
             fLastMessageID++;
-            fDataWriter.WriteFile(bytes, "F_" + String.valueOf(fLastMessageID));
+            String lastMessageIDStr = String.valueOf(fLastMessageID);
+
+            byte[] finalBytes = new byte[bytes.length + lastMessageIDStr.length() + 1];
+
+            //System.arraycopy(bytes, 0, finalBytes, lastMessageIDStr.length(), finalBytes.length - 1);
+            System.arraycopy(bytes, 0, finalBytes, lastMessageIDStr.length() + 1, bytes.length);
+
+            for (int i = 0; i < lastMessageIDStr.length(); i++)
+            {
+                finalBytes[i] = (byte) lastMessageIDStr.charAt(i);
+            }
+            finalBytes[lastMessageIDStr.length()] = '\n';
+
+
+            fDataWriter.WriteFile(finalBytes, "F_" + String.valueOf(fLastMessageID));
             return true;
         }
-        catch (IOException ex)
+        catch (Exception ex)
         {
             return false;
         }
