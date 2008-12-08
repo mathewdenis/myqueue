@@ -113,7 +113,7 @@ public class HDEngine extends StorageEngine
             File dir = new File(fLocation);
             File[] files = dir.listFiles();
 
-            // This filter only returns directories
+            // This filter only returns files.
             FileFilter fileFilter = new FileFilter()
             {
 
