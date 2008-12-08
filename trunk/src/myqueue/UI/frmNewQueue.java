@@ -10,6 +10,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import myqueue.Core.MyQueue;
 import myqueue.Core.QueueManager;
 
 /**
@@ -20,8 +21,10 @@ public class frmNewQueue extends javax.swing.JFrame
 {
 
     private frmMain fMainForm;
+    private boolean fOpenedForEdit;
+    private String fQueueToEdit;
 
-    /** Creates new form frmNewQueue */
+    // Open form to create new queue.
     public frmNewQueue(frmMain mainForm)
     {
         fMainForm = mainForm;
@@ -32,6 +35,37 @@ public class frmNewQueue extends javax.swing.JFrame
         int newX = (them.width - us.width) / 2;
         int newY = (them.height - us.height) / 2;
         this.setLocation(newX, newY);
+    }
+
+    public frmNewQueue(frmMain mainForm, String queue)
+    {
+        fQueueToEdit = queue;
+        fOpenedForEdit = true;
+        fMainForm = mainForm;
+
+        initComponents();
+
+        // Open form in the center of the screen.
+        Dimension us = this.getSize(), them = Toolkit.getDefaultToolkit().getScreenSize();
+        int newX = (them.width - us.width) / 2;
+        int newY = (them.height - us.height) / 2;
+        this.setLocation(newX, newY);
+
+        // Load queue data.
+        MyQueue tmp = QueueManager.getQueues().get(queue);
+        jTextFieldName.setText(tmp.getName());
+        jTextFieldDescription.setText(tmp.getDescription());
+        jTextFieldLocation.setText(tmp.getEngine().getLocation());
+        jTextFieldCorePoolSize.setText(String.valueOf(tmp.getCorePoolSize()));
+        jTextFieldMaxPoolSize.setText(String.valueOf(tmp.getMaxPoolSize()));
+
+        // Listeners.
+        DefaultTableModel model = (DefaultTableModel) jTableListeners.getModel();
+        for (int i = 0; i < tmp.getListeners().size(); i++)
+        {
+            TCPListener listener = (TCPListener) tmp.getListeners().get(i);
+            AddListener(listener.getIPAddress().toString().substring(1), listener.getPort(), listener.getMaxConnections());
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -243,6 +277,26 @@ public class frmNewQueue extends javax.swing.JFrame
 
     private void jButtonOKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonOKActionPerformed
     {//GEN-HEADEREND:event_jButtonOKActionPerformed
+        if (fOpenedForEdit) // Opened for edit.
+        {
+            try
+            {
+                int answer = JOptionPane.showConfirmDialog(null, "This queue will be restarted.\n Do you agree with that?", "Restart", JOptionPane.YES_NO_OPTION);
+                if (answer == JOptionPane.YES_OPTION)
+                {
+                    QueueManager.DeleteQueue(fQueueToEdit);
+                    fMainForm.Update();
+                }
+                else
+                {
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
         String name = jTextFieldName.getText();
         String description = jTextFieldDescription.getText();
 

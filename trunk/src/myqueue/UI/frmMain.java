@@ -248,7 +248,8 @@ public class frmMain extends javax.swing.JFrame
             if (jTableQueues.getSelectedRow() >= 0)
             {
                 selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
-
+                frmNewQueue frm = new frmNewQueue(this, selectedServer);
+                frm.setVisible(true);
             }
         }
         catch (Exception ex)
@@ -369,9 +370,9 @@ public class frmMain extends javax.swing.JFrame
         }
 
         // Remove deleted queues.
-        for (int i = model.getRowCount()-1; i >= 0; i--)
+        for (int i = model.getRowCount() - 1; i >= 0; i--)
         {
-            if(!QueueManager.getQueues().containsKey(jTableQueues.getValueAt(i, 1).toString()))
+            if (!QueueManager.getQueues().containsKey(jTableQueues.getValueAt(i, 1).toString()))
             {
                 model.removeRow(i);
             }
