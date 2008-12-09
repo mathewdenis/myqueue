@@ -94,6 +94,7 @@ public class frmMain extends javax.swing.JFrame
         });
         jPopupMenu1.add(jMenuItemDelete);
 
+        jMenuItemClear.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/trash-full-16x16.png"))); // NOI18N
         jMenuItemClear.setText("Clear");
         jMenuItemClear.setToolTipText("Clear all messages stored by this queue.");
         jMenuItemClear.addActionListener(new java.awt.event.ActionListener() {
@@ -315,26 +316,6 @@ public class frmMain extends javax.swing.JFrame
         }
     }//GEN-LAST:event_jMenuItemClearActionPerformed
 
-    public static void main(String args[])
-    {
-        try
-        {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (Exception ex)
-        {
-        }
-
-        java.awt.EventQueue.invokeLater(new Runnable()
-        {
-
-            public void run()
-            {
-                new frmMain().setVisible(true);
-            }
-        });
-    }
-
     public void Update()
     {
         System.out.println("Updated...");
@@ -411,6 +392,27 @@ public class frmMain extends javax.swing.JFrame
                 model.removeRow(i);
             }
         }
+    }
+
+    public static void main(String args[])
+    {
+        try
+        {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }
+        catch (Exception ex)
+        {
+        }
+
+        java.awt.EventQueue.invokeLater(new Runnable()
+        {
+
+            @Override
+            public void run()
+            {
+                new frmMain().setVisible(true);
+            }
+        });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;
