@@ -3,8 +3,6 @@ package myqueue.Connector;
 import Extasys.DataFrame;
 import Extasys.ManualResetEvent;
 import Extasys.Network.TCP.Client.Connectors.TCPConnector;
-import Extasys.Network.TCP.Client.Exceptions.ConnectorCannotSendPacketException;
-import Extasys.Network.TCP.Client.Exceptions.ConnectorDisconnectedException;
 import java.net.InetAddress;
 import myqueue.Connector.Exceptions.DequeueMessageException;
 import myqueue.Connector.Exceptions.EnqueueMessageException;
