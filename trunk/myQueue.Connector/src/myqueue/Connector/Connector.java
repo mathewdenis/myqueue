@@ -6,7 +6,9 @@ import Extasys.Network.TCP.Client.Connectors.TCPConnector;
 import Extasys.Network.TCP.Client.Exceptions.ConnectorCannotSendPacketException;
 import Extasys.Network.TCP.Client.Exceptions.ConnectorDisconnectedException;
 import java.net.InetAddress;
+import myqueue.Connector.Exceptions.DequeueMessageException;
 import myqueue.Connector.Exceptions.EnqueueMessageException;
+import myqueue.Connector.Exceptions.MyQueueConnectorDisconnectedException;
 import myqueue.Connector.Exceptions.PeekMessageException;
 
 /**
@@ -99,7 +101,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
      * @param data is the string data to be enqueued.
      * @throws Exception
      */
-    public synchronized void Enqueue(String data) throws ConnectorDisconnectedException, ConnectorCannotSendPacketException, EnqueueMessageException
+    public synchronized void Enqueue(String data) throws EnqueueMessageException, MyQueueConnectorDisconnectedException
     {
         synchronized (fSyncObject)
         {
@@ -111,7 +113,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                 }
                 catch (Exception ex)
                 {
-                    throw new ConnectorDisconnectedException((TCPConnector) super.getConnectors().get(0));
+                    throw new MyQueueConnectorDisconnectedException();
                 }
             }
 
@@ -119,7 +121,15 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
             fEnqueueMessageErrorReported = false;
 
             fWaitEvt.Reset();
-            SendData("1" + data + fSplitter);
+            try
+            {
+                SendData("1" + data + fSplitter);
+            }
+            catch (Exception ex)
+            {
+                fWaitEvt.Set();
+                throw new MyQueueConnectorDisconnectedException();
+            }
             fWaitEvt.WaitOne(10000);
 
             if (!fMessageEnqueuedSuccessfully)
@@ -139,7 +149,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
      * Peek the last message of the queue.
      * @return the last message of the queue.
      */
-    public synchronized MessageQueueMessage Peek() throws ConnectorDisconnectedException, ConnectorCannotSendPacketException, PeekMessageException
+    public synchronized MessageQueueMessage Peek() throws PeekMessageException, MyQueueConnectorDisconnectedException
     {
         synchronized (fSyncObject)
         {
@@ -152,14 +162,22 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                 }
                 catch (Exception ex)
                 {
-                    throw new ConnectorDisconnectedException((TCPConnector) super.getConnectors().get(0));
+                    throw new MyQueueConnectorDisconnectedException();
                 }
             }
 
             fMessagePeekedSuccessfully = false;
 
             fWaitEvt.Reset();
-            SendData("2" + fSplitter);
+            try
+            {
+                SendData("2" + fSplitter);
+            }
+            catch (Exception ex)
+            {
+                fWaitEvt.Set();
+                throw new MyQueueConnectorDisconnectedException();
+            }
             fWaitEvt.WaitOne(10000);
 
             if (!fMessagePeekedSuccessfully)
@@ -175,7 +193,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
      * Dequeue the last message of the queue.
      * @return the last message of the queue.
      */
-    public synchronized MessageQueueMessage Dequeue() throws ConnectorDisconnectedException, ConnectorCannotSendPacketException
+    public synchronized MessageQueueMessage Dequeue() throws MyQueueConnectorDisconnectedException, DequeueMessageException
     {
         synchronized (fSyncObject)
         {
@@ -188,15 +206,28 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                 }
                 catch (Exception ex)
                 {
-                    throw new ConnectorDisconnectedException((TCPConnector) super.getConnectors().get(0));
+                    throw new MyQueueConnectorDisconnectedException();
                 }
             }
 
             fMessagePeekedSuccessfully = false;
 
             fWaitEvt.Reset();
-            SendData("3" + fSplitter);
+            try
+            {
+                SendData("3" + fSplitter);
+            }
+            catch (Exception ex)
+            {
+                fWaitEvt.Set();
+                throw new MyQueueConnectorDisconnectedException();
+            }
             fWaitEvt.WaitOne(10000);
+
+            if (!fMessagePeekedSuccessfully)
+            {
+                throw new DequeueMessageException("Could not dequeue a message from the server");
+            }
             return fMessage;
         }
     }
