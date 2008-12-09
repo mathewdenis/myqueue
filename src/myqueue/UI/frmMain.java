@@ -36,9 +36,9 @@ public class frmMain extends javax.swing.JFrame
         jPopupMenu1 = new javax.swing.JPopupMenu();
         jMenuItemStart = new javax.swing.JMenuItem();
         jMenuItemStop = new javax.swing.JMenuItem();
-        jMenuItemInfo = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JSeparator();
         jMenuItemEdit = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        jMenuItemInfo = new javax.swing.JMenuItem();
         jMenuItemDelete = new javax.swing.JMenuItem();
         jMenuItemClear = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -76,15 +76,6 @@ public class frmMain extends javax.swing.JFrame
         });
         jPopupMenu1.add(jMenuItemStop);
 
-        jMenuItemInfo.setText("Info");
-        jMenuItemInfo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemInfoActionPerformed(evt);
-            }
-        });
-        jPopupMenu1.add(jMenuItemInfo);
-        jPopupMenu1.add(jSeparator1);
-
         jMenuItemEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/notes-edit-16x16.png"))); // NOI18N
         jMenuItemEdit.setText("Edit");
         jMenuItemEdit.addActionListener(new java.awt.event.ActionListener() {
@@ -93,6 +84,16 @@ public class frmMain extends javax.swing.JFrame
             }
         });
         jPopupMenu1.add(jMenuItemEdit);
+        jPopupMenu1.add(jSeparator1);
+
+        jMenuItemInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Button-Info-16x16.png"))); // NOI18N
+        jMenuItemInfo.setText("Info");
+        jMenuItemInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemInfoActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItemInfo);
 
         jMenuItemDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Button-Delete-16x16.png"))); // NOI18N
         jMenuItemDelete.setText("Delete");
