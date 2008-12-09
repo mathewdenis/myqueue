@@ -36,6 +36,7 @@ public class frmMain extends javax.swing.JFrame
         jPopupMenu1 = new javax.swing.JPopupMenu();
         jMenuItemStart = new javax.swing.JMenuItem();
         jMenuItemStop = new javax.swing.JMenuItem();
+        jMenuItemInfo = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
         jMenuItemEdit = new javax.swing.JMenuItem();
         jMenuItemDelete = new javax.swing.JMenuItem();
@@ -74,6 +75,14 @@ public class frmMain extends javax.swing.JFrame
             }
         });
         jPopupMenu1.add(jMenuItemStop);
+
+        jMenuItemInfo.setText("Info");
+        jMenuItemInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemInfoActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItemInfo);
         jPopupMenu1.add(jSeparator1);
 
         jMenuItemEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/notes-edit-16x16.png"))); // NOI18N
@@ -316,6 +325,24 @@ public class frmMain extends javax.swing.JFrame
         }
     }//GEN-LAST:event_jMenuItemClearActionPerformed
 
+    private void jMenuItemInfoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemInfoActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemInfoActionPerformed
+        try
+        {
+            String selectedServer = "";
+            if (jTableQueues.getSelectedRow() >= 0)
+            {
+                selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
+                frmQueueInfo frm = new frmQueueInfo(selectedServer);
+                frm.setVisible(true);
+            }
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR);
+        }
+    }//GEN-LAST:event_jMenuItemInfoActionPerformed
+
     public void Update()
     {
         System.out.println("Updated...");
@@ -422,6 +449,7 @@ public class frmMain extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItemClear;
     private javax.swing.JMenuItem jMenuItemDelete;
     private javax.swing.JMenuItem jMenuItemEdit;
+    private javax.swing.JMenuItem jMenuItemInfo;
     private javax.swing.JMenuItem jMenuItemStart;
     private javax.swing.JMenuItem jMenuItemStop;
     private javax.swing.JPopupMenu jPopupMenu1;
