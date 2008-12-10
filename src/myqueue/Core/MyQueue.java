@@ -5,6 +5,7 @@ import Extasys.Network.TCP.Server.Listener.TCPClientConnection;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.Hashtable;
 import myqueue.Core.StorageEngines.StorageEngine;
 
 /**
@@ -71,9 +72,12 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     try
                     {
                         System.arraycopy(data.getBytes(), 1, messageBytes, 0, data.getLength() - 1);
-                        if (fEngine.Enqueue(messageBytes))
+                        String enqueuedMesageID = fEngine.Enqueue(messageBytes);
+                        if (enqueuedMesageID != null)
                         {
                             client.SendData("0" + fSplitter); // Message enqueued successfully!
+                            // Inform all clients that the message has been enqueued.
+                            ReplyToAll("3" + enqueuedMesageID + fSplitter);
                         }
                         else
                         {
@@ -104,6 +108,17 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                         dequeuedMessage = new String(dequeuedBytes);
                     }
                     client.SendData("2" + dequeuedMessage + fSplitter);
+                    break;
+
+                case 4: // Request message.
+                    String messageID = new String(data.getBytes(), 1, data.getLength() - 1);
+                    byte[] readedMessageBytes = fEngine.GetMessageByID(messageID);
+                    String readedMessage = "";
+                    if (messageBytes != null)
+                    {
+                        readedMessage = new String(readedMessageBytes);
+                    }
+                    client.SendData("4" + readedMessage + fSplitter);
                     break;
             }
         }

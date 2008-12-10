@@ -8,6 +8,7 @@ import myqueue.Connector.Exceptions.DequeueMessageException;
 import myqueue.Connector.Exceptions.EnqueueMessageException;
 import myqueue.Connector.Exceptions.MyQueueConnectorDisconnectedException;
 import myqueue.Connector.Exceptions.PeekMessageException;
+import sun.misc.Queue;
 
 /**
  *
@@ -29,6 +30,12 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     // Peek
     private boolean fMessagePeekedSuccessfully = false;
     private MessageQueueMessage fMessage;
+    // Begin receive.
+    private Queue fReceivedMesagesQueue = new Queue();
+    private ManualResetEvent fWaitForMessagesEvt = new ManualResetEvent(false);
+    private boolean fIsReceiving = false;
+    private ManualResetEvent fBeginReceiveWaitEvt = new ManualResetEvent(false);
+    private MessageQueueMessage fReceivedMessage;
 
     public Connector(InetAddress ip, int port)
     {
@@ -81,6 +88,25 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                     }
                     fMessagePeekedSuccessfully = true;
                     fWaitEvt.Set();
+                    break;
+
+                case 3: // Begin receive.
+                    if (fIsReceiving)
+                    {
+                        fReceivedMesagesQueue.enqueue(new String(data.getBytes(), 1, data.getLength() - 1));
+                        fWaitForMessagesEvt.Set();
+                    }
+                    break;
+
+                case 4: // Reveive requested message.
+                    String requestedMessage = new String(data.getBytes(), 1, data.getLength() - 1);
+                    int indexOfRequestedMessageID = requestedMessage.indexOf('\n');
+                    if (indexOfRequestedMessageID > 0)
+                    {
+                        long messageID = Long.parseLong(requestedMessage.substring(0, indexOfRequestedMessageID));
+                        fReceivedMessage = new MessageQueueMessage(messageID, requestedMessage.substring(indexOfRequestedMessageID + 1));
+                    }
+                    fBeginReceiveWaitEvt.Set();
                     break;
 
                 case 9: // Fatal error.
@@ -228,6 +254,63 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
             }
             return fMessage;
         }
+    }
+
+    /**
+     * Start receiving new enqueued messages.
+     */
+    public void BeginReceive() throws MyQueueConnectorDisconnectedException
+    {
+        fIsReceiving = true;
+        if (super.getConnectors().size() == 0 || !((TCPConnector) super.getConnectors().get(0)).isConnected())
+        {
+            try
+            {
+                Connect();
+            }
+            catch (Exception ex)
+            {
+                throw new MyQueueConnectorDisconnectedException();
+            }
+        }
+    }
+
+    /**
+     * Stop receiving messages.
+     */
+    public void StopReceive()
+    {
+        fIsReceiving = false;
+        fReceivedMesagesQueue = new Queue();
+    }
+
+    /**
+     * Receive new message from queue.
+     * @return 
+     */
+    public synchronized MessageQueueMessage Receive()
+    {
+        try
+        {
+            fWaitForMessagesEvt.Reset();
+            fBeginReceiveWaitEvt.Reset();
+
+            fReceivedMessage = null;
+            if (!fReceivedMesagesQueue.isEmpty() && fIsReceiving)
+            {
+                SendData("4" + fReceivedMesagesQueue.dequeue().toString() + fSplitter);
+                fBeginReceiveWaitEvt.WaitOne();
+            }
+            else
+            {
+                fWaitForMessagesEvt.WaitOne();
+                return Receive();
+            }
+        }
+        catch (Exception ex)
+        {
+        }
+        return fReceivedMessage;
     }
 
     public void Connect() throws Exception
