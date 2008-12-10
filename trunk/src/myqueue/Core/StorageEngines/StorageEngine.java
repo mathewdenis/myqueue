@@ -1,12 +1,10 @@
 package myqueue.Core.StorageEngines;
 
-
-
 /**
  *
  * @author Nikos Siatras
  */
-public class StorageEngine 
+public class StorageEngine
 {
 
     private String fLocation;
@@ -26,15 +24,18 @@ public class StorageEngine
         return null;
     }
 
-   
-    public boolean Enqueue(byte[] bytes)
+    public byte[] GetMessageByID(String messageID)
     {
-        return false;
+        return null;
+    }
+
+    public String Enqueue(byte[] bytes)
+    {
+        return null;
     }
 
     public void StartEngine()
     {
-        
     }
 
     public String getLocation()

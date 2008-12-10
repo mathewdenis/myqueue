@@ -70,7 +70,24 @@ public class HDEngine extends StorageEngine
     }
 
     @Override
-    public synchronized boolean Enqueue(byte[] bytes)
+    public synchronized byte[] GetMessageByID(String messageID)
+    {
+        synchronized (fSyncObject)
+        {
+            try
+            {
+                String fileName = "F_" + messageID;
+                return fDataReader.ReadBytes(fileName);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+    }
+
+    @Override
+    public synchronized String Enqueue(byte[] bytes)
     {
         synchronized (fSyncObject)
         {
@@ -90,11 +107,11 @@ public class HDEngine extends StorageEngine
                 finalBytes[lastMessageIDStr.length()] = '\n';
 
                 fDataWriter.WriteFile(finalBytes, "F_" + String.valueOf(fLastMessageID));
-                return true;
+                return lastMessageIDStr;
             }
             catch (Exception ex)
             {
-                return false;
+                return null;
             }
         }
     }
