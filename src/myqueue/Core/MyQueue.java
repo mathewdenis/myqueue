@@ -5,7 +5,6 @@ import Extasys.Network.TCP.Server.Listener.TCPClientConnection;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.Hashtable;
 import myqueue.Core.StorageEngines.StorageEngine;
 
 /**
@@ -15,20 +14,22 @@ import myqueue.Core.StorageEngines.StorageEngine;
 public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
 {
 
-    private String fName,  fDescription;
     private StorageEngine fEngine;
     private int fCorePoolsSize,  fMaxPoolSize;
     private boolean fRunning = false;
-    private String fSplitter = "#!" + String.valueOf(((char) 2)) + "!#";
+    private final String fSplitter = "#!" + String.valueOf(((char) 2)) + "!#";
+    private int fSplitterLength = 0;
+    private byte[] fSplitterBytes = null;
 
     public MyQueue(String name, String description, StorageEngine engine, int corePoolSize, int maxPoolSize)
     {
         super(name, description, corePoolSize, maxPoolSize);
-        fName = name;
-        fDescription = description;
         fEngine = engine;
         fCorePoolsSize = corePoolSize;
         fMaxPoolSize = maxPoolSize;
+
+        fSplitterLength = fSplitter.length();
+        fSplitterBytes = fSplitter.getBytes();
     }
 
     @Override
@@ -63,8 +64,11 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
         {
             String commandIDStr = new String(data.getBytes(), 0, 1);
             int commandID = Integer.valueOf(commandIDStr);
-
             byte[] messageBytes = new byte[data.getLength() - 1];
+
+            byte[] finalBytes;
+            byte[] peekedBytes;
+            int peekedBytesLength = 0;
 
             switch (commandID)
             {
@@ -90,24 +94,39 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     }
                     break;
 
-                case 2: // Peek.
-                    byte[] peekedBytes = fEngine.Peek();
-                    String peekedMessage = "";
+                case 2: // Peek (2 - PeekedMessage - Splitter).
+                    peekedBytes = fEngine.Peek();
+                    peekedBytesLength = peekedBytes == null ? 1 : peekedBytes.length + 1;
+                    finalBytes = new byte[peekedBytesLength + fSplitterLength];
                     if (peekedBytes != null)
                     {
-                        peekedMessage = new String(peekedBytes);
+                        System.arraycopy(peekedBytes, 0, finalBytes, 1, peekedBytes.length);
                     }
-                    client.SendData("2" + peekedMessage + fSplitter);
+                    finalBytes[0] = (byte) '2';
+                    System.arraycopy(fSplitterBytes, 0, finalBytes, peekedBytesLength, fSplitterLength);
+
+                    client.SendData(finalBytes, 0, finalBytes.length);
                     break;
 
                 case 3: // Dequeue.
-                    byte[] dequeuedBytes = fEngine.Dequeue();
+                    /*byte[] dequeuedBytes = fEngine.Dequeue();
                     String dequeuedMessage = "";
                     if (dequeuedBytes != null)
                     {
-                        dequeuedMessage = new String(dequeuedBytes);
+                    dequeuedMessage = new String(dequeuedBytes);
                     }
-                    client.SendData("2" + dequeuedMessage + fSplitter);
+                    client.SendData("2" + dequeuedMessage + fSplitter);*/
+                    peekedBytes = fEngine.Dequeue();
+                    peekedBytesLength = peekedBytes == null ? 1 : peekedBytes.length + 1;
+                    finalBytes = new byte[peekedBytesLength + fSplitterLength];
+                    if (peekedBytes != null)
+                    {
+                        System.arraycopy(peekedBytes, 0, finalBytes, 1, peekedBytes.length);
+                    }
+                    finalBytes[0] = (byte) '2';
+                    System.arraycopy(fSplitterBytes, 0, finalBytes, peekedBytesLength, fSplitterLength);
+
+                    client.SendData(finalBytes, 0, finalBytes.length);
                     break;
 
                 case 4: // Request message.

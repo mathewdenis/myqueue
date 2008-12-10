@@ -34,7 +34,6 @@ public class HDEngine extends StorageEngine
         {
             try
             {
-
                 String fileName = "F_" + String.valueOf(fFirstInMessage);
                 byte[] bytes = fDataReader.ReadBytes(fileName);
                 File file = new File(fLocation + "\\" + fileName + ".mqf");
@@ -43,7 +42,6 @@ public class HDEngine extends StorageEngine
                 fFirstInMessage++;
 
                 return bytes;
-
             }
             catch (Exception ex)
             {
