@@ -104,18 +104,10 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     }
                     finalBytes[0] = (byte) '2';
                     System.arraycopy(fSplitterBytes, 0, finalBytes, peekedBytesLength, fSplitterLength);
-
                     client.SendData(finalBytes, 0, finalBytes.length);
                     break;
 
-                case 3: // Dequeue.
-                    /*byte[] dequeuedBytes = fEngine.Dequeue();
-                    String dequeuedMessage = "";
-                    if (dequeuedBytes != null)
-                    {
-                    dequeuedMessage = new String(dequeuedBytes);
-                    }
-                    client.SendData("2" + dequeuedMessage + fSplitter);*/
+                case 3: // Dequeue (2 - DequeuedMessage - Splitter).
                     peekedBytes = fEngine.Dequeue();
                     peekedBytesLength = peekedBytes == null ? 1 : peekedBytes.length + 1;
                     finalBytes = new byte[peekedBytesLength + fSplitterLength];
@@ -125,7 +117,6 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     }
                     finalBytes[0] = (byte) '2';
                     System.arraycopy(fSplitterBytes, 0, finalBytes, peekedBytesLength, fSplitterLength);
-
                     client.SendData(finalBytes, 0, finalBytes.length);
                     break;
 
