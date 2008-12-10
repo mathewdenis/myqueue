@@ -30,7 +30,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     // Peek
     private boolean fMessagePeekedSuccessfully = false;
     private MessageQueueMessage fMessage;
-    // Begin receive.
+    // Begin receive
     private Queue fReceivedMesagesQueue = new Queue();
     private ManualResetEvent fWaitForMessagesEvt = new ManualResetEvent(false);
     private boolean fIsReceiving = false;
@@ -288,10 +288,12 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
      * Receive new message from queue.
      * @return 
      */
-    public synchronized MessageQueueMessage Receive()
+    public MessageQueueMessage Receive(int timeOut)
     {
         try
         {
+            BeginReceive();
+
             fWaitForMessagesEvt.Reset();
             fBeginReceiveWaitEvt.Reset();
 
@@ -299,12 +301,17 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
             if (!fReceivedMesagesQueue.isEmpty() && fIsReceiving)
             {
                 SendData("4" + fReceivedMesagesQueue.dequeue().toString() + fSplitter);
-                fBeginReceiveWaitEvt.WaitOne();
+                fBeginReceiveWaitEvt.WaitOne(timeOut);
             }
             else
             {
-                fWaitForMessagesEvt.WaitOne();
-                return Receive();
+                // Send a keep alive.
+                SendData("9" + fSplitter);
+                fWaitForMessagesEvt.WaitOne(timeOut);
+                if (!fReceivedMesagesQueue.isEmpty() && fIsReceiving)
+                {
+                    return Receive(timeOut);
+                }
             }
         }
         catch (Exception ex)

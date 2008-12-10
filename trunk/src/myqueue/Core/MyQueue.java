@@ -120,6 +120,9 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     }
                     client.SendData("4" + readedMessage + fSplitter);
                     break;
+
+                case 9: // Keep - Alive
+                    break;
             }
         }
         catch (Exception ex)
