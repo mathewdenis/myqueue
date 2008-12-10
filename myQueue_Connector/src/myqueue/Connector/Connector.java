@@ -36,6 +36,11 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     private ManualResetEvent fBeginReceiveWaitEvt = new ManualResetEvent(false);
     private MessageQueueMessage fReceivedMessage;
 
+    /**
+     * Create a new myQueue connector.
+     * @param ip is the myQueue server's ip address.
+     * @param port is the myQueue server's port.
+     */
     public Connector(InetAddress ip, int port)
     {
         super("", "", 5, 10);
@@ -120,7 +125,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     }
 
     /**
-     * Enqueue data.
+     * Adds a String object to the end of the Queue.
      * @param data is the string data to be enqueued.
      * @throws Exception
      */
@@ -147,7 +152,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
 
             if (!fMessageEnqueuedSuccessfully)
             {
-                // Could not receive response from the server that certifies that the message has been queued successfully.
+                // Could not receive response from the server that certifies that the message has been enqueued successfully.
                 throw new EnqueueMessageException("Could not receive response from the server that certifies the message has been enqueued successfully.");
             }
             if (fEnqueueMessageErrorReported)
@@ -159,8 +164,8 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     }
 
     /**
-     * Peek the last message of the queue.
-     * @return the last message of the queue.
+     * Returns the message at the beginning of the Queue without removing it.
+     * @return the message at the beginning of the Queue without removing it.
      */
     public synchronized MessageQueueMessage Peek() throws PeekMessageException, MyQueueConnectorDisconnectedException
     {
@@ -193,8 +198,8 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     }
 
     /**
-     * Dequeue the last message of the queue.
-     * @return the last message of the queue.
+     * Removes and returns the message at the beginning of the Queue.
+     * @return Removes and returns the message at the beginning of the Queue.
      */
     public synchronized MessageQueueMessage Dequeue() throws MyQueueConnectorDisconnectedException, DequeueMessageException
     {
@@ -241,6 +246,8 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     {
         fIsReceiving = false;
         fReceivedMesagesQueue.clear();
+        fWaitForMessagesEvt.Set();
+        fBeginReceiveWaitEvt.Set();
     }
 
     /**
@@ -261,7 +268,9 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         {
             throw new Exception("Use BeginReceive method before Receive method.");
         }
+
         TryToConnect();
+
         try
         {
             fWaitForMessagesEvt.Reset();
@@ -305,7 +314,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         }
     }
 
-    public void Connect() throws Exception
+    private void Connect() throws Exception
     {
         fWaitEvt = new ManualResetEvent(false);
         super.Stop();
@@ -314,7 +323,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         super.Start();
     }
 
-    public void Disconnect()
+    private void Disconnect()
     {
         super.Stop();
     }
