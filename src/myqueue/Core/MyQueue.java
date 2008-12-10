@@ -120,15 +120,18 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     client.SendData(finalBytes, 0, finalBytes.length);
                     break;
 
-                case 4: // Request message.
+                case 4: // Request message ( 4 - Message - Splitter).
                     String messageID = new String(data.getBytes(), 1, data.getLength() - 1);
-                    byte[] readedMessageBytes = fEngine.GetMessageByID(messageID);
-                    String readedMessage = "";
-                    if (messageBytes != null)
+                    peekedBytes = fEngine.GetMessageByID(messageID);
+                    peekedBytesLength = peekedBytes == null ? 1 : peekedBytes.length + 1;
+                    finalBytes = new byte[peekedBytesLength + fSplitterLength];
+                    if (peekedBytes != null)
                     {
-                        readedMessage = new String(readedMessageBytes);
+                        System.arraycopy(peekedBytes, 0, finalBytes, 1, peekedBytes.length);
                     }
-                    client.SendData("4" + readedMessage + fSplitter);
+                    finalBytes[0] = (byte) '4';
+                    System.arraycopy(fSplitterBytes, 0, finalBytes, peekedBytesLength, fSplitterLength);
+                    client.SendData(finalBytes, 0, finalBytes.length);
                     break;
 
                 case 9: // Keep - Alive
