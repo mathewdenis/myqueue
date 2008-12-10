@@ -1,7 +1,11 @@
 package myqueue.UI;
 
+
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
 import java.util.Vector;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
@@ -15,6 +19,8 @@ import myqueue.Core.QueueManager;
 public class frmMain extends javax.swing.JFrame
 {
 
+    private TrayIcon fTrayIcon;
+
     public frmMain()
     {
         initComponents();
@@ -27,6 +33,24 @@ public class frmMain extends javax.swing.JFrame
         QueueManager.Load();
         jTableQueues.getColumnModel().getColumn(0).setCellRenderer(new ImageTableCellRenderer());
         Update();
+
+        try
+        {
+            if (SystemTray.isSupported())
+            {
+                SystemTray tray = SystemTray.getSystemTray();
+
+                ImageIcon trayImage = new ImageIcon(getClass().getResource("/Images/data-server-16x16.png"));
+                fTrayIcon = new TrayIcon(trayImage.getImage());
+
+                fTrayIcon.setToolTip("myQueue");
+                fTrayIcon.setPopupMenu(popupMenuTray);
+                tray.add(fTrayIcon);
+            }
+        }
+        catch (Exception ex)
+        {
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -41,6 +65,8 @@ public class frmMain extends javax.swing.JFrame
         jMenuItemInfo = new javax.swing.JMenuItem();
         jMenuItemDelete = new javax.swing.JMenuItem();
         jMenuItemClear = new javax.swing.JMenuItem();
+        popupMenuTray = new java.awt.PopupMenu();
+        menuItemShowServer = new java.awt.MenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableQueues = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -114,8 +140,23 @@ public class frmMain extends javax.swing.JFrame
         });
         jPopupMenu1.add(jMenuItemClear);
 
+        popupMenuTray.setLabel("popupMenu1");
+
+        menuItemShowServer.setLabel("Show");
+        menuItemShowServer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemShowServerActionPerformed(evt);
+            }
+        });
+        popupMenuTray.add(menuItemShowServer);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("myQueue");
+        addWindowStateListener(new java.awt.event.WindowStateListener() {
+            public void windowStateChanged(java.awt.event.WindowEvent evt) {
+                formWindowStateChanged(evt);
+            }
+        });
 
         jTableQueues.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -344,6 +385,20 @@ public class frmMain extends javax.swing.JFrame
         }
     }//GEN-LAST:event_jMenuItemInfoActionPerformed
 
+    private void formWindowStateChanged(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowStateChanged
+    {//GEN-HEADEREND:event_formWindowStateChanged
+        if (this.getState() == JFrame.ICONIFIED)
+        {
+            this.setVisible(false);
+        }
+    }//GEN-LAST:event_formWindowStateChanged
+
+    private void menuItemShowServerActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_menuItemShowServerActionPerformed
+    {//GEN-HEADEREND:event_menuItemShowServerActionPerformed
+        this.setVisible(true);
+        this.setState(JFrame.NORMAL);
+    }//GEN-LAST:event_menuItemShowServerActionPerformed
+
     public void Update()
     {
         System.out.println("Updated...");
@@ -457,5 +512,7 @@ public class frmMain extends javax.swing.JFrame
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jTableQueues;
+    private java.awt.MenuItem menuItemShowServer;
+    private java.awt.PopupMenu popupMenuTray;
     // End of variables declaration//GEN-END:variables
 }
