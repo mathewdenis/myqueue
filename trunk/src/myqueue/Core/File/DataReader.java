@@ -47,14 +47,13 @@ public class DataReader
     public byte[] ReadBytes(String fileName) throws IOException
     {
         File file = new File(fLocation + "\\" + fileName + fFileExtension);
+        if (!file.exists())
+        {
+            return null;
+        }
         InputStream is = new FileInputStream(file);
 
         long length = file.length();
-
-        /*if (length > Integer.MAX_VALUE)
-        {
-        // File is too large
-        }*/
 
         byte[] bytes = new byte[(int) length];
 

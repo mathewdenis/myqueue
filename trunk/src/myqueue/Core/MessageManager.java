@@ -18,7 +18,6 @@ public class MessageManager
     private long fFirstInMessage = 1; // This long holds the first message id.
     private String fLocation;
     private String fPriorityInteger;
-    private final Object fSyncObject = new Object();
 
     public MessageManager(String location, String priorityInteger)
     {
@@ -34,10 +33,13 @@ public class MessageManager
         {
             String fileName = fPriorityInteger + String.valueOf(fFirstInMessage);
             byte[] bytes = fDataReader.ReadBytes(fileName);
-            File file = new File(fLocation + "\\" + fileName + ".mqf");
-            file.delete();
+            if (bytes != null)
+            {
+                File file = new File(fLocation + "\\" + fileName + ".mqf");
+                file.delete();
 
-            fFirstInMessage++;
+                fFirstInMessage++;
+            }
 
             return bytes;
         }

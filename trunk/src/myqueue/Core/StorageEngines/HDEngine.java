@@ -12,13 +12,11 @@ public class HDEngine extends StorageEngine
     private MessageManager fNormalPriorityMessageManager;
     private MessageManager fAboveNormalPriorityMessageManager;
     private MessageManager fHighPriorityMessageManager;
-    private String fLocation;
     private final Object fSyncObject = new Object();
 
     public HDEngine(String location)
     {
         super(location);
-        fLocation = location;
 
         fNormalPriorityMessageManager = new MessageManager(location, "PN");
         fAboveNormalPriorityMessageManager = new MessageManager(location + "\\AboveNormalPriority", "PA");
@@ -82,24 +80,15 @@ public class HDEngine extends StorageEngine
     {
         synchronized (fSyncObject)
         {
-            byte[] bytesToReturn;
-
-            // Check if there is a message in the HighPriority queue.
-            bytesToReturn = fHighPriorityMessageManager.GetMessageByID(messageID);
-            if (bytesToReturn != null)
+            if (messageID.startsWith("PH")) // High priority message.
             {
-                return bytesToReturn;
+                return fHighPriorityMessageManager.GetMessageByID(messageID);
             }
-
-            // Check if there is a message in the AboveNormalPriority queue.
-            bytesToReturn = fAboveNormalPriorityMessageManager.GetMessageByID(messageID);
-            if (bytesToReturn != null)
+            else if (messageID.startsWith("PA")) // Above normal priority message.
             {
-                return bytesToReturn;
+                return fAboveNormalPriorityMessageManager.GetMessageByID(messageID);
             }
-
-            // Check if there is a message in the NormalPriority queue.
-            return fNormalPriorityMessageManager.GetMessageByID(messageID);
+            return fNormalPriorityMessageManager.GetMessageByID(messageID); // Normal priority message.
         }
     }
 
