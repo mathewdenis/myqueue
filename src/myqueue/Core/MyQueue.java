@@ -74,7 +74,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
             {
                 case 1: // Enqueue.
                     try
-                    {
+                    {                      
                         System.arraycopy(data.getBytes(), 1, messageBytes, 0, data.getLength() - 1);
                         String enqueuedMesageID = fEngine.Enqueue(messageBytes);
 

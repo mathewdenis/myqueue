@@ -144,7 +144,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
             fWaitEvt.Reset();
             try
             {
-                SendData("1" + data + fSplitter);
+                SendData("10" + data + fSplitter);
             }
             catch (Exception ex)
             {
@@ -166,6 +166,42 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         }
     }
 
+    public synchronized void Enqueue(String data,int priority) throws EnqueueMessageException, MyQueueConnectorDisconnectedException
+    {
+        synchronized (fSyncObject)
+        {
+            TryToConnect();
+
+            fMessageEnqueuedSuccessfully = false;
+            fEnqueueMessageErrorReported = false;
+
+            fWaitEvt.Reset();
+            try
+            {
+                SendData("1" + String.valueOf(priority) + data + fSplitter);
+            }
+            catch (Exception ex)
+            {
+                fWaitEvt.Set();
+                throw new MyQueueConnectorDisconnectedException();
+            }
+            fWaitEvt.WaitOne(10000);
+
+            if (!fMessageEnqueuedSuccessfully)
+            {
+                // Could not receive response from the server that certifies that the message has been enqueued successfully.
+                throw new EnqueueMessageException("Could not receive response from the server that certifies the message has been enqueued successfully.");
+            }
+            if (fEnqueueMessageErrorReported)
+            {
+                // An error occured during the server's message enqueue proccess.
+                throw new EnqueueMessageException(fEnqueueMessageProccessError);
+            }
+        }
+    }
+
+
+    
     /**
      * Returns the message at the beginning of the Queue without removing it.
      * @return the message at the beginning of the Queue without removing it.
