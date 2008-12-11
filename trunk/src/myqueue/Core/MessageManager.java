@@ -19,6 +19,7 @@ public class MessageManager
     private String fLocation;
     private String fPriorityInteger;
 
+
     public MessageManager(String location, String priorityInteger)
     {
         fLocation = location;

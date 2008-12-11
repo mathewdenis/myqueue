@@ -11,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import javax.swing.JOptionPane;
 import myqueue.Core.Serializable.TCPListenerSerializable;
 import myqueue.Core.StorageEngines.HDEngine;
 
@@ -146,6 +147,7 @@ public class QueueManager
         if (fQueues.containsKey(name))
         {
             ((MyQueue) fQueues.get(name)).Clear();
+            JOptionPane.showMessageDialog(null, "Queue " + name + " cleared!", "Clear", JOptionPane.INFORMATION_MESSAGE);
         }
         else
         {
