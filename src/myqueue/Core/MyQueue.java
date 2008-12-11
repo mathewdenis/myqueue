@@ -74,7 +74,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
             {
                 case 1: // Enqueue.
                     try
-                    {                      
+                    {
                         System.arraycopy(data.getBytes(), 1, messageBytes, 0, data.getLength() - 1);
                         String enqueuedMesageID = fEngine.Enqueue(messageBytes);
 
@@ -121,7 +121,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     client.SendData(finalBytes, 0, finalBytes.length);
                     break;
 
-                case 4: // Request message ( 4 - Message - Splitter).
+                case 4: // Request message (4 - Message - Splitter).
                     String messageID = new String(data.getBytes(), 1, data.getLength() - 1);
                     peekedBytes = fEngine.GetMessageByID(messageID);
                     peekedBytesLength = peekedBytes == null ? 1 : peekedBytes.length + 1;

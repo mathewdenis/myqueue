@@ -1,8 +1,5 @@
 package myqueue.Core.StorageEngines;
 
-import java.io.File;
-import java.io.FileFilter;
-import myqueue.Core.IntegerQueue;
 import myqueue.Core.MessageManager;
 
 /**
@@ -23,9 +20,9 @@ public class HDEngine extends StorageEngine
         super(location);
         fLocation = location;
 
-        fNormalPriorityMessageManager = new MessageManager(location);
-        fAboveNormalPriorityMessageManager = new MessageManager(location + "\\AboveNormalPriority");
-        fHighPriorityMessageManager = new MessageManager(location + "\\HighPriority");
+        fNormalPriorityMessageManager = new MessageManager(location, "PN");
+        fAboveNormalPriorityMessageManager = new MessageManager(location + "\\AboveNormalPriority", "PA");
+        fHighPriorityMessageManager = new MessageManager(location + "\\HighPriority", "PH");
     }
 
     @Override
@@ -33,6 +30,23 @@ public class HDEngine extends StorageEngine
     {
         synchronized (fSyncObject)
         {
+            byte[] bytesToReturn;
+
+            // Check if there is a message in the HighPriority queue.
+            bytesToReturn = fHighPriorityMessageManager.Dequeue();
+            if (bytesToReturn != null)
+            {
+                return bytesToReturn;
+            }
+
+            // Check if there is a message in the AboveNormalPriority queue.
+            bytesToReturn = fAboveNormalPriorityMessageManager.Dequeue();
+            if (bytesToReturn != null)
+            {
+                return bytesToReturn;
+            }
+
+            // Check if there is a message in the NormalPriority queue.
             return fNormalPriorityMessageManager.Dequeue();
         }
     }
@@ -42,6 +56,23 @@ public class HDEngine extends StorageEngine
     {
         synchronized (fSyncObject)
         {
+            byte[] bytesToReturn;
+
+            // Check if there is a message in the HighPriority queue.
+            bytesToReturn = fHighPriorityMessageManager.Peek();
+            if (bytesToReturn != null)
+            {
+                return bytesToReturn;
+            }
+
+            // Check if there is a message in the AboveNormalPriority queue.
+            bytesToReturn = fAboveNormalPriorityMessageManager.Peek();
+            if (bytesToReturn != null)
+            {
+                return bytesToReturn;
+            }
+
+            // Check if there is a message in the NormalPriority queue.
             return fNormalPriorityMessageManager.Peek();
         }
     }
@@ -51,6 +82,23 @@ public class HDEngine extends StorageEngine
     {
         synchronized (fSyncObject)
         {
+            byte[] bytesToReturn;
+
+            // Check if there is a message in the HighPriority queue.
+            bytesToReturn = fHighPriorityMessageManager.GetMessageByID(messageID);
+            if (bytesToReturn != null)
+            {
+                return bytesToReturn;
+            }
+
+            // Check if there is a message in the AboveNormalPriority queue.
+            bytesToReturn = fAboveNormalPriorityMessageManager.GetMessageByID(messageID);
+            if (bytesToReturn != null)
+            {
+                return bytesToReturn;
+            }
+
+            // Check if there is a message in the NormalPriority queue.
             return fNormalPriorityMessageManager.GetMessageByID(messageID);
         }
     }
@@ -64,14 +112,16 @@ public class HDEngine extends StorageEngine
             int messagePriority = Integer.parseInt(messagePriorityStr);
             switch (messagePriority)
             {
+                case 0: // Normal priority
+                    return fNormalPriorityMessageManager.Enqueue(bytes);
+
                 case 1: // Above normal priority.
-                    // fAboveNormalPriorityQueue.add(messagePriority);
-                    break;
+                    return fAboveNormalPriorityMessageManager.Enqueue(bytes);
+
                 case 2: // High priority
-                    // fHighPriorityQueue.add(messagePriority);
-                    break;
+                    return fHighPriorityMessageManager.Enqueue(bytes);
             }
-            return fNormalPriorityMessageManager.Enqueue(bytes);
+            return null;
         }
     }
 

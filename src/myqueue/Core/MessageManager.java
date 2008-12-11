@@ -17,11 +17,13 @@ public class MessageManager
     private long fLastMessageID = 0;  // This long holds the last message id.
     private long fFirstInMessage = 1; // This long holds the first message id.
     private String fLocation;
+    private String fPriorityInteger;
     private final Object fSyncObject = new Object();
 
-    public MessageManager(String location)
+    public MessageManager(String location, String priorityInteger)
     {
         fLocation = location;
+        fPriorityInteger = priorityInteger;
         fDataReader = new DataReader(location, "mqf");
         fDataWriter = new DataWriter(location, "mqf");
     }
@@ -30,7 +32,7 @@ public class MessageManager
     {
         try
         {
-            String fileName = "F_" + String.valueOf(fFirstInMessage);
+            String fileName = fPriorityInteger + String.valueOf(fFirstInMessage);
             byte[] bytes = fDataReader.ReadBytes(fileName);
             File file = new File(fLocation + "\\" + fileName + ".mqf");
             file.delete();
@@ -49,7 +51,7 @@ public class MessageManager
     {
         try
         {
-            String fileName = "F_" + String.valueOf(fFirstInMessage);
+            String fileName = fPriorityInteger + String.valueOf(fFirstInMessage);
             return fDataReader.ReadBytes(fileName);
         }
         catch (Exception ex)
@@ -62,7 +64,7 @@ public class MessageManager
     {
         try
         {
-            String fileName = "F_" + messageID;
+            String fileName = messageID;
             return fDataReader.ReadBytes(fileName);
         }
         catch (Exception ex)
@@ -76,7 +78,7 @@ public class MessageManager
         try
         {
             fLastMessageID++;
-            String lastMessageIDStr = String.valueOf(fLastMessageID);
+            String lastMessageIDStr = fPriorityInteger + String.valueOf(fLastMessageID);
 
             byte[] finalBytes = new byte[bytes.length + lastMessageIDStr.length() + 1];
 
@@ -88,14 +90,13 @@ public class MessageManager
             }
             finalBytes[lastMessageIDStr.length()] = '\n';
 
-            fDataWriter.WriteFile(finalBytes, "F_" + String.valueOf(fLastMessageID));
+            fDataWriter.WriteFile(finalBytes, fPriorityInteger + String.valueOf(fLastMessageID));
             return lastMessageIDStr;
         }
         catch (Exception ex)
         {
             return null;
         }
-
     }
 
     public void Start()
