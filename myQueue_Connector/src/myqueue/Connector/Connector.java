@@ -90,8 +90,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                     if (indexOfID > 0)
                     {
                         String messageID = message.substring(0, indexOfID);
-
-                        fMessage = new MessageQueueMessage(messageID, message.substring(indexOfID + 1), Integer.valueOf(message.substring(indexOfID + 1, indexOfID + 2)));
+                        fMessage = new MessageQueueMessage(messageID, message.substring(indexOfID + 2), Integer.valueOf(message.substring(indexOfID + 1, indexOfID + 2)));
                     }
                     fMessagePeekedSuccessfully = true;
                     fWaitEvt.Set();
@@ -111,7 +110,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                     if (indexOfRequestedMessageID > 0)
                     {
                         String messageID = requestedMessage.substring(0, indexOfRequestedMessageID);
-                        fReceivedMessage = new MessageQueueMessage(messageID, requestedMessage.substring(indexOfRequestedMessageID + 1), Integer.valueOf(requestedMessage.substring(indexOfRequestedMessageID + 1, indexOfRequestedMessageID + 2)));
+                        fReceivedMessage = new MessageQueueMessage(messageID, requestedMessage.substring(indexOfRequestedMessageID + 2), Integer.valueOf(requestedMessage.substring(indexOfRequestedMessageID + 1, indexOfRequestedMessageID + 2)));
                     }
                     fMessageReceivedSuccessfully = true;
                     fBeginReceiveWaitEvt.Set();
