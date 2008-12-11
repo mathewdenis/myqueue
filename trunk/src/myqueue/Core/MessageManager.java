@@ -75,18 +75,6 @@ public class MessageManager
     {
         try
         {
-            String messagePriorityStr = new String(bytes, 0, 1);
-            int messagePriority = Integer.parseInt(messagePriorityStr);
-            switch (messagePriority)
-            {
-                case 1: // Above normal priority.
-                    // fAboveNormalPriorityQueue.add(messagePriority);
-                    break;
-                case 2: // High priority
-                    // fHighPriorityQueue.add(messagePriority);
-                    break;
-            }
-
             fLastMessageID++;
             String lastMessageIDStr = String.valueOf(fLastMessageID);
 
@@ -169,6 +157,35 @@ public class MessageManager
         }
         catch (Exception ex)
         {
+        }
+    }
+
+    public void ClearMessages()
+    {
+        File dir = new File(fLocation);
+        File[] files = dir.listFiles();
+
+        // This filter only returns files.
+        FileFilter fileFilter = new FileFilter()
+        {
+
+            @Override
+            public boolean accept(File file)
+            {
+                return !file.isDirectory() && file.getName().endsWith("mqf");
+            }
+        };
+        files = dir.listFiles(fileFilter);
+
+        for (File file : files)
+        {
+            try
+            {
+                file.delete();
+            }
+            catch (Exception ex)
+            {
+            }
         }
     }
 }

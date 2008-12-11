@@ -15,7 +15,6 @@ public class HDEngine extends StorageEngine
     private MessageManager fNormalPriorityMessageManager;
     private MessageManager fAboveNormalPriorityMessageManager;
     private MessageManager fHighPriorityMessageManager;
-
     private String fLocation;
     private final Object fSyncObject = new Object();
 
@@ -32,25 +31,48 @@ public class HDEngine extends StorageEngine
     @Override
     public synchronized byte[] Dequeue()
     {
-        return fNormalPriorityMessageManager.Dequeue();
+        synchronized (fSyncObject)
+        {
+            return fNormalPriorityMessageManager.Dequeue();
+        }
     }
 
     @Override
     public synchronized byte[] Peek()
     {
-        return fNormalPriorityMessageManager.Peek();
+        synchronized (fSyncObject)
+        {
+            return fNormalPriorityMessageManager.Peek();
+        }
     }
 
     @Override
     public synchronized byte[] GetMessageByID(String messageID)
     {
-        return fNormalPriorityMessageManager.GetMessageByID(messageID);
+        synchronized (fSyncObject)
+        {
+            return fNormalPriorityMessageManager.GetMessageByID(messageID);
+        }
     }
 
     @Override
     public synchronized String Enqueue(byte[] bytes)
     {
-        return fNormalPriorityMessageManager.Enqueue(bytes);
+        synchronized (fSyncObject)
+        {
+            String messagePriorityStr = new String(bytes, 0, 1);
+            int messagePriority = Integer.parseInt(messagePriorityStr);
+            switch (messagePriority)
+            {
+                case 1: // Above normal priority.
+                    // fAboveNormalPriorityQueue.add(messagePriority);
+                    break;
+                case 2: // High priority
+                    // fHighPriorityQueue.add(messagePriority);
+                    break;
+            }
+            return fNormalPriorityMessageManager.Enqueue(bytes);
+        }
     }
 
     @Override
@@ -58,12 +80,23 @@ public class HDEngine extends StorageEngine
     {
         try
         {
-           fNormalPriorityMessageManager.Start();
-           fAboveNormalPriorityMessageManager.Start();
-           fHighPriorityMessageManager.Start();
+            fNormalPriorityMessageManager.Start();
+            fAboveNormalPriorityMessageManager.Start();
+            fHighPriorityMessageManager.Start();
         }
         catch (Exception ex)
         {
+        }
+    }
+
+    @Override
+    public void Clear()
+    {
+        synchronized (fSyncObject)
+        {
+            fNormalPriorityMessageManager.ClearMessages();
+            fAboveNormalPriorityMessageManager.ClearMessages();
+            fHighPriorityMessageManager.ClearMessages();
         }
     }
 }

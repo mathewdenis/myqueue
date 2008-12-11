@@ -42,4 +42,9 @@ public class StorageEngine
     {
         return fLocation;
     }
+
+    public void Clear()
+    {
+
+    }
 }
