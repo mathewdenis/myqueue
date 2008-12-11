@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import myqueue.Core.File.DataReader;
 import myqueue.Core.File.DataWriter;
+import myqueue.Core.IntegerQueue;
 
 /**
  *
@@ -14,17 +15,31 @@ public class HDEngine extends StorageEngine
 
     private DataReader fDataReader;
     private DataWriter fDataWriter;
+    private DataReader fAboveNormalPriorityDataReader;
+    private DataWriter fAboveNormalPriorityDataWriter;
+    private DataReader fHighPriorityDataReader;
+    private DataWriter fHighPriorityDataWriter;
     private long fLastMessageID = 0;  // This long holds the last message id.
     private long fFirstInMessage = 1; // This long holds the first message id.
     private String fLocation;
     private final Object fSyncObject = new Object();
+    // Priority queues.
+    private IntegerQueue fAboveNormalPriorityQueue = new IntegerQueue();
+    private IntegerQueue fHighPriorityQueue = new IntegerQueue();
 
     public HDEngine(String location)
     {
         super(location);
         fLocation = location;
+
         fDataReader = new DataReader(location, "mqf");
         fDataWriter = new DataWriter(location, "mqf");
+
+        fAboveNormalPriorityDataReader = new DataReader(location + "\\AboveNormalPriority", "mqf");
+        fAboveNormalPriorityDataWriter = new DataWriter(location + "\\AboveNormalPriority", "mqf");
+
+        fHighPriorityDataReader = new DataReader(location + "\\HighPriority", "mqf");
+        fHighPriorityDataWriter = new DataWriter(location + "\\HighPriority", "mqf");
     }
 
     @Override
@@ -91,6 +106,18 @@ public class HDEngine extends StorageEngine
         {
             try
             {
+                String messagePriorityStr = new String(bytes, 0, 1);
+                int messagePriority = Integer.parseInt(messagePriorityStr);
+                switch (messagePriority)
+                {
+                    case 1: // Above normal priority.
+                        fAboveNormalPriorityQueue.add(messagePriority);
+                        break;
+                    case 2: // High priority
+                        fHighPriorityQueue.add(messagePriority);
+                        break;
+                }
+
                 fLastMessageID++;
                 String lastMessageIDStr = String.valueOf(fLastMessageID);
 
@@ -163,6 +190,20 @@ public class HDEngine extends StorageEngine
             if (fFirstInMessage == 0)
             {
                 fFirstInMessage = 1;
+            }
+
+            // Create AboveNormalPriority folder.
+            File aboveNormalPriorityFolder = new File(fLocation + "\\AboveNormalPriority");
+            if (!aboveNormalPriorityFolder.exists())
+            {
+                aboveNormalPriorityFolder.mkdirs();
+            }
+
+            // Create HighPriority folder
+            File hightPriorityFolder = new File(fLocation + "\\HighPriority");
+            if (!hightPriorityFolder.exists())
+            {
+                hightPriorityFolder.mkdirs();
             }
         }
         catch (Exception ex)
