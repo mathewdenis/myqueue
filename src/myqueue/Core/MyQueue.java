@@ -155,31 +155,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     // Clear all message queue messages from disk.
     public void Clear()
     {
-        File dir = new File(fEngine.getLocation());
-        File[] files = dir.listFiles();
-
-        // This filter only returns files.
-        FileFilter fileFilter = new FileFilter()
-        {
-
-            @Override
-            public boolean accept(File file)
-            {
-                return !file.isDirectory() && file.getName().endsWith("mqf");
-            }
-        };
-        files = dir.listFiles(fileFilter);
-
-        for (File file : files)
-        {
-            try
-            {
-                file.delete();
-            }
-            catch (Exception ex)
-            {
-            }
-        }
+        fEngine.Clear();
 
         fEngine.StartEngine();
     }
