@@ -8,6 +8,7 @@ import myqueue.Connector.Exceptions.DequeueMessageException;
 import myqueue.Connector.Exceptions.EnqueueMessageException;
 import myqueue.Connector.Exceptions.MyQueueConnectorDisconnectedException;
 import myqueue.Connector.Exceptions.PeekMessageException;
+import myqueue.Connector.Exceptions.ReceivedMessageException;
 
 /**
  *
@@ -30,6 +31,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     private boolean fMessagePeekedSuccessfully = false;
     private MessageQueueMessage fMessage;
     // Begin receive
+    private boolean fMessageReceivedSuccessfully = false;
     private ObjectQueue fReceivedMesagesQueue = new ObjectQueue();
     private ManualResetEvent fWaitForMessagesEvt = new ManualResetEvent(false);
     private boolean fIsReceiving = false;
@@ -102,7 +104,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                     }
                     break;
 
-                case 4: // Reveive requested message.
+                case 4: // Receive requested message.
                     String requestedMessage = new String(data.getBytes(), 1, data.getLength() - 1);
                     int indexOfRequestedMessageID = requestedMessage.indexOf('\n');
                     if (indexOfRequestedMessageID > 0)
@@ -110,6 +112,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                         long messageID = Long.parseLong(requestedMessage.substring(0, indexOfRequestedMessageID));
                         fReceivedMessage = new MessageQueueMessage(messageID, requestedMessage.substring(indexOfRequestedMessageID + 1));
                     }
+                    fMessageReceivedSuccessfully = true;
                     fBeginReceiveWaitEvt.Set();
                     break;
 
@@ -258,7 +261,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
      * @throws myqueue.Connector.Exceptions.MyQueueConnectorDisconnectedException
      * @throws java.lang.Exception
      */
-    public MessageQueueMessage Receive(int timeOut) throws MyQueueConnectorDisconnectedException, Exception
+    public MessageQueueMessage Receive(int timeOut) throws MyQueueConnectorDisconnectedException, ReceivedMessageException
     {
         if (timeOut < 2000 || timeOut > 20000)
         {
@@ -266,7 +269,8 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         }
         if (!fIsReceiving)
         {
-            throw new Exception("Use BeginReceive method before Receive method.");
+            fBeginReceiveWaitEvt.WaitOne(timeOut);
+            return null;
         }
 
         TryToConnect();
@@ -279,8 +283,16 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
             fReceivedMessage = null;
             if (!fReceivedMesagesQueue.isEmpty() && fIsReceiving)
             {
-                SendData("4" + fReceivedMesagesQueue.dequeue().toString() + fSplitter);
+                // Request the message from the server.
+                fMessageReceivedSuccessfully = false;
+                String messageID = fReceivedMesagesQueue.dequeue().toString();
+                SendData("4" + messageID + fSplitter);
                 fBeginReceiveWaitEvt.WaitOne(timeOut);
+
+                if (!fMessageReceivedSuccessfully)
+                {
+                    throw new ReceivedMessageException("Message " + messageID + " could not be received.");
+                }
             }
             else
             {
@@ -324,6 +336,12 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     }
 
     private void Disconnect()
+    {
+        super.Stop();
+    }
+
+    @Override
+    public void Dispose()
     {
         super.Stop();
     }
