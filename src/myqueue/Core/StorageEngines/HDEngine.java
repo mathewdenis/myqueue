@@ -129,7 +129,7 @@ public class HDEngine extends StorageEngine
     }
 
     @Override
-    public void Clear()
+    public synchronized void Clear()
     {
         synchronized (fSyncObject)
         {
