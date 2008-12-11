@@ -89,8 +89,9 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                     int indexOfID = message.indexOf('\n');
                     if (indexOfID > 0)
                     {
-                        long messageID = Long.parseLong(message.substring(0, indexOfID));
-                        fMessage = new MessageQueueMessage(messageID, message.substring(indexOfID + 1));
+                        String messageID = message.substring(0, indexOfID);
+
+                        fMessage = new MessageQueueMessage(messageID, message.substring(indexOfID + 1), Integer.valueOf(message.substring(indexOfID + 1, indexOfID + 2)));
                     }
                     fMessagePeekedSuccessfully = true;
                     fWaitEvt.Set();
@@ -109,8 +110,8 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                     int indexOfRequestedMessageID = requestedMessage.indexOf('\n');
                     if (indexOfRequestedMessageID > 0)
                     {
-                        long messageID = Long.parseLong(requestedMessage.substring(0, indexOfRequestedMessageID));
-                        fReceivedMessage = new MessageQueueMessage(messageID, requestedMessage.substring(indexOfRequestedMessageID + 1));
+                        String messageID = requestedMessage.substring(0, indexOfRequestedMessageID);
+                        fReceivedMessage = new MessageQueueMessage(messageID, requestedMessage.substring(indexOfRequestedMessageID + 1), Integer.valueOf(requestedMessage.substring(indexOfRequestedMessageID + 1, indexOfRequestedMessageID + 2)));
                     }
                     fMessageReceivedSuccessfully = true;
                     fBeginReceiveWaitEvt.Set();
@@ -166,7 +167,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         }
     }
 
-    public synchronized void Enqueue(String data,int priority) throws EnqueueMessageException, MyQueueConnectorDisconnectedException
+    public synchronized void Enqueue(String data, int priority) throws EnqueueMessageException, MyQueueConnectorDisconnectedException
     {
         synchronized (fSyncObject)
         {
@@ -200,8 +201,6 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         }
     }
 
-
-    
     /**
      * Returns the message at the beginning of the Queue without removing it.
      * @return the message at the beginning of the Queue without removing it.

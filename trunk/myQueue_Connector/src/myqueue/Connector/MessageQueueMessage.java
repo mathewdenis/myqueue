@@ -7,22 +7,20 @@ package myqueue.Connector;
 public class MessageQueueMessage
 {
 
-    private long fID;
+    private String fID;
     private String fBinaryData;
     private int fPriority = 0;
-
     public static int PriorityNormal = 0;
     public static int PriorityAboveNormal = 1;
     public static int PriorityHigh = 2;
 
-
-    public MessageQueueMessage(long id, String data)
+    public MessageQueueMessage(String id, String data)
     {
         fID = id;
         fBinaryData = data;
     }
 
-    public MessageQueueMessage(long id, String data,int priority)
+    public MessageQueueMessage(String id, String data, int priority)
     {
         fID = id;
         fBinaryData = data;
@@ -33,7 +31,7 @@ public class MessageQueueMessage
      * Message ID.
      * @return the message's ID.
      */
-    public long getID()
+    public String getID()
     {
         return fID;
     }
