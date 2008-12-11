@@ -77,6 +77,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     {
                         System.arraycopy(data.getBytes(), 1, messageBytes, 0, data.getLength() - 1);
                         String enqueuedMesageID = fEngine.Enqueue(messageBytes);
+
                         if (enqueuedMesageID != null)
                         {
                             client.SendData("0" + fSplitter); // Message enqueued successfully!
