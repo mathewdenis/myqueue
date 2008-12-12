@@ -28,23 +28,14 @@ public class HDEngine extends StorageEngine
     {
         synchronized (fSyncObject)
         {
-            byte[] bytesToReturn;
-
-            // Check if there is a message in the HighPriority queue.
-            bytesToReturn = fHighPriorityMessageManager.Dequeue();
-            if (bytesToReturn != null)
+            if (fHighPriorityMessageManager.fMessageCount > 0)
             {
-                return bytesToReturn;
+                return fHighPriorityMessageManager.Dequeue();
             }
-
-            // Check if there is a message in the AboveNormalPriority queue.
-            bytesToReturn = fAboveNormalPriorityMessageManager.Dequeue();
-            if (bytesToReturn != null)
+            else if (fAboveNormalPriorityMessageManager.fMessageCount > 0)
             {
-                return bytesToReturn;
+                return fAboveNormalPriorityMessageManager.Dequeue();
             }
-
-            // Check if there is a message in the NormalPriority queue.
             return fNormalPriorityMessageManager.Dequeue();
         }
     }
@@ -54,23 +45,14 @@ public class HDEngine extends StorageEngine
     {
         synchronized (fSyncObject)
         {
-            byte[] bytesToReturn;
-
-            // Check if there is a message in the HighPriority queue.
-            bytesToReturn = fHighPriorityMessageManager.Peek();
-            if (bytesToReturn != null)
+            if (fHighPriorityMessageManager.fMessageCount > 0)
             {
-                return bytesToReturn;
+                return fHighPriorityMessageManager.Peek();
             }
-
-            // Check if there is a message in the AboveNormalPriority queue.
-            bytesToReturn = fAboveNormalPriorityMessageManager.Peek();
-            if (bytesToReturn != null)
+            else if (fAboveNormalPriorityMessageManager.fMessageCount > 0)
             {
-                return bytesToReturn;
+                return fAboveNormalPriorityMessageManager.Peek();
             }
-
-            // Check if there is a message in the NormalPriority queue.
             return fNormalPriorityMessageManager.Peek();
         }
     }
@@ -104,7 +86,7 @@ public class HDEngine extends StorageEngine
                 case 0: // Normal priority
                     return fNormalPriorityMessageManager.Enqueue(bytes);
 
-                case 1: // Above normal priority.
+                case 1: // Above normal priority
                     return fAboveNormalPriorityMessageManager.Enqueue(bytes);
 
                 case 2: // High priority

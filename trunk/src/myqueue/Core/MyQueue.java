@@ -154,7 +154,6 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     public void Clear()
     {
         fEngine.Clear();
-
         fEngine.StartEngine();
     }
 

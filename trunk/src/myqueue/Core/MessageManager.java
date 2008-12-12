@@ -16,9 +16,9 @@ public class MessageManager
     private DataWriter fDataWriter;
     private long fLastMessageID = 0;  // This long holds the last message id.
     private long fFirstInMessage = 1; // This long holds the first message id.
+    public long fMessageCount = 0;   // Holds the number of messages are stored in disk.
     private String fLocation;
     private String fPriorityInteger;
-
 
     public MessageManager(String location, String priorityInteger)
     {
@@ -40,6 +40,7 @@ public class MessageManager
                 file.delete();
 
                 fFirstInMessage++;
+                fMessageCount--;
             }
 
             return bytes;
@@ -81,6 +82,8 @@ public class MessageManager
         try
         {
             fLastMessageID++;
+            fMessageCount++;
+
             String lastMessageIDStr = fPriorityInteger + String.valueOf(fLastMessageID);
 
             byte[] finalBytes = new byte[bytes.length + lastMessageIDStr.length() + 1];
@@ -191,5 +194,6 @@ public class MessageManager
             {
             }
         }
+        fMessageCount = 0;
     }
 }
