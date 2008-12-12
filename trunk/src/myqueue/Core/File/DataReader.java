@@ -1,6 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/* myQueue
+ * Copyright (C) 2008 Nikos Siatras
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package myqueue.Core.File;
 
@@ -22,7 +33,7 @@ public class DataReader
 
     public DataReader(String location, String fileExtension)
     {
-        fLocation = location;
+        fLocation = location + "\\";
         fFileExtension = "." + fileExtension;
     }
 
@@ -32,7 +43,7 @@ public class DataReader
         {
             StringBuilder answer = new StringBuilder();
 
-            FileReader reader = new FileReader(fLocation + "\\" + fileName + fFileExtension);
+            FileReader reader = new FileReader(fLocation + fileName + fFileExtension);
             BufferedReader bufRead = new BufferedReader(reader);
 
             int character = bufRead.read();
@@ -55,7 +66,7 @@ public class DataReader
     {
         try
         {
-            File file = new File(fLocation + "\\" + fileName + fFileExtension);
+            File file = new File(fLocation + fileName + fFileExtension);
             InputStream inputStream = new FileInputStream(file);
 
             long length = file.length();
