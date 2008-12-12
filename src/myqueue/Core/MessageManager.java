@@ -14,9 +14,9 @@ public class MessageManager
 
     private DataReader fDataReader;
     private DataWriter fDataWriter;
-    private long fLastMessageID = 0;  // This long holds the last message id.
-    private long fFirstInMessage = 1; // This long holds the first message id.
-    public long fMessageCount = 0;   // Holds the number of messages are stored in disk.
+    private long fLastMessageID = 0;  // Holds the last message id.
+    private long fFirstInMessage = 1; // Holds the first message id.
+    public long fMessageCount = 0;    // Holds the number of messages are stored in disk.
     private String fLocation;
     private String fPriorityInteger;
 
