@@ -36,7 +36,7 @@ public class DataWriter
      */
     public DataWriter(String location, String fileExtension)
     {
-        fLocation = location + "\\";
+        fLocation = location + "/";
         fFileExtension = "." + fileExtension;
     }
 
