@@ -58,7 +58,7 @@ public class QueueManager
 
         if (name.equals(""))
         {
-            throw new Exception("Please select a name for this queue.");
+            throw new Exception("Please give a name to this queue.");
         }
 
         if (corePoolSize < 10)
