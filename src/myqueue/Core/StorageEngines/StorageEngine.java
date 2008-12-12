@@ -61,4 +61,9 @@ public class StorageEngine
     public void Clear()
     {
     }
+
+    public long getMessageCount()
+    {
+        return 0;
+    }
 }
