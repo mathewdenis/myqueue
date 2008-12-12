@@ -145,7 +145,7 @@ public class QueueManager
 
             try
             {
-                File savedQueueFile = new File("QueueData\\" + name + ".queue");
+                File savedQueueFile = new File("MyQueueActiveQueues/" + name + ".queue");
                 savedQueueFile.delete();
             }
             catch (Exception ex)
@@ -174,7 +174,8 @@ public class QueueManager
     private static void Save()
     {
         // Check if file QueueData exists.
-        File tmpFolder = new File("QueueData");
+
+        File tmpFolder = new File("MyQueueActiveQueues");
         if (!tmpFolder.exists())
         {
             tmpFolder.mkdirs();
@@ -189,7 +190,7 @@ public class QueueManager
     private static void SaveQueue(String queueName)
     {
         // Check if file QueueData exists.
-        File tmpFolder = new File("QueueData");
+        File tmpFolder = new File("MyQueueActiveQueues");
         if (!tmpFolder.exists())
         {
             tmpFolder.mkdirs();
@@ -233,7 +234,7 @@ public class QueueManager
         ObjectOutputStream out = null;
         try
         {
-            fos = new FileOutputStream("QueueData\\" + tmp.Name + ".queue");
+            fos = new FileOutputStream("MyQueueActiveQueues/" + tmp.Name + ".queue");
             out = new ObjectOutputStream(fos);
             out.writeObject(tmp);
             out.close();
@@ -247,7 +248,7 @@ public class QueueManager
 
     public static void Load()
     {
-        File dir = new File("QueueData");
+        File dir = new File("MyQueueActiveQueues");
         File[] files = dir.listFiles();
 
         // This filter only returns files.
@@ -296,8 +297,6 @@ public class QueueManager
                 System.err.println(ex.getMessage());
             }
         }
-
-
     }
 
     public static Hashtable<String, MyQueue> getQueues()

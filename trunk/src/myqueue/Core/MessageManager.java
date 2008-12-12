@@ -70,8 +70,7 @@ public class MessageManager
     {
         try
         {
-            String fileName = fPriorityInteger + String.valueOf(fFirstInMessage);
-            return fDataReader.ReadFile(fileName);
+            return fDataReader.ReadFile(fPriorityInteger + String.valueOf(fFirstInMessage));
         }
         catch (Exception ex)
         {
@@ -83,8 +82,8 @@ public class MessageManager
     {
         try
         {
-            String fileName = messageID;
-            return fDataReader.ReadFile(fileName);
+            // The fileName is the messageID.
+            return fDataReader.ReadFile(messageID);
         }
         catch (Exception ex)
         {
@@ -176,8 +175,6 @@ public class MessageManager
             {
                 fFirstInMessage = 1;
             }
-
-
         }
         catch (Exception ex)
         {

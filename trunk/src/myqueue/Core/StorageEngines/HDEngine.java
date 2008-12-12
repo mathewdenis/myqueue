@@ -34,8 +34,8 @@ public class HDEngine extends StorageEngine
         super(location);
 
         fNormalPriorityMessageManager = new MessageManager(location, "PN");
-        fAboveNormalPriorityMessageManager = new MessageManager(location + "\\AboveNormalPriority", "PA");
-        fHighPriorityMessageManager = new MessageManager(location + "\\HighPriority", "PH");
+        fAboveNormalPriorityMessageManager = new MessageManager(location + "/AboveNormalPriority", "PA");
+        fHighPriorityMessageManager = new MessageManager(location + "/HighPriority", "PH");
     }
 
     @Override

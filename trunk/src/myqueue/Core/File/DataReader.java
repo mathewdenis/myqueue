@@ -36,7 +36,7 @@ public class DataReader
      */
     public DataReader(String location, String fileExtension)
     {
-        fLocation = location + "\\";
+        fLocation = location + "/";
         fFileExtension = "." + fileExtension;
     }
 
