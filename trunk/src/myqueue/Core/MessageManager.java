@@ -97,8 +97,6 @@ public class MessageManager
         try
         {
             fLastMessageID++;
-            fMessageCount++;
-
             String lastMessageIDStr = fPriorityInteger + String.valueOf(fLastMessageID);
 
             byte[] finalBytes = new byte[bytes.length + lastMessageIDStr.length() + 1];
@@ -112,6 +110,8 @@ public class MessageManager
             finalBytes[lastMessageIDStr.length()] = '\n';
 
             fDataWriter.WriteFile(finalBytes, fPriorityInteger + String.valueOf(fLastMessageID));
+
+            fMessageCount++;
             return lastMessageIDStr;
         }
         catch (Exception ex)
@@ -124,6 +124,13 @@ public class MessageManager
     {
         try
         {
+            // Create my folder.
+            File myFolder = new File(fLocation);
+            if (!myFolder.exists())
+            {
+                myFolder.mkdirs();
+            }
+
             // Find the last message id in the engine location.
             File dir = new File(fLocation);
             File[] files = dir.listFiles();
@@ -170,12 +177,7 @@ public class MessageManager
                 fFirstInMessage = 1;
             }
 
-            // Create my folder.
-            File myFolder = new File(fLocation);
-            if (!myFolder.exists())
-            {
-                myFolder.mkdirs();
-            }
+
         }
         catch (Exception ex)
         {
@@ -210,5 +212,10 @@ public class MessageManager
             }
         }
         fMessageCount = 0;
+    }
+
+    public long getMessageCount()
+    {
+        return fMessageCount;
     }
 }

@@ -191,4 +191,9 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     {
         return fRunning;
     }
+
+    public long getMessageCount()
+    {
+        return fEngine.getMessageCount();
+    }
 }

@@ -135,4 +135,10 @@ public class HDEngine extends StorageEngine
             fHighPriorityMessageManager.ClearMessages();
         }
     }
+
+    @Override
+    public long getMessageCount()
+    {
+        return fNormalPriorityMessageManager.getMessageCount() + fAboveNormalPriorityMessageManager.getMessageCount() + fHighPriorityMessageManager.getMessageCount();
+    }
 }
