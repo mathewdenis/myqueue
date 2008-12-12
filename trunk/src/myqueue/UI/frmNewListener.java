@@ -15,6 +15,7 @@
  */
 package myqueue.UI;
 
+import Extasys.Network.TCP.Client.ExtasysTCPClient;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.net.InetAddress;
@@ -96,7 +97,6 @@ public class frmNewListener extends JFrame
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("New Listener");
-        setAlwaysOnTop(true);
         setResizable(false);
 
         jLabel1.setText("IP:");
@@ -183,6 +183,7 @@ public class frmNewListener extends JFrame
         catch (Exception ex)
         {
             JOptionPane.showMessageDialog(null, "Invalid port number!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         try
@@ -192,7 +193,31 @@ public class frmNewListener extends JFrame
         catch (Exception ex)
         {
             JOptionPane.showMessageDialog(null, "Invalid maximum connections number!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+
+        // Check if TCP port is in use by an other application.
+        boolean portIsInUse = false;
+        ExtasysTCPClient client = new ExtasysTCPClient("", "", 1, 2);
+
+        try
+        {
+            client.AddConnector("", InetAddress.getByName(jComboBoxIP.getSelectedItem().toString()), Integer.parseInt(jTextFieldPort.getText()), 10240);
+            client.Start();
+            portIsInUse = true;
+            client.Stop();
+        }
+        catch (Exception ex)
+        {
+            // Port is free.
+        }
+
+        if (portIsInUse)
+        {
+            JOptionPane.showMessageDialog(null, "The selected TCP port is in use by an other proccess.\nPlease use an other TCP port for this listener.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         fMainForm.AddListener(jComboBoxIP.getSelectedItem().toString(), Integer.parseInt(jTextFieldPort.getText()), Integer.parseInt(jTextFieldMaxConnections.getText()));
         this.dispose();
 }//GEN-LAST:event_jButtonOKActionPerformed
