@@ -17,6 +17,11 @@ package myqueue.UI;
 
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -37,7 +42,32 @@ public class frmMain extends javax.swing.JFrame
 
     public frmMain()
     {
+        try
+        {
+            ImageIcon titleImage = new ImageIcon(getClass().getResource("/Images/data-server-16x16.png"));
+            this.setIconImage(titleImage.getImage());
+        }
+        catch (Exception ex)
+        {
+            System.err.println(ex.getMessage());
+        }
         initComponents();
+
+        // Load myQueue.properties.
+        try
+        {
+            FileInputStream fis = null;
+            ObjectInputStream in = null;
+            fis = new FileInputStream("myQueueUI.properties");
+            in = new ObjectInputStream(fis);
+
+            MainFormStatus status = (MainFormStatus) in.readObject();
+
+            this.setBounds((int) status.X, (int) status.Y, status.Width, status.Height);
+        }
+        catch (Exception ex)
+        {
+        }
     }
 
     @Override
@@ -154,8 +184,6 @@ public class frmMain extends javax.swing.JFrame
         });
         jPopupMenu1.add(jMenuItemClear);
 
-        popupMenuTray.setLabel("popupMenu1");
-
         menuItemShowServer.setLabel("Show");
         menuItemShowServer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -164,8 +192,13 @@ public class frmMain extends javax.swing.JFrame
         });
         popupMenuTray.add(menuItemShowServer);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("myQueue");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         addWindowStateListener(new java.awt.event.WindowStateListener() {
             public void windowStateChanged(java.awt.event.WindowEvent evt) {
                 formWindowStateChanged(evt);
@@ -245,9 +278,41 @@ public class frmMain extends javax.swing.JFrame
     // Exit.
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem2ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem2ActionPerformed
-        QueueManager.StopAllQueues();
-        this.dispose();
+        Exit();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void Exit()
+    {
+        int answer = JOptionPane.showConfirmDialog(null, "Exit myQueue server?", "Exit", JOptionPane.YES_NO_OPTION);
+        if (answer == JOptionPane.YES_OPTION)
+        {
+            // Save form status.
+            MainFormStatus status = new MainFormStatus();
+            status.Height = this.getHeight();
+            status.Width = this.getWidth();
+            status.X = this.getLocation().getX();
+            status.Y = this.getLocation().getY();
+
+            FileOutputStream fos = null;
+            ObjectOutputStream out = null;
+            try
+            {
+                fos = new FileOutputStream("myQueueUI.properties");
+                out = new ObjectOutputStream(fos);
+                out.writeObject(status);
+                out.close();
+            }
+            catch (IOException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+
+
+            QueueManager.StopAllQueues();
+            this.dispose();
+            System.exit(0);
+        }
+    }
 
     private void jPopupMenu1PopupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt)//GEN-FIRST:event_jPopupMenu1PopupMenuWillBecomeVisible
     {//GEN-HEADEREND:event_jPopupMenu1PopupMenuWillBecomeVisible
@@ -412,6 +477,12 @@ public class frmMain extends javax.swing.JFrame
         this.setVisible(true);
         this.setState(JFrame.NORMAL);
     }//GEN-LAST:event_menuItemShowServerActionPerformed
+
+    // Closing form.
+    private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
+    {//GEN-HEADEREND:event_formWindowClosing
+        Exit();
+    }//GEN-LAST:event_formWindowClosing
 
     public void Update()
     {

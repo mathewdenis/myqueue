@@ -83,9 +83,6 @@
       </SubComponents>
     </Container>
     <Menu class="java.awt.PopupMenu" name="popupMenuTray">
-      <Properties>
-        <Property name="label" type="java.lang.String" value="popupMenu1"/>
-      </Properties>
       <SubComponents>
         <MenuItem class="java.awt.MenuItem" name="menuItemShowServer">
           <Properties>
@@ -126,7 +123,7 @@
     </Menu>
   </NonVisualComponents>
   <Properties>
-    <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="defaultCloseOperation" type="int" value="0"/>
     <Property name="title" type="java.lang.String" value="myQueue"/>
   </Properties>
   <SyntheticProperties>
@@ -134,6 +131,7 @@
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
   </SyntheticProperties>
   <Events>
+    <EventHandler event="windowClosing" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="formWindowClosing"/>
     <EventHandler event="windowStateChanged" listener="java.awt.event.WindowStateListener" parameters="java.awt.event.WindowEvent" handler="formWindowStateChanged"/>
   </Events>
   <AuxValues>
