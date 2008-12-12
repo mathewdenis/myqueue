@@ -40,13 +40,27 @@ public class DataWriter
         fFileExtension = "." + fileExtension;
     }
 
+    /**
+     * Write a file.
+     * @param data is the string data will be written in the file.
+     * @param fileName is the file's name without the file extension.
+     * @throws java.io.IOException
+     */
     public void WriteFile(String data, String fileName) throws IOException
     {
-        FileWriter writer = new FileWriter(fLocation + fileName + "." + fFileExtension);
+        FileWriter writer = new FileWriter(fLocation + fileName + fFileExtension);
         writer.write(data);
         writer.close();
     }
 
+    /**
+     * Write a file.
+     * @param data is the string data will be written in the file.
+     * @param offset from which to start writing characters.
+     * @param length is the number of characters to write.
+     * @param fileName is the file's name without the file extension.
+     * @throws java.io.IOException
+     */
     public void WriteFile(String data, int offset, int length, String fileName) throws IOException
     {
         FileWriter writer = new FileWriter(fLocation + fileName + fFileExtension);
@@ -54,6 +68,13 @@ public class DataWriter
         writer.close();
     }
 
+    /**
+     * Write a file.
+     * @param bytes is the byte[] data will be written in the file.
+     * @param fileName is the file's name without the file extension.
+     * @throws java.io.FileNotFoundException
+     * @throws java.io.IOException
+     */
     public void WriteFile(byte[] bytes, String fileName) throws FileNotFoundException, IOException
     {
         FileOutputStream writer = new FileOutputStream(fLocation + fileName + fFileExtension);
@@ -61,30 +82,19 @@ public class DataWriter
         writer.close();
     }
 
+    /**
+     * Write a file.
+     * @param bytes is the byte[] data will be written in the file.
+     * @param offset is the start offset in the bytes.
+     * @param length is the number of bytes to write.
+     * @param fileName is the file's name without the file extension.
+     * @throws java.io.FileNotFoundException
+     * @throws java.io.IOException
+     */
     public void WriteFile(byte[] bytes, int offset, int length, String fileName) throws FileNotFoundException, IOException
     {
         FileOutputStream writer = new FileOutputStream(fLocation + fileName + fFileExtension);
         writer.write(bytes, offset, length);
         writer.close();
-    }
-
-    public String getLocation()
-    {
-        return fLocation;
-    }
-
-    public void setLocation(String value)
-    {
-        fLocation = value;
-    }
-
-    public String getFileExtension()
-    {
-        return fFileExtension;
-    }
-
-    public void setFileExtension(String value)
-    {
-        fFileExtension = value;
     }
 }

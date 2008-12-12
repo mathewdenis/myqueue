@@ -48,7 +48,7 @@ public class MessageManager
         try
         {
             String fileName = fPriorityInteger + String.valueOf(fFirstInMessage);
-            byte[] bytes = fDataReader.ReadBytes(fileName);
+            byte[] bytes = fDataReader.ReadFile(fileName);
             if (bytes != null)
             {
                 File file = new File(fLocation + "\\" + fileName + ".mqf");
@@ -71,7 +71,7 @@ public class MessageManager
         try
         {
             String fileName = fPriorityInteger + String.valueOf(fFirstInMessage);
-            return fDataReader.ReadBytes(fileName);
+            return fDataReader.ReadFile(fileName);
         }
         catch (Exception ex)
         {
@@ -84,7 +84,7 @@ public class MessageManager
         try
         {
             String fileName = messageID;
-            return fDataReader.ReadBytes(fileName);
+            return fDataReader.ReadFile(fileName);
         }
         catch (Exception ex)
         {
@@ -146,7 +146,7 @@ public class MessageManager
             {
                 try
                 {
-                    int tmpID = Integer.parseInt(file.getName().replace("F_", "").replace(".mqf", ""));
+                    int tmpID = Integer.parseInt(file.getName().replace(fPriorityInteger, "").replace(".mqf", ""));
 
                     maxID = Math.max(maxID, tmpID);
 
