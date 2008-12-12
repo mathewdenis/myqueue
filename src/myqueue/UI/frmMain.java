@@ -283,7 +283,7 @@ public class frmMain extends javax.swing.JFrame
 
     private void Exit()
     {
-        int answer = JOptionPane.showConfirmDialog(null, "Exit myQueue server?", "Exit", JOptionPane.YES_NO_OPTION);
+        int answer = JOptionPane.showConfirmDialog(null, "Exit myQueue server?", "Exit", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (answer == JOptionPane.YES_OPTION)
         {
             // Save form status.
@@ -409,7 +409,7 @@ public class frmMain extends javax.swing.JFrame
             if (jTableQueues.getSelectedRow() >= 0)
             {
                 selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
-                int answer = JOptionPane.showConfirmDialog(null, "Delete " + selectedServer + "?", "Delete", JOptionPane.YES_NO_OPTION);
+                int answer = JOptionPane.showConfirmDialog(null, "Delete " + selectedServer + "?", "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (answer == JOptionPane.YES_OPTION)
                 {
                     QueueManager.DeleteQueue(selectedServer);
@@ -432,7 +432,7 @@ public class frmMain extends javax.swing.JFrame
             if (jTableQueues.getSelectedRow() >= 0)
             {
                 selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
-                int answer = JOptionPane.showConfirmDialog(null, "Clear " + selectedServer + " messages?", "Clear Queue", JOptionPane.YES_NO_OPTION);
+                int answer = JOptionPane.showConfirmDialog(null, "Clear " + selectedServer + " messages?", "Clear Queue", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (answer == JOptionPane.YES_OPTION)
                 {
                     QueueManager.ClearQueue(selectedServer);
