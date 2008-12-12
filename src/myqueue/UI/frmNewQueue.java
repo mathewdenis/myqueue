@@ -179,25 +179,25 @@ public class frmNewQueue extends javax.swing.JFrame
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel2.setText("The number of threads to keep in the pool, even if they are idle.");
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel7.setText("The maximum number of threads to allow in the pool.");
 
-        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel8.setText("Name for this queue.");
 
-        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel9.setText("Description for this queue.");
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel10.setText("The path at wich the queue saves the messages.");
 
         jLabel11.setText("Listeners:");
 
         jLabel12.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel12.setText("Add one or more listeners to this queue.Make sure the listener's has enought maximum connections for your clients.");
+        jLabel12.setText("Add one or more listeners to this queue. Make sure the listener's has enought maximum connections for your clients.");
         jLabel12.setAutoscrolls(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -207,6 +207,9 @@ public class frmNewQueue extends javax.swing.JFrame
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 562, Short.MAX_VALUE)
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
@@ -222,7 +225,6 @@ public class frmNewQueue extends javax.swing.JFrame
                         .addContainerGap(125, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
                             .addComponent(jLabel11)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 454, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -230,7 +232,7 @@ public class frmNewQueue extends javax.swing.JFrame
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jButtonAddListener, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jButtonRemoveListener))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jButtonOK)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -369,8 +371,27 @@ public class frmNewQueue extends javax.swing.JFrame
         String name = jTextFieldName.getText();
         String description = jTextFieldDescription.getText();
 
-        int corePoolSize = Integer.parseInt(jTextFieldCorePoolSize.getText());
-        int maxPoolSize = Integer.parseInt(jTextFieldMaxPoolSize.getText());
+        int corePoolSize = 0;
+        try
+        {
+            corePoolSize = Integer.parseInt(jTextFieldCorePoolSize.getText());
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, "Invalid core pool size!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int maxPoolSize = 0;
+        try
+        {
+            maxPoolSize = Integer.parseInt(jTextFieldMaxPoolSize.getText());
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, "Invalid max pool size!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         ArrayList listeners = new ArrayList();
 
@@ -392,7 +413,7 @@ public class frmNewQueue extends javax.swing.JFrame
 
         try
         {
-            QueueManager.CreateNewQueue(jTextFieldName.getText(), jTextFieldDescription.getText(), jTextFieldLocation.getText(), Integer.parseInt(jTextFieldCorePoolSize.getText()), Integer.parseInt(jTextFieldMaxPoolSize.getText()), listeners);
+            QueueManager.CreateNewQueue(jTextFieldName.getText(), jTextFieldDescription.getText(), jTextFieldLocation.getText(), corePoolSize, maxPoolSize, listeners);
             fMainForm.Update();
             this.dispose();
         }
