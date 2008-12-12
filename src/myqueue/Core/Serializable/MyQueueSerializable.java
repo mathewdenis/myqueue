@@ -1,5 +1,6 @@
 package myqueue.Core.Serializable;
 
+import myqueue.Core.StorageEngines.EStorageEngine;
 import java.io.Serializable;
 import java.util.ArrayList;
 import myqueue.Core.*;

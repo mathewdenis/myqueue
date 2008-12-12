@@ -1,5 +1,6 @@
 package myqueue.Core;
 
+import myqueue.Core.StorageEngines.EStorageEngine;
 import myqueue.Core.Serializable.MyQueueSerializable;
 import Extasys.Network.TCP.Server.Listener.TCPListener;
 import java.io.File;

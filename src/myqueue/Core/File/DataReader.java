@@ -28,49 +28,48 @@ public class DataReader
 
     public String ReadFile(String fileName) throws IOException
     {
-        StringBuilder answer = new StringBuilder();
-
-        FileReader reader = new FileReader(fLocation + "\\" + fileName + fFileExtension);
-        BufferedReader bufRead = new BufferedReader(reader);
-
-        int character = bufRead.read();
-        while (character > -1)
+        try
         {
-            answer.append((char) character);
-            character = bufRead.read();
-        }
+            StringBuilder answer = new StringBuilder();
 
-        bufRead.close();
-        return answer.toString();
+            FileReader reader = new FileReader(fLocation + "\\" + fileName + fFileExtension);
+            BufferedReader bufRead = new BufferedReader(reader);
+
+            int character = bufRead.read();
+            while (character > -1)
+            {
+                answer.append((char) character);
+                character = bufRead.read();
+            }
+
+            bufRead.close();
+            return answer.toString();
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
     }
 
     public byte[] ReadBytes(String fileName) throws IOException
     {
-        File file = new File(fLocation + "\\" + fileName + fFileExtension);
-        if (!file.exists())
+        try
+        {
+            File file = new File(fLocation + "\\" + fileName + fFileExtension);
+            InputStream inputStream = new FileInputStream(file);
+
+            long length = file.length();
+            byte[] bytes = new byte[(int) length];
+
+            inputStream.read(bytes, 0, bytes.length);
+
+            inputStream.close();
+            return bytes;
+        }
+        catch (Exception ex)
         {
             return null;
         }
-        InputStream is = new FileInputStream(file);
-
-        long length = file.length();
-
-        byte[] bytes = new byte[(int) length];
-
-        int offset = 0;
-        int numRead = 0;
-        while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0)
-        {
-            offset += numRead;
-        }
-
-        if (offset < bytes.length)
-        {
-            throw new IOException("Could not completely read file " + file.getName());
-        }
-
-        is.close();
-        return bytes;
     }
 }
 
