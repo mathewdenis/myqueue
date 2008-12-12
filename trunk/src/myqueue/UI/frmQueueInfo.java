@@ -15,6 +15,9 @@
  */
 package myqueue.UI;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import javax.swing.ImageIcon;
 import myqueue.Core.MyQueue;
 import myqueue.Core.QueueManager;
 
@@ -30,6 +33,9 @@ public class frmQueueInfo extends javax.swing.JFrame
 
     public frmQueueInfo(String queue)
     {
+        ImageIcon titleImage = new ImageIcon(getClass().getResource("/Images/Button-Info-16x16.png"));
+        this.setIconImage(titleImage.getImage());
+
         initComponents();
         this.setTitle(queue);
         fQueue = queue;
@@ -56,6 +62,12 @@ public class frmQueueInfo extends javax.swing.JFrame
         });
         fUpdateThreadRun = true;
         updateThread.start();
+
+        // Open form in the center of the screen.
+        Dimension us = this.getSize(), them = Toolkit.getDefaultToolkit().getScreenSize();
+        int newX = (them.width - us.width) / 2;
+        int newY = (them.height - us.height) / 2;
+        this.setLocation(newX, newY);
     }
 
     private void Update()
