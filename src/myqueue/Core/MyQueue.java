@@ -75,19 +75,16 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     {
         try
         {
-            String commandIDStr = new String(data.getBytes(), 0, 1);
-            int commandID = Integer.valueOf(commandIDStr);
-            byte[] messageBytes = new byte[data.getLength() - 1];
+            //String commandIDStr = new String(data.getBytes(), 0, 1);
+            int commandID = Integer.valueOf(new String(data.getBytes(), 0, 1));
 
-            byte[] finalBytes;
-            byte[] peekedBytes;
-            int peekedBytesLength = 0;
 
             switch (commandID)
             {
                 case 1: // Enqueue.
                     try
                     {
+                        byte[] messageBytes = new byte[data.getLength() - 1];
                         System.arraycopy(data.getBytes(), 1, messageBytes, 0, data.getLength() - 1);
                         String enqueuedMesageID = fEngine.Enqueue(messageBytes);
 
@@ -95,7 +92,8 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                         {
                             client.SendData("0" + fSplitter); // Message enqueued successfully!
                             // Inform all clients that the message has been enqueued.
-                            ReplyToAllExceptSender("3" + enqueuedMesageID + fSplitter, client);
+                            //ReplyToAllExceptSender("3" + enqueuedMesageID + fSplitter, client);
+                            ReplyToAll("3" + enqueuedMesageID + fSplitter);
                             return;
                         }
                         else
@@ -111,43 +109,78 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     break;
 
                 case 2: // Peek (2 - PeekedMessage - Splitter).
-                    peekedBytes = fEngine.Peek();
-                    peekedBytesLength = peekedBytes == null ? 1 : peekedBytes.length + 1;
-                    finalBytes = new byte[peekedBytesLength + fSplitterLength];
-                    if (peekedBytes != null)
+                    try
                     {
-                        System.arraycopy(peekedBytes, 0, finalBytes, 1, peekedBytes.length);
+                        byte[] finalBytes;
+                        byte[] peekedBytes;
+                        int peekedBytesLength = 0;
+
+                        peekedBytes = fEngine.Peek();
+                        peekedBytesLength = peekedBytes == null ? 1 : peekedBytes.length + 1;
+                        finalBytes = new byte[peekedBytesLength + fSplitterLength];
+                        if (peekedBytes != null)
+                        {
+                            System.arraycopy(peekedBytes, 0, finalBytes, 1, peekedBytes.length);
+                        }
+                        finalBytes[0] = (byte) '2';
+                        System.arraycopy(fSplitterBytes, 0, finalBytes, peekedBytesLength, fSplitterLength);
+                        client.SendData(finalBytes, 0, finalBytes.length);
+                        return;
                     }
-                    finalBytes[0] = (byte) '2';
-                    System.arraycopy(fSplitterBytes, 0, finalBytes, peekedBytesLength, fSplitterLength);
-                    client.SendData(finalBytes, 0, finalBytes.length);
+                    catch (Exception ex)
+                    {
+                        client.SendData("9" + fSplitter); // A fatal error occured.
+                    }
                     break;
 
                 case 3: // Dequeue (2 - DequeuedMessage - Splitter).
-                    peekedBytes = fEngine.Dequeue();
-                    peekedBytesLength = peekedBytes == null ? 1 : peekedBytes.length + 1;
-                    finalBytes = new byte[peekedBytesLength + fSplitterLength];
-                    if (peekedBytes != null)
+                    try
                     {
-                        System.arraycopy(peekedBytes, 0, finalBytes, 1, peekedBytes.length);
+                        byte[] finalBytes;
+                        byte[] peekedBytes;
+                        int peekedBytesLength = 0;
+
+                        peekedBytes = fEngine.Dequeue();
+                        peekedBytesLength = peekedBytes == null ? 1 : peekedBytes.length + 1;
+                        finalBytes = new byte[peekedBytesLength + fSplitterLength];
+                        if (peekedBytes != null)
+                        {
+                            System.arraycopy(peekedBytes, 0, finalBytes, 1, peekedBytes.length);
+                        }
+                        finalBytes[0] = (byte) '2';
+                        System.arraycopy(fSplitterBytes, 0, finalBytes, peekedBytesLength, fSplitterLength);
+                        client.SendData(finalBytes, 0, finalBytes.length);
+                        return;
                     }
-                    finalBytes[0] = (byte) '2';
-                    System.arraycopy(fSplitterBytes, 0, finalBytes, peekedBytesLength, fSplitterLength);
-                    client.SendData(finalBytes, 0, finalBytes.length);
+                    catch (Exception ex)
+                    {
+                        client.SendData("9" + fSplitter); // A fatal error occured.
+                    }
                     break;
 
                 case 4: // Request message (4 - Message - Splitter).
-                    String messageID = new String(data.getBytes(), 1, data.getLength() - 1);
-                    peekedBytes = fEngine.GetMessageByID(messageID);
-                    peekedBytesLength = peekedBytes == null ? 1 : peekedBytes.length + 1;
-                    finalBytes = new byte[peekedBytesLength + fSplitterLength];
-                    if (peekedBytes != null)
+                    try
                     {
-                        System.arraycopy(peekedBytes, 0, finalBytes, 1, peekedBytes.length);
+                        byte[] finalBytes;
+                        byte[] peekedBytes;
+                        int peekedBytesLength = 0;
+
+                        peekedBytes = fEngine.GetMessageByID(new String(data.getBytes(), 1, data.getLength() - 1));
+                        peekedBytesLength = peekedBytes == null ? 1 : peekedBytes.length + 1;
+                        finalBytes = new byte[peekedBytesLength + fSplitterLength];
+                        if (peekedBytes != null)
+                        {
+                            System.arraycopy(peekedBytes, 0, finalBytes, 1, peekedBytes.length);
+                        }
+                        finalBytes[0] = (byte) '4';
+                        System.arraycopy(fSplitterBytes, 0, finalBytes, peekedBytesLength, fSplitterLength);
+                        client.SendData(finalBytes, 0, finalBytes.length);
+                        return;
                     }
-                    finalBytes[0] = (byte) '4';
-                    System.arraycopy(fSplitterBytes, 0, finalBytes, peekedBytesLength, fSplitterLength);
-                    client.SendData(finalBytes, 0, finalBytes.length);
+                    catch (Exception ex)
+                    {
+                        client.SendData("9" + fSplitter); // A fatal error occured.
+                    }
                     break;
 
                 case 9: // Keep - Alive

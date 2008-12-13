@@ -147,7 +147,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
      * @param data is the string data to be enqueued.
      * @throws Exception
      */
-    public synchronized void Enqueue(String data) throws EnqueueMessageException, MyQueueConnectorDisconnectedException
+    public void Enqueue(String data) throws EnqueueMessageException, MyQueueConnectorDisconnectedException
     {
         synchronized (fSyncObject)
         {
@@ -181,7 +181,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         }
     }
 
-    public synchronized void Enqueue(String data, int priority) throws EnqueueMessageException, MyQueueConnectorDisconnectedException
+    public void Enqueue(String data, int priority) throws EnqueueMessageException, MyQueueConnectorDisconnectedException
     {
         synchronized (fSyncObject)
         {
@@ -219,7 +219,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
      * Returns the message at the beginning of the Queue without removing it.
      * @return the message at the beginning of the Queue without removing it.
      */
-    public synchronized MessageQueueMessage Peek() throws PeekMessageException, MyQueueConnectorDisconnectedException
+    public MessageQueueMessage Peek() throws PeekMessageException, MyQueueConnectorDisconnectedException
     {
         synchronized (fSyncObject)
         {
@@ -253,7 +253,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
      * Removes and returns the message at the beginning of the Queue.
      * @return Removes and returns the message at the beginning of the Queue.
      */
-    public synchronized MessageQueueMessage Dequeue() throws MyQueueConnectorDisconnectedException, DequeueMessageException
+    public MessageQueueMessage Dequeue() throws MyQueueConnectorDisconnectedException, DequeueMessageException
     {
         synchronized (fSyncObject)
         {
@@ -310,54 +310,57 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
      * @throws myqueue.Connector.Exceptions.MyQueueConnectorDisconnectedException
      * @throws java.lang.Exception
      */
-    public synchronized MessageQueueMessage Receive(int timeOut) throws MyQueueConnectorDisconnectedException, ReceivedMessageException
+    public MessageQueueMessage Receive(int timeOut) throws MyQueueConnectorDisconnectedException, ReceivedMessageException
     {
-        if (timeOut < 2000 || timeOut > 20000)
-        {
-            timeOut = 5000;
-        }
-        if (!fIsReceiving)
-        {
-            fBeginReceiveWaitEvt.WaitOne(timeOut);
-            return null;
-        }
-
-        TryToConnect();
-
-        try
-        {
-            fWaitForMessagesEvt.Reset();
-            fBeginReceiveWaitEvt.Reset();
-
-            fReceivedMessage = null;
-            if (!fReceivedMesagesQueue.isEmpty() && fIsReceiving)
+        //synchronized (fSyncObject)
+        //{
+            if (timeOut < 2000 || timeOut > 20000)
             {
-                // Request the message from the server.
-                fMessageReceivedSuccessfully = false;
-                String messageID = fReceivedMesagesQueue.dequeue().toString();
-                SendData("4" + messageID + fSplitter);
-                fBeginReceiveWaitEvt.WaitOne(timeOut);
-
-                if (!fMessageReceivedSuccessfully)
-                {
-                    throw new ReceivedMessageException("Message " + messageID + " could not be received.");
-                }
+                timeOut = 5000;
             }
-            else
+            if (!fIsReceiving)
             {
-                // Send a keep alive.
-                SendData("9" + fSplitter);
-                fWaitForMessagesEvt.WaitOne(timeOut);
+                fBeginReceiveWaitEvt.WaitOne(timeOut);
+                return null;
+            }
+
+            TryToConnect();
+
+            try
+            {
+                fWaitForMessagesEvt.Reset();
+                fBeginReceiveWaitEvt.Reset();
+
+                fReceivedMessage = null;
                 if (!fReceivedMesagesQueue.isEmpty() && fIsReceiving)
                 {
-                    return Receive(timeOut);
+                    // Request the message from the server.
+                    fMessageReceivedSuccessfully = false;
+                    String messageID = fReceivedMesagesQueue.dequeue().toString();
+                    SendData("4" + messageID + fSplitter);
+                    fBeginReceiveWaitEvt.WaitOne(timeOut);
+
+                    if (!fMessageReceivedSuccessfully)
+                    {
+                        throw new ReceivedMessageException("Message " + messageID + " could not be received.");
+                    }
+                }
+                else
+                {
+                    // Send a keep alive.
+                    SendData("9" + fSplitter);
+                    fWaitForMessagesEvt.WaitOne(timeOut);
+                    if (!fReceivedMesagesQueue.isEmpty() && fIsReceiving)
+                    {
+                        return Receive(timeOut);
+                    }
                 }
             }
-        }
-        catch (Exception ex)
-        {
-        }
-        return fReceivedMessage;
+            catch (Exception ex)
+            {
+            }
+            return fReceivedMessage;
+        //}
     }
 
     private void TryToConnect() throws MyQueueConnectorDisconnectedException
