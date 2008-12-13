@@ -92,8 +92,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                         {
                             client.SendData("0" + fSplitter); // Message enqueued successfully!
                             // Inform all clients that the message has been enqueued.
-                            //ReplyToAllExceptSender("3" + enqueuedMesageID + fSplitter, client);
-                            ReplyToAll("3" + enqueuedMesageID + fSplitter);
+                            ReplyToAllExceptSender("3" + enqueuedMesageID + fSplitter, client);
                             return;
                         }
                         else

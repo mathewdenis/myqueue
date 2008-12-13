@@ -32,6 +32,7 @@ import myqueue.Connector.Exceptions.ReceivedMessageException;
 public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
 {
 
+    private boolean fIsConnected = false;
     private ManualResetEvent fWaitEvt = new ManualResetEvent(false);
     private final Object fSyncObject = new Object();
     // myQueue Server
@@ -68,12 +69,14 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     @Override
     public void OnConnect(TCPConnector connector)
     {
+        fIsConnected = true;
         System.out.println("Connector connected");
     }
 
     @Override
     public void OnDisconnect(TCPConnector connector)
     {
+        fIsConnected = false;
         System.err.println("Connector disconnected.");
         Disconnect();
     }
@@ -83,21 +86,20 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     {
         try
         {
-            String commandIDStr = new String(data.getBytes(), 0, 1);
-            int commandID = Integer.valueOf(commandIDStr);
+            int commandID = Integer.valueOf(new String(data.getBytes(), 0, 1));
 
             switch (commandID)
             {
                 case 0: // Message enqueued successfully!
                     fMessageEnqueuedSuccessfully = true;
                     fWaitEvt.Set();
-                    break;
+                    return;
 
                 case 1: // An error occured during the message enqueue proccess.
                     fEnqueueMessageProccessError = "An error occured during the server's message enqueue proccess.";
                     fMessageEnqueuedSuccessfully = false;
                     fWaitEvt.Set();
-                    break;
+                    return;
 
                 case 2: // Peek or Dequeue data.
                     String message = new String(data.getBytes(), 1, data.getLength() - 1);
@@ -109,7 +111,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                     }
                     fMessagePeekedSuccessfully = true;
                     fWaitEvt.Set();
-                    break;
+                    return;
 
                 case 3: // Begin receive.
                     if (fIsReceiving)
@@ -117,7 +119,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                         fReceivedMesagesQueue.enqueue(new String(data.getBytes(), 1, data.getLength() - 1));
                         fWaitForMessagesEvt.Set();
                     }
-                    break;
+                    return;
 
                 case 4: // Receive requested message.
                     String requestedMessage = new String(data.getBytes(), 1, data.getLength() - 1);
@@ -129,11 +131,11 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                     }
                     fMessageReceivedSuccessfully = true;
                     fBeginReceiveWaitEvt.Set();
-                    break;
+                    return;
 
                 case 9: // Fatal error.
                     fWaitEvt.Set();
-                    break;
+                    return;
             }
         }
         catch (Exception ex)
@@ -314,58 +316,59 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     {
         //synchronized (fSyncObject)
         //{
-            if (timeOut < 2000 || timeOut > 20000)
+        if (timeOut < 2000 || timeOut > 20000)
+        {
+            timeOut = 5000;
+        }
+        if (!fIsReceiving)
+        {
+            fBeginReceiveWaitEvt.WaitOne(timeOut);
+            return null;
+        }
+
+        TryToConnect();
+
+        try
+        {
+            fWaitForMessagesEvt.Reset();
+            fBeginReceiveWaitEvt.Reset();
+
+            fReceivedMessage = null;
+            if (!fReceivedMesagesQueue.isEmpty() && fIsReceiving)
             {
-                timeOut = 5000;
-            }
-            if (!fIsReceiving)
-            {
+                // Request the message from the server.
+                fMessageReceivedSuccessfully = false;
+                String messageID = fReceivedMesagesQueue.dequeue().toString();
+                SendData("4" + messageID + fSplitter);
                 fBeginReceiveWaitEvt.WaitOne(timeOut);
-                return null;
+
+                if (!fMessageReceivedSuccessfully)
+                {
+                    throw new ReceivedMessageException("Message " + messageID + " could not be received.");
+                }
             }
-
-            TryToConnect();
-
-            try
+            else
             {
-                fWaitForMessagesEvt.Reset();
-                fBeginReceiveWaitEvt.Reset();
-
-                fReceivedMessage = null;
+                // Send a keep alive.
+                SendData("9" + fSplitter);
+                fWaitForMessagesEvt.WaitOne(timeOut);
                 if (!fReceivedMesagesQueue.isEmpty() && fIsReceiving)
                 {
-                    // Request the message from the server.
-                    fMessageReceivedSuccessfully = false;
-                    String messageID = fReceivedMesagesQueue.dequeue().toString();
-                    SendData("4" + messageID + fSplitter);
-                    fBeginReceiveWaitEvt.WaitOne(timeOut);
-
-                    if (!fMessageReceivedSuccessfully)
-                    {
-                        throw new ReceivedMessageException("Message " + messageID + " could not be received.");
-                    }
-                }
-                else
-                {
-                    // Send a keep alive.
-                    SendData("9" + fSplitter);
-                    fWaitForMessagesEvt.WaitOne(timeOut);
-                    if (!fReceivedMesagesQueue.isEmpty() && fIsReceiving)
-                    {
-                        return Receive(timeOut);
-                    }
+                    return Receive(timeOut);
                 }
             }
-            catch (Exception ex)
-            {
-            }
-            return fReceivedMessage;
-        //}
+        }
+        catch (Exception ex)
+        {
+        }
+        return fReceivedMessage;
+    //}
     }
 
     private void TryToConnect() throws MyQueueConnectorDisconnectedException
     {
-        if (super.getConnectors().size() == 0 || !((TCPConnector) super.getConnectors().get(0)).isConnected())
+        if (!fIsConnected)
+        //if (super.getConnectors().size() == 0 || !((TCPConnector) super.getConnectors().get(0)).isConnected())
         {
             try
             {
