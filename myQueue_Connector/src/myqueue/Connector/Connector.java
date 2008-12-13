@@ -127,8 +127,9 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                     int indexOfRequestedMessageID = requestedMessage.indexOf('\n');
                     if (indexOfRequestedMessageID > 0)
                     {
-                        String messageID = requestedMessage.substring(0, indexOfRequestedMessageID);
-                        fReceivedMessage = new MessageQueueMessage(messageID, requestedMessage.substring(indexOfRequestedMessageID + 2), Integer.valueOf(requestedMessage.substring(indexOfRequestedMessageID + 1, indexOfRequestedMessageID + 2)));
+                        fReceivedMessage = new MessageQueueMessage(requestedMessage.substring(0, indexOfRequestedMessageID),
+                                requestedMessage.substring(indexOfRequestedMessageID + 2),
+                                Integer.valueOf(requestedMessage.substring(indexOfRequestedMessageID + 1, indexOfRequestedMessageID + 2)));
                     }
                     fMessageReceivedSuccessfully = true;
                     fBeginReceiveWaitEvt.Set();
