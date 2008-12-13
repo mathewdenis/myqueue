@@ -57,7 +57,6 @@ public class frmQueueInfo extends javax.swing.JFrame
                     {
                     }
                 }
-
             }
         });
         fUpdateThreadRun = true;
@@ -103,8 +102,13 @@ public class frmQueueInfo extends javax.swing.JFrame
         jLabel4 = new javax.swing.JLabel();
         jLabelMessagesCount = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jLabel1.setText("Bytes In:");
 
@@ -192,6 +196,12 @@ public class frmQueueInfo extends javax.swing.JFrame
         fUpdateThreadRun = false;
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
+    {//GEN-HEADEREND:event_formWindowClosing
+        fUpdateThreadRun = false;
+        this.dispose();
+    }//GEN-LAST:event_formWindowClosing
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

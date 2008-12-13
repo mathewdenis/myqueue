@@ -96,10 +96,12 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                             client.SendData("0" + fSplitter); // Message enqueued successfully!
                             // Inform all clients that the message has been enqueued.
                             ReplyToAllExceptSender("3" + enqueuedMesageID + fSplitter, client);
+                            return;
                         }
                         else
                         {
                             client.SendData("1" + fSplitter); // An error occured during the message enqueue proccess.
+                            return;
                         }
                     }
                     catch (Exception ex)
