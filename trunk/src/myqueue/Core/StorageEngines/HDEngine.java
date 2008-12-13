@@ -77,11 +77,12 @@ public class HDEngine extends StorageEngine
     {
         synchronized (fSyncObject)
         {
-            if (messageID.startsWith("PH")) // High priority message.
+            String priorityIdicator = messageID.substring(0, 2);
+            if (priorityIdicator.equals("PH")) // High priority message.
             {
                 return fHighPriorityMessageManager.GetMessageByID(messageID);
             }
-            else if (messageID.startsWith("PA")) // Above normal priority message.
+            else if (priorityIdicator.equals("PA")) // Above normal priority message.
             {
                 return fAboveNormalPriorityMessageManager.GetMessageByID(messageID);
             }
@@ -94,8 +95,7 @@ public class HDEngine extends StorageEngine
     {
         synchronized (fSyncObject)
         {
-            String messagePriorityStr = new String(bytes, 0, 1);
-            int messagePriority = Integer.parseInt(messagePriorityStr);
+            int messagePriority = Integer.parseInt(new String(bytes, 0, 1));
             switch (messagePriority)
             {
                 case 0: // Normal priority

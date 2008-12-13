@@ -26,15 +26,19 @@ public class ObjectQueue extends LinkedList
 
     private final Object fSync = new Object();
 
-    public synchronized void enqueue(Object element)
+    public ObjectQueue()
+    {
+    }
+
+    public void enqueue(Object element)
     {
         synchronized (fSync)
         {
-            add(element);
+            addLast(element);
         }
     }
 
-    public synchronized Object dequeue()
+    public Object dequeue()
     {
         synchronized (fSync)
         {
