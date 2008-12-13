@@ -75,9 +75,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     {
         try
         {
-            //String commandIDStr = new String(data.getBytes(), 0, 1);
             int commandID = Integer.valueOf(new String(data.getBytes(), 0, 1));
-
 
             switch (commandID)
             {
@@ -167,7 +165,8 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                         peekedBytes = fEngine.GetMessageByID(new String(data.getBytes(), 1, data.getLength() - 1));
                         peekedBytesLength = peekedBytes == null ? 1 : peekedBytes.length + 1;
                         finalBytes = new byte[peekedBytesLength + fSplitterLength];
-                        if (peekedBytes != null)
+                        //if (peekedBytes != null)
+                        if (peekedBytesLength > 1)
                         {
                             System.arraycopy(peekedBytes, 0, finalBytes, 1, peekedBytes.length);
                         }
