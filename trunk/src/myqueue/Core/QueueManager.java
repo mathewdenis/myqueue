@@ -140,7 +140,7 @@ public class QueueManager
     {
         if (fQueues.containsKey(name))
         {
-            StopQueue(name);
+            ((MyQueue) fQueues.get(name)).Dispose();
             fQueues.remove(name);
 
             try

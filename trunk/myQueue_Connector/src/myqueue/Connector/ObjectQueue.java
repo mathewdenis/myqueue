@@ -15,26 +15,27 @@
  */
 package myqueue.Connector;
 
-import java.util.LinkedList;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  *
  * @author Nikos Siatras
  */
-public class ObjectQueue extends LinkedList
+public class ObjectQueue extends ArrayBlockingQueue
 {
 
     private final Object fSync = new Object();
 
     public ObjectQueue()
     {
+        super(100000);
     }
 
     public void enqueue(Object element)
     {
         synchronized (fSync)
         {
-            addLast(element);
+            add(element);
         }
     }
 
@@ -42,7 +43,7 @@ public class ObjectQueue extends LinkedList
     {
         synchronized (fSync)
         {
-            return removeFirst();
+            return remove();
         }
     }
 }

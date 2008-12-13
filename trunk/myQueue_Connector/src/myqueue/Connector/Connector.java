@@ -97,6 +97,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
 
                 case 1: // An error occured during the message enqueue proccess.
                     fEnqueueMessageProccessError = "An error occured during the server's message enqueue proccess.";
+                    System.err.println(fEnqueueMessageProccessError);
                     fMessageEnqueuedSuccessfully = false;
                     fWaitEvt.Set();
                     return;
@@ -135,6 +136,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
 
                 case 9: // Fatal error.
                     fWaitEvt.Set();
+                    System.err.println("Fatal error");
                     return;
             }
         }
@@ -314,8 +316,6 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
      */
     public MessageQueueMessage Receive(int timeOut) throws MyQueueConnectorDisconnectedException, ReceivedMessageException
     {
-        //synchronized (fSyncObject)
-        //{
         if (timeOut < 2000 || timeOut > 20000)
         {
             timeOut = 5000;
@@ -336,15 +336,18 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
             fReceivedMessage = null;
             if (!fReceivedMesagesQueue.isEmpty() && fIsReceiving)
             {
-                // Request the message from the server.
-                fMessageReceivedSuccessfully = false;
-                String messageID = fReceivedMesagesQueue.dequeue().toString();
-                SendData("4" + messageID + fSplitter);
-                fBeginReceiveWaitEvt.WaitOne(timeOut);
-
-                if (!fMessageReceivedSuccessfully)
+                synchronized (fSyncObject)
                 {
-                    throw new ReceivedMessageException("Message " + messageID + " could not be received.");
+                    // Request the message from the server.
+                    fMessageReceivedSuccessfully = false;
+                    String messageID = fReceivedMesagesQueue.dequeue().toString();
+                    SendData("4" + messageID + fSplitter);
+                    fBeginReceiveWaitEvt.WaitOne(timeOut);
+
+                    if (!fMessageReceivedSuccessfully)
+                    {
+                        throw new ReceivedMessageException("Message " + messageID + " could not be received.");
+                    }
                 }
             }
             else
@@ -362,7 +365,6 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         {
         }
         return fReceivedMessage;
-    //}
     }
 
     private void TryToConnect() throws MyQueueConnectorDisconnectedException
