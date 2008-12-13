@@ -27,6 +27,7 @@ public class HDEngine extends StorageEngine
     private HDMessageManager fNormalPriorityMessageManager;
     private HDMessageManager fAboveNormalPriorityMessageManager;
     private HDMessageManager fHighPriorityMessageManager;
+    private final Object fSyncObject = new Object();
 
     public HDEngine(String location)
     {
@@ -38,64 +39,76 @@ public class HDEngine extends StorageEngine
     }
 
     @Override
-    public synchronized byte[] Dequeue()
+    public byte[] Dequeue()
     {
-        if (fHighPriorityMessageManager.fMessageCount > 0)
+        synchronized (fSyncObject)
         {
-            return fHighPriorityMessageManager.Dequeue();
+            if (fHighPriorityMessageManager.fMessageCount > 0)
+            {
+                return fHighPriorityMessageManager.Dequeue();
+            }
+            else if (fAboveNormalPriorityMessageManager.fMessageCount > 0)
+            {
+                return fAboveNormalPriorityMessageManager.Dequeue();
+            }
+            return fNormalPriorityMessageManager.Dequeue();
         }
-        else if (fAboveNormalPriorityMessageManager.fMessageCount > 0)
-        {
-            return fAboveNormalPriorityMessageManager.Dequeue();
-        }
-        return fNormalPriorityMessageManager.Dequeue();
     }
 
     @Override
-    public synchronized byte[] Peek()
+    public byte[] Peek()
     {
-        if (fHighPriorityMessageManager.fMessageCount > 0)
+        synchronized (fSyncObject)
         {
-            return fHighPriorityMessageManager.Peek();
+            if (fHighPriorityMessageManager.fMessageCount > 0)
+            {
+                return fHighPriorityMessageManager.Peek();
+            }
+            else if (fAboveNormalPriorityMessageManager.fMessageCount > 0)
+            {
+                return fAboveNormalPriorityMessageManager.Peek();
+            }
+            return fNormalPriorityMessageManager.Peek();
         }
-        else if (fAboveNormalPriorityMessageManager.fMessageCount > 0)
-        {
-            return fAboveNormalPriorityMessageManager.Peek();
-        }
-        return fNormalPriorityMessageManager.Peek();
     }
 
     @Override
-    public synchronized byte[] GetMessageByID(String messageID)
+    public byte[] GetMessageByID(String messageID)
     {
-        if (messageID.startsWith("PH")) // High priority message.
+        synchronized (fSyncObject)
         {
-            return fHighPriorityMessageManager.GetMessageByID(messageID);
+            if (messageID.startsWith("PH")) // High priority message.
+            {
+                return fHighPriorityMessageManager.GetMessageByID(messageID);
+            }
+            else if (messageID.startsWith("PA")) // Above normal priority message.
+            {
+                return fAboveNormalPriorityMessageManager.GetMessageByID(messageID);
+            }
+            return fNormalPriorityMessageManager.GetMessageByID(messageID); // Normal priority message.
         }
-        else if (messageID.startsWith("PA")) // Above normal priority message.
-        {
-            return fAboveNormalPriorityMessageManager.GetMessageByID(messageID);
-        }
-        return fNormalPriorityMessageManager.GetMessageByID(messageID); // Normal priority message.
     }
 
     @Override
-    public synchronized String Enqueue(byte[] bytes)
+    public String Enqueue(byte[] bytes)
     {
-        String messagePriorityStr = new String(bytes, 0, 1);
-        int messagePriority = Integer.parseInt(messagePriorityStr);
-        switch (messagePriority)
+        synchronized (fSyncObject)
         {
-            case 0: // Normal priority
-                return fNormalPriorityMessageManager.Enqueue(bytes);
+            String messagePriorityStr = new String(bytes, 0, 1);
+            int messagePriority = Integer.parseInt(messagePriorityStr);
+            switch (messagePriority)
+            {
+                case 0: // Normal priority
+                    return fNormalPriorityMessageManager.Enqueue(bytes);
 
-            case 1: // Above normal priority
-                return fAboveNormalPriorityMessageManager.Enqueue(bytes);
+                case 1: // Above normal priority
+                    return fAboveNormalPriorityMessageManager.Enqueue(bytes);
 
-            case 2: // High priority
-                return fHighPriorityMessageManager.Enqueue(bytes);
+                case 2: // High priority
+                    return fHighPriorityMessageManager.Enqueue(bytes);
+            }
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -113,11 +126,14 @@ public class HDEngine extends StorageEngine
     }
 
     @Override
-    public synchronized void Clear()
+    public void Clear()
     {
-        fNormalPriorityMessageManager.ClearMessages();
-        fAboveNormalPriorityMessageManager.ClearMessages();
-        fHighPriorityMessageManager.ClearMessages();
+        synchronized (fSyncObject)
+        {
+            fNormalPriorityMessageManager.ClearMessages();
+            fAboveNormalPriorityMessageManager.ClearMessages();
+            fHighPriorityMessageManager.ClearMessages();
+        }
     }
 
     @Override
