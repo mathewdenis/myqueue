@@ -38,11 +38,10 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     // myQueue Server
     private InetAddress fIP;
     private int fPort;
-    private String fSplitter = "#!" + String.valueOf(((char) 2)) + "!#";
+    private String fSplitter = String.valueOf(((char) 1)) + String.valueOf(((char) 2)) + String.valueOf(((char) 3)) + String.valueOf(((char) 4)) + "@";
     // Enqueue
     private boolean fMessageEnqueuedSuccessfully = false;
-    private boolean fEnqueueMessageErrorReported = false;
-    private String fEnqueueMessageProccessError = "";
+    private String fMessageEnqueueError = "";
     // Peek
     private boolean fMessagePeekedSuccessfully = false;
     private MessageQueueMessage fMessage;
@@ -96,8 +95,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                     return;
 
                 case 1: // An error occured during the message enqueue proccess.
-                    fEnqueueMessageProccessError = "An error occured during the server's message enqueue proccess.";
-                    System.err.println(fEnqueueMessageProccessError);
+                    fMessageEnqueueError = new String(data.getBytes(), 1, data.getLength() - 1);
                     fMessageEnqueuedSuccessfully = false;
                     fWaitEvt.Set();
                     return;
@@ -137,7 +135,8 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
 
                 case 9: // Fatal error.
                     fWaitEvt.Set();
-                    System.err.println("Fatal error");
+                    String error = new String(data.getBytes(), 1, data.getLength() - 1);
+                    System.err.println(error);
                     return;
             }
         }
@@ -159,7 +158,6 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
             TryToConnect();
 
             fMessageEnqueuedSuccessfully = false;
-            fEnqueueMessageErrorReported = false;
 
             fWaitEvt.Reset();
             try
@@ -176,12 +174,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
             if (!fMessageEnqueuedSuccessfully)
             {
                 // Could not receive response from the server that certifies that the message has been enqueued successfully.
-                throw new EnqueueMessageException("Could not receive response from the server that certifies the message has been enqueued successfully.");
-            }
-            if (fEnqueueMessageErrorReported)
-            {
-                // An error occured during the server's message enqueue proccess.
-                throw new EnqueueMessageException(fEnqueueMessageProccessError);
+                throw new EnqueueMessageException(fMessageEnqueueError);
             }
         }
     }
@@ -193,7 +186,6 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
             TryToConnect();
 
             fMessageEnqueuedSuccessfully = false;
-            fEnqueueMessageErrorReported = false;
 
             fWaitEvt.Reset();
             try
@@ -210,12 +202,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
             if (!fMessageEnqueuedSuccessfully)
             {
                 // Could not receive response from the server that certifies that the message has been enqueued successfully.
-                throw new EnqueueMessageException("Could not receive response from the server that certifies the message has been enqueued successfully.");
-            }
-            if (fEnqueueMessageErrorReported)
-            {
-                // An error occured during the server's message enqueue proccess.
-                throw new EnqueueMessageException(fEnqueueMessageProccessError);
+                throw new EnqueueMessageException(fMessageEnqueueError);
             }
         }
     }
