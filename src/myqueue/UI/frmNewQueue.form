@@ -58,7 +58,6 @@
                                   <Component id="jButtonAddListener" max="32767" attributes="1"/>
                                   <Component id="jButtonRemoveListener" alignment="0" min="-2" max="-2" attributes="1"/>
                               </Group>
-                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jButtonOK" min="-2" max="-2" attributes="1"/>

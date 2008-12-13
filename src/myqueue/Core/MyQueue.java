@@ -30,7 +30,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     private StorageEngine fEngine;
     private int fCorePoolsSize,  fMaxPoolSize;
     private boolean fRunning = false;
-    private final String fSplitter = "#!" + String.valueOf(((char) 2)) + "!#";
+    private final String fSplitter = String.valueOf(((char) 1)) + String.valueOf(((char) 2)) + String.valueOf(((char) 3)) + String.valueOf(((char) 4)) + "@";
     private int fSplitterLength = 0;
     private byte[] fSplitterBytes = null;
 
@@ -95,13 +95,13 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                         }
                         else
                         {
-                            client.SendData("1" + fSplitter); // An error occured during the message enqueue proccess.
+                            client.SendData("1An error occured on server enqueue message procedure." + fSplitter); // A fatal error occured.
                             return;
                         }
                     }
                     catch (Exception ex)
                     {
-                        client.SendData("1" + fSplitter); // An error occured during the message enqueue proccess.
+                        client.SendData("9Fatal error occured on server enqueue message procedure.\n" + ex.getMessage() + fSplitter); // A fatal error occured.
                     }
                     break;
 
@@ -126,7 +126,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     }
                     catch (Exception ex)
                     {
-                        client.SendData("9" + fSplitter); // A fatal error occured.
+                        client.SendData("9Fatal error occured on server peek message procedure.\n" + ex.getMessage() + fSplitter); // A fatal error occured.
                     }
                     break;
 
@@ -151,7 +151,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     }
                     catch (Exception ex)
                     {
-                        client.SendData("9" + fSplitter); // A fatal error occured.
+                        client.SendData("9Fatal error occured on server dequeue message procedure.\n" + ex.getMessage() + fSplitter); // A fatal error occured.
                     }
                     break;
 
@@ -177,7 +177,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     }
                     catch (Exception ex)
                     {
-                        client.SendData("9" + fSplitter); // A fatal error occured.
+                        client.SendData("9Fatal error occured on server request message procedure.\n" + ex.getMessage() + fSplitter); // A fatal error occured.
                     }
                     break;
 
