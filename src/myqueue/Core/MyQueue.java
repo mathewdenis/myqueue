@@ -99,12 +99,12 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                         }
                         else
                         {
-                            client.SendData("1" + fSplitter); // An error occured during during the message enqueue proccess.
+                            client.SendData("1" + fSplitter); // An error occured during the message enqueue proccess.
                         }
                     }
                     catch (Exception ex)
                     {
-                        client.SendData("1" + fSplitter); // An error occured during during the message enqueue proccess.
+                        client.SendData("1" + fSplitter); // An error occured during the message enqueue proccess.
                     }
                     break;
 
