@@ -33,18 +33,12 @@ public class ObjectQueue extends ArrayBlockingQueue
 
     public void enqueue(Object element)
     {
-        synchronized (fSync)
-        {
-            add(element);
-        }
+        add(element);
     }
 
     public Object dequeue()
     {
-        synchronized (fSync)
-        {
-            return remove();
-        }
+        return remove();
     }
 }
 

@@ -61,7 +61,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
      */
     public Connector(InetAddress ip, int port)
     {
-        super("", "", 5, 10);
+        super("", "", 20, 80);
         fIP = ip;
         fPort = port;
     }
