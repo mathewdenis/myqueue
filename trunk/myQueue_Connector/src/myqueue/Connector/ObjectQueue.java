@@ -24,14 +24,22 @@ import java.util.LinkedList;
 public class ObjectQueue extends LinkedList
 {
 
+    private final Object fSync = new Object();
+
     public synchronized void enqueue(Object element)
     {
-        add(element);
+        synchronized (fSync)
+        {
+            add(element);
+        }
     }
 
     public synchronized Object dequeue()
     {
-        return removeFirst();
+        synchronized (fSync)
+        {
+            return removeFirst();
+        }
     }
 }
 

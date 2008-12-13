@@ -310,7 +310,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
      * @throws myqueue.Connector.Exceptions.MyQueueConnectorDisconnectedException
      * @throws java.lang.Exception
      */
-    public MessageQueueMessage Receive(int timeOut) throws MyQueueConnectorDisconnectedException, ReceivedMessageException
+    public synchronized MessageQueueMessage Receive(int timeOut) throws MyQueueConnectorDisconnectedException, ReceivedMessageException
     {
         if (timeOut < 2000 || timeOut > 20000)
         {
