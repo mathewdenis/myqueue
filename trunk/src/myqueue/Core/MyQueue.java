@@ -71,7 +71,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     }
 
     @Override
-    public void OnDataReceive(TCPClientConnection client, DataFrame data)
+    public synchronized void OnDataReceive(TCPClientConnection client, DataFrame data)
     {
         try
         {

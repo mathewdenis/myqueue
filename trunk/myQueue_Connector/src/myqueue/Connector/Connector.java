@@ -173,7 +173,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
 
             if (!fMessageEnqueuedSuccessfully)
             {
-                // Could not receive response from the server that certifies that the message has been enqueued successfully.
+                // Could not receive response from the server that certifies the message has been enqueued successfully.
                 throw new EnqueueMessageException(fMessageEnqueueError);
             }
         }
