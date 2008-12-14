@@ -30,7 +30,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     private StorageEngine fEngine;
     private int fCorePoolsSize,  fMaxPoolSize;
     private boolean fRunning = false;
-    private final String fSplitter = String.valueOf(((char) 1)) + String.valueOf(((char) 2)) + String.valueOf(((char) 3)) + String.valueOf(((char) 4)) + "@";
+    private final String fSplitter = String.valueOf(((char) 3));
     private int fSplitterLength = 0;
     private byte[] fSplitterBytes = null;
 
@@ -71,7 +71,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     }
 
     @Override
-    public synchronized void OnDataReceive(TCPClientConnection client, DataFrame data)
+    public void OnDataReceive(TCPClientConnection client, DataFrame data)
     {
         try
         {
@@ -165,7 +165,6 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                         peekedBytes = fEngine.GetMessageByID(new String(data.getBytes(), 1, data.getLength() - 1));
                         peekedBytesLength = peekedBytes == null ? 1 : peekedBytes.length + 1;
                         finalBytes = new byte[peekedBytesLength + fSplitterLength];
-                        //if (peekedBytes != null)
                         if (peekedBytesLength > 1)
                         {
                             System.arraycopy(peekedBytes, 0, finalBytes, 1, peekedBytes.length);
