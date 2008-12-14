@@ -38,7 +38,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     // myQueue Server
     private InetAddress fIP;
     private int fPort;
-    private String fSplitter = String.valueOf(((char) 1)) + String.valueOf(((char) 2)) + String.valueOf(((char) 3)) + String.valueOf(((char) 4)) + "@";
+    private String fSplitter = String.valueOf(((char) 3));
     // Enqueue
     private boolean fMessageEnqueuedSuccessfully = false;
     private String fMessageEnqueueError = "";
@@ -142,6 +142,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         }
         catch (Exception ex)
         {
+            System.err.println(ex.getMessage());
             fWaitEvt.Set();
         }
     }
