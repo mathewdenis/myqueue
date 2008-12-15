@@ -24,7 +24,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Vector;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
@@ -42,6 +41,8 @@ public class frmMain extends javax.swing.JFrame
 
     public frmMain()
     {
+
+
         try
         {
             ImageIcon titleImage = new ImageIcon(getClass().getResource("/Images/data-server-16x16.png"));
@@ -53,7 +54,7 @@ public class frmMain extends javax.swing.JFrame
         }
         initComponents();
 
-        // Load myQueue.properties.
+        // Load myQueueUI.properties.
         try
         {
             FileInputStream fis = null;
@@ -68,11 +69,19 @@ public class frmMain extends javax.swing.JFrame
         catch (Exception ex)
         {
         }
+        ShowForm();
     }
 
     @Override
     public void setVisible(boolean b)
     {
+        String osName = System.getProperty("os.name");
+        boolean osIsWindows = false;
+        if (osName.contains("Windows"))
+        {
+            osIsWindows = true;
+        }
+
         super.setVisible(b);
         QueueManager.Load();
         jTableQueues.getColumnModel().getColumn(0).setCellRenderer(new ImageTableCellRenderer());
@@ -84,10 +93,22 @@ public class frmMain extends javax.swing.JFrame
             {
                 SystemTray tray = SystemTray.getSystemTray();
 
-                ImageIcon trayImage = new ImageIcon(getClass().getResource("/Images/data-server-16x16.png"));
-                fTrayIcon = new TrayIcon(trayImage.getImage());
+                String trayIconPath = "";
+                if (osIsWindows)
+                {
+                    trayIconPath = "/Images/data-server-16x16.png";
+                    ImageIcon trayImage = new ImageIcon(getClass().getResource(trayIconPath));
+                    fTrayIcon = new TrayIcon(trayImage.getImage());
+                }
+                else
+                {
+                    trayIconPath = "/Images/data-server-32x32.png";
+                    ImageIcon trayImage = new ImageIcon(getClass().getResource(trayIconPath));
+                    fTrayIcon = new TrayIcon(trayImage.getImage());
+                }
 
                 fTrayIcon.setToolTip("myQueue");
+                fTrayIcon.setImageAutoSize(true);
                 fTrayIcon.setPopupMenu(popupMenuTray);
                 tray.add(fTrayIcon);
             }
@@ -199,11 +220,6 @@ public class frmMain extends javax.swing.JFrame
                 formWindowClosing(evt);
             }
         });
-        addWindowStateListener(new java.awt.event.WindowStateListener() {
-            public void windowStateChanged(java.awt.event.WindowEvent evt) {
-                formWindowStateChanged(evt);
-            }
-        });
 
         jTableQueues.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -306,7 +322,6 @@ public class frmMain extends javax.swing.JFrame
             {
                 System.err.println(ex.getMessage());
             }
-
 
             QueueManager.StopAllQueues();
             this.dispose();
@@ -469,25 +484,35 @@ public class frmMain extends javax.swing.JFrame
         }
     }//GEN-LAST:event_jMenuItemInfoActionPerformed
 
-    private void formWindowStateChanged(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowStateChanged
-    {//GEN-HEADEREND:event_formWindowStateChanged
-        if (this.getState() == JFrame.ICONIFIED)
-        {
-            this.setVisible(false);
-        }
-    }//GEN-LAST:event_formWindowStateChanged
-
-    private void menuItemShowServerActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_menuItemShowServerActionPerformed
-    {//GEN-HEADEREND:event_menuItemShowServerActionPerformed
-        this.setVisible(true);
-        this.setState(JFrame.NORMAL);
-    }//GEN-LAST:event_menuItemShowServerActionPerformed
-
     // Closing form.
     private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
     {//GEN-HEADEREND:event_formWindowClosing
         Exit();
     }//GEN-LAST:event_formWindowClosing
+
+    private void menuItemShowServerActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_menuItemShowServerActionPerformed
+    {//GEN-HEADEREND:event_menuItemShowServerActionPerformed
+        if (menuItemShowServer.getLabel().equals("Show"))
+        {
+            ShowForm();
+        }
+        else
+        {
+            HideForm();
+        }
+    }//GEN-LAST:event_menuItemShowServerActionPerformed
+
+    private void HideForm()
+    {
+        menuItemShowServer.setLabel("Show");
+        this.setVisible(false);
+    }
+
+    public void ShowForm()
+    {
+        menuItemShowServer.setLabel("Hide");
+        this.setVisible(true);
+    }
 
     public void Update()
     {

@@ -33,21 +33,9 @@ public class frmNewListener extends JFrame
 {
 
     private frmNewQueue fMainForm;
-    private int fRowToEdit;
-    private boolean fOpenedForEdit = false,  fOpenedToCreateNew = false;
 
     public frmNewListener(frmNewQueue frm)
     {
-        fMainForm = frm;
-        fOpenedToCreateNew = true;
-        initComponents();
-        Init();
-    }
-
-    public frmNewListener(frmNewQueue frm, int index)
-    {
-        fOpenedForEdit = true;
-        fRowToEdit = index;
         fMainForm = frm;
         initComponents();
         Init();

@@ -75,19 +75,16 @@ public class HDEngine extends StorageEngine
     @Override
     public byte[] GetMessageByID(String messageID)
     {
-        synchronized (fSyncObject)
+        String priorityIdicator = messageID.substring(0, 2);
+        if (priorityIdicator.equals("PH")) // High priority message.
         {
-            String priorityIdicator = messageID.substring(0, 2);
-            if (priorityIdicator.equals("PH")) // High priority message.
-            {
-                return fHighPriorityMessageManager.GetMessageByID(messageID);
-            }
-            else if (priorityIdicator.equals("PA")) // Above normal priority message.
-            {
-                return fAboveNormalPriorityMessageManager.GetMessageByID(messageID);
-            }
-            return fNormalPriorityMessageManager.GetMessageByID(messageID); // Normal priority message.
+            return fHighPriorityMessageManager.GetMessageByID(messageID);
         }
+        else if (priorityIdicator.equals("PA")) // Above normal priority message.
+        {
+            return fAboveNormalPriorityMessageManager.GetMessageByID(messageID);
+        }
+        return fNormalPriorityMessageManager.GetMessageByID(messageID); // Normal priority message.
     }
 
     @Override
