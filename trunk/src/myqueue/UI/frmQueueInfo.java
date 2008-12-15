@@ -262,7 +262,16 @@ public class frmQueueInfo extends javax.swing.JFrame
             new String [] {
                 "IP", "Bytes In/Out", "Time Connected"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableClients.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTableClients);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
