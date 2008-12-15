@@ -15,6 +15,7 @@
  */
 package myqueue.UI;
 
+import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.io.FileInputStream;
@@ -41,8 +42,6 @@ public class frmMain extends javax.swing.JFrame
 
     public frmMain()
     {
-
-
         try
         {
             ImageIcon titleImage = new ImageIcon(getClass().getResource("/Images/data-server-16x16.png"));
@@ -70,11 +69,7 @@ public class frmMain extends javax.swing.JFrame
         {
         }
         ShowForm();
-    }
 
-    @Override
-    public void setVisible(boolean b)
-    {
         String osName = System.getProperty("os.name");
         boolean osIsWindows = false;
         if (osName.contains("Windows"))
@@ -82,7 +77,6 @@ public class frmMain extends javax.swing.JFrame
             osIsWindows = true;
         }
 
-        super.setVisible(b);
         QueueManager.Load();
         jTableQueues.getColumnModel().getColumn(0).setCellRenderer(new ImageTableCellRenderer());
         Update();
@@ -104,11 +98,11 @@ public class frmMain extends javax.swing.JFrame
                 {
                     trayIconPath = "/Images/data-server-32x32.png";
                     ImageIcon trayImage = new ImageIcon(getClass().getResource(trayIconPath));
-                    fTrayIcon = new TrayIcon(trayImage.getImage());
+                    fTrayIcon = new TrayIcon(trayImage.getImage().getScaledInstance(tray.getTrayIconSize().width, tray.getTrayIconSize().height, 0));
                 }
 
                 fTrayIcon.setToolTip("myQueue");
-                fTrayIcon.setImageAutoSize(true);
+
                 fTrayIcon.setPopupMenu(popupMenuTray);
                 tray.add(fTrayIcon);
             }
