@@ -44,7 +44,7 @@ public class QueueManager
     {
     }
 
-    public static void CreateNewQueue(String name, String description, String location, int corePoolSize, int maxPoolSize, ArrayList listeners) throws Exception
+    public static void CreateNewQueue(String name, String description, String location, int corePoolSize, int maxPoolSize, ArrayList listeners, int connectionsTimeOut) throws Exception
     {
         name = name.trim();
         description = description.trim();
@@ -90,7 +90,7 @@ public class QueueManager
         }
 
         HDEngine engine = new HDEngine(location);
-        MyQueue queue = new MyQueue(name, description, engine, corePoolSize, maxPoolSize);
+        MyQueue queue = new MyQueue(name, description, engine, corePoolSize, maxPoolSize, connectionsTimeOut);
 
         for (int i = 0; i < listeners.size(); i++)
         {
@@ -282,7 +282,7 @@ public class QueueManager
                 }
 
                 String queueFileName = file.getName().substring(0, file.getName().lastIndexOf("."));
-                CreateNewQueue(queueFileName, tmp.Description, tmp.Location, tmp.CorePoolsSize, tmp.MaxPoolSize, listeners);
+                CreateNewQueue(queueFileName, tmp.Description, tmp.Location, tmp.CorePoolsSize, tmp.MaxPoolSize, listeners, tmp.ConnectionsTimeOut);
 
                 if (tmp.Running)
                 {

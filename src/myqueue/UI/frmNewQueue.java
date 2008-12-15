@@ -38,6 +38,7 @@ public class frmNewQueue extends javax.swing.JFrame
     private frmMain fMainForm;
     private boolean fOpenedForEdit;
     private String fQueueToEdit;
+    private boolean fQueueToEditIsActive = false;
 
     // Open form to create new queue.
     public frmNewQueue(frmMain mainForm)
@@ -68,6 +69,8 @@ public class frmNewQueue extends javax.swing.JFrame
 
         // Load queue data.
         MyQueue tmp = QueueManager.getQueues().get(queue);
+        fQueueToEditIsActive = tmp.isRunning();
+
         jTextFieldName.setText(tmp.getName());
         jTextFieldDescription.setText(tmp.getDescription());
         jTextFieldLocation.setText(tmp.getEngine().getLocation());
@@ -81,6 +84,8 @@ public class frmNewQueue extends javax.swing.JFrame
             TCPListener listener = (TCPListener) tmp.getListeners().get(i);
             AddListener(listener.getIPAddress().toString().substring(1), listener.getPort(), listener.getMaxConnections());
         }
+
+        jTextFieldTimeOut.setText(String.valueOf(tmp.getConnectionsTimeOut()));
 
         this.setTitle("Edit " + queue);
     }
@@ -113,6 +118,9 @@ public class frmNewQueue extends javax.swing.JFrame
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jTextFieldTimeOut = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("New Queue");
@@ -196,9 +204,16 @@ public class frmNewQueue extends javax.swing.JFrame
 
         jLabel11.setText("Listeners:");
 
-        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel12.setText("Add one or more listeners to this queue. Make sure the listener's has enought maximum connections for your clients.");
         jLabel12.setAutoscrolls(true);
+
+        jLabel13.setText("Connections time out (ms):");
+
+        jTextFieldTimeOut.setText("30000");
+
+        jLabel14.setFont(new java.awt.Font("Tahoma", 0, 10));
+        jLabel14.setText("The time in milliseconds a client can be inactive.");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -231,12 +246,7 @@ public class frmNewQueue extends javax.swing.JFrame
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jButtonAddListener, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButtonRemoveListener))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButtonOK)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButtonCancel)))
+                                    .addComponent(jButtonRemoveListener))))
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -257,7 +267,19 @@ public class frmNewQueue extends javax.swing.JFrame
                             .addComponent(jLabel8)
                             .addComponent(jLabel9)
                             .addComponent(jLabel10))
-                        .addContainerGap(20, Short.MAX_VALUE))))
+                        .addContainerGap(20, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButtonOK)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonCancel)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jTextFieldTimeOut, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel14)
+                        .addGap(55, 55, 55))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -299,11 +321,16 @@ public class frmNewQueue extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonRemoveListener))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(jTextFieldTimeOut, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonOK)
                     .addComponent(jButtonCancel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -352,11 +379,15 @@ public class frmNewQueue extends javax.swing.JFrame
         {
             try
             {
-                int answer = JOptionPane.showConfirmDialog(null, "This queue will be restarted.\n Do you agree with that?", "Restart", JOptionPane.YES_NO_OPTION);
+                int answer = JOptionPane.YES_OPTION;
+
+                if (fQueueToEditIsActive)
+                {
+                    answer = JOptionPane.showConfirmDialog(null, "This queue will be restarted.\n Do you agree with that?", "Restart", JOptionPane.YES_NO_OPTION);
+                }
+
                 if (answer == JOptionPane.YES_OPTION)
                 {
-                    QueueManager.DeleteQueue(fQueueToEdit);
-                    fMainForm.Update();
                 }
                 else
                 {
@@ -393,6 +424,23 @@ public class frmNewQueue extends javax.swing.JFrame
             return;
         }
 
+        int timeOut = 0;
+        try
+        {
+            timeOut = Integer.parseInt(jTextFieldTimeOut.getText());
+            if (timeOut < 30000)
+            {
+                JOptionPane.showMessageDialog(null, "Time-out must be 30000 and above milliseconds.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, "Invalid time-out!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+
         ArrayList listeners = new ArrayList();
 
         for (int i = 0; i < jTableListeners.getRowCount(); i++)
@@ -403,7 +451,7 @@ public class frmNewQueue extends javax.swing.JFrame
                 int port = Integer.parseInt(jTableListeners.getValueAt(i, 1).toString());
                 int maxConnections = Integer.parseInt(jTableListeners.getValueAt(i, 2).toString());
 
-                TCPListener listener = new TCPListener("Listener " + String.valueOf(i), ip, port, maxConnections, 65535, 30000, 100, String.valueOf(((char) 3)));
+                TCPListener listener = new TCPListener("Listener " + String.valueOf(i), ip, port, maxConnections, 65535, timeOut, 100, String.valueOf(((char) 3)));
                 listeners.add(listener);
             }
             catch (Exception ex)
@@ -413,7 +461,22 @@ public class frmNewQueue extends javax.swing.JFrame
 
         try
         {
-            QueueManager.CreateNewQueue(jTextFieldName.getText(), jTextFieldDescription.getText(), jTextFieldLocation.getText(), corePoolSize, maxPoolSize, listeners);
+            try
+            {
+                QueueManager.DeleteQueue(fQueueToEdit);
+                fMainForm.Update();
+            }
+            catch (Exception ex)
+            {
+            }
+
+            QueueManager.CreateNewQueue(jTextFieldName.getText(), jTextFieldDescription.getText(), jTextFieldLocation.getText(), corePoolSize, maxPoolSize, listeners, timeOut);
+
+            if (fQueueToEditIsActive)
+            {
+                QueueManager.StartQueue(name);
+            }
+
             fMainForm.Update();
             this.dispose();
         }
@@ -437,6 +500,8 @@ public class frmNewQueue extends javax.swing.JFrame
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -452,5 +517,6 @@ public class frmNewQueue extends javax.swing.JFrame
     private javax.swing.JTextField jTextFieldLocation;
     private javax.swing.JTextField jTextFieldMaxPoolSize;
     private javax.swing.JTextField jTextFieldName;
+    private javax.swing.JTextField jTextFieldTimeOut;
     // End of variables declaration//GEN-END:variables
 }
