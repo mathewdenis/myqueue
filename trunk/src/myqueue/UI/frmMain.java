@@ -367,12 +367,17 @@ public class frmMain extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jMenuItemStopActionPerformed
         try
         {
+
             String selectedServer = "";
             if (jTableQueues.getSelectedRow() >= 0)
             {
                 selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
-                QueueManager.StopQueue(selectedServer);
-                Update();
+                int answer = JOptionPane.showConfirmDialog(null, "Stop " + selectedServer + "?", "Stop", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION)
+                {
+                    QueueManager.StopQueue(selectedServer);
+                    Update();
+                }
             }
         }
         catch (Exception ex)
