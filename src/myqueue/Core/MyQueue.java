@@ -228,4 +228,19 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     {
         return fEngine.getMessageCount();
     }
+
+    public long getNormalPriorityMessageCount()
+    {
+        return fEngine.getNormalPriorityMessageCount();
+    }
+
+    public long getAboveNormalPriorityMessageCount()
+    {
+        return fEngine.getAboveNormalPriorityMessageCount();
+    }
+
+    public long getHighPriorityMessageCount()
+    {
+        return fEngine.getHighPriorityMessageCount();
+    }
 }

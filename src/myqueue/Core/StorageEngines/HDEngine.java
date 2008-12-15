@@ -141,4 +141,22 @@ public class HDEngine extends StorageEngine
     {
         return fNormalPriorityMessageManager.getMessageCount() + fAboveNormalPriorityMessageManager.getMessageCount() + fHighPriorityMessageManager.getMessageCount();
     }
+
+    @Override
+    public long getNormalPriorityMessageCount()
+    {
+        return fNormalPriorityMessageManager.getMessageCount();
+    }
+
+    @Override
+    public long getAboveNormalPriorityMessageCount()
+    {
+        return fAboveNormalPriorityMessageManager.getMessageCount();
+    }
+
+    @Override
+    public long getHighPriorityMessageCount()
+    {
+        return fHighPriorityMessageManager.getMessageCount();
+    }
 }
