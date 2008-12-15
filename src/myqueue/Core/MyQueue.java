@@ -182,6 +182,8 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     }
                     break;
 
+                case 5:
+
                 case 9: // Keep - Alive
                     break;
             }

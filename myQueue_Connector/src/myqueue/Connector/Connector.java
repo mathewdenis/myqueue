@@ -47,7 +47,9 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     private MessageQueueMessage fMessage;
     // Begin receive
     private boolean fMessageReceivedSuccessfully = false;
-    private ObjectQueue fReceivedMesagesQueue = new ObjectQueue();
+    private ObjectQueue fNormalPriorityMessagesReceived = new ObjectQueue();
+    private ObjectQueue fAboveNormalPriorityMessagesReceived = new ObjectQueue();
+    private ObjectQueue fHighPriorityMessagesReceived = new ObjectQueue();
     private ManualResetEvent fWaitForMessagesEvt = new ManualResetEvent(false);
     private boolean fIsReceiving = false;
     private ManualResetEvent fBeginReceiveWaitEvt = new ManualResetEvent(false);
@@ -60,7 +62,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
      */
     public Connector(InetAddress ip, int port)
     {
-        super("", "", 20, 80);
+        super("", "", 20, 40);
         fIP = ip;
         fPort = port;
     }
@@ -115,7 +117,20 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                 case 3: // Begin receive.
                     if (fIsReceiving)
                     {
-                        fReceivedMesagesQueue.enqueue(new String(data.getBytes(), 1, data.getLength() - 1));
+                        String messageID = new String(data.getBytes(), 1, data.getLength() - 1);
+                        String messagePriority = messageID.substring(0, 2);
+                        if (messagePriority.equals("PN")) // Normal priority.
+                        {
+                            fNormalPriorityMessagesReceived.enqueue(messageID);
+                        }
+                        else if (messagePriority.equals("PA")) // Above normal priority,
+                        {
+                            fAboveNormalPriorityMessagesReceived.enqueue(messageID);
+                        }
+                        else if (messagePriority.equals("PH")) // High priority.
+                        {
+                            fHighPriorityMessagesReceived.enqueue(messageID);
+                        }
                         fWaitForMessagesEvt.Set();
                     }
                     return;
@@ -290,7 +305,11 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     public void StopReceive()
     {
         fIsReceiving = false;
-        fReceivedMesagesQueue.clear();
+
+        fNormalPriorityMessagesReceived.clear();
+        fAboveNormalPriorityMessagesReceived.clear();
+        fHighPriorityMessagesReceived.clear();
+
         fWaitForMessagesEvt.Set();
         fBeginReceiveWaitEvt.Set();
     }
@@ -323,13 +342,26 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
             fBeginReceiveWaitEvt.Reset();
 
             fReceivedMessage = null;
-            if (!fReceivedMesagesQueue.isEmpty() && fIsReceiving)
+            if ((!fNormalPriorityMessagesReceived.isEmpty() || !fAboveNormalPriorityMessagesReceived.isEmpty() || !fHighPriorityMessagesReceived.isEmpty()) && fIsReceiving)
             {
                 synchronized (fSyncObject)
                 {
                     // Request the message from the server.
                     fMessageReceivedSuccessfully = false;
-                    String messageID = fReceivedMesagesQueue.dequeue().toString();
+                    String messageID = "";
+                    if (!fHighPriorityMessagesReceived.isEmpty())
+                    {
+                        messageID = fHighPriorityMessagesReceived.dequeue().toString();
+                    }
+                    else if (!fAboveNormalPriorityMessagesReceived.isEmpty())
+                    {
+                        messageID = fAboveNormalPriorityMessagesReceived.dequeue().toString();
+                    }
+                    else if (!fNormalPriorityMessagesReceived.isEmpty())
+                    {
+                        messageID = fNormalPriorityMessagesReceived.dequeue().toString();
+                    }
+
                     SendData("4" + messageID + fSplitter);
                     fBeginReceiveWaitEvt.WaitOne(timeOut);
 
@@ -344,7 +376,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                 // Send a keep alive.
                 SendData("9" + fSplitter);
                 fWaitForMessagesEvt.WaitOne(timeOut);
-                if (!fReceivedMesagesQueue.isEmpty() && fIsReceiving)
+                if ((!fNormalPriorityMessagesReceived.isEmpty() || !fAboveNormalPriorityMessagesReceived.isEmpty() || !fHighPriorityMessagesReceived.isEmpty()) && fIsReceiving)
                 {
                     return Receive(timeOut);
                 }
