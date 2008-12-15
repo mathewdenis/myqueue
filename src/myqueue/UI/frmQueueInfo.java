@@ -95,22 +95,91 @@ public class frmQueueInfo extends javax.swing.JFrame
             for (int i = 0; i < queue.getListeners().size(); i++)
             {
                 TCPListener listener = (TCPListener) queue.getListeners().get(i);
+
+                // Add new clients.
                 for (Enumeration e = listener.getConnectedClients().keys(); e.hasMoreElements();)
                 {
-                    String ip = e.nextElement().toString();
-                    TCPClientConnection client = (TCPClientConnection) listener.getConnectedClients().get(ip);
-                    int bytesIn = client.getBytesIn();
-                    int bytesOut = client.getBytesOut();
+                    try
+                    {
+                        String ip = e.nextElement().toString();
+                        TCPClientConnection client = (TCPClientConnection) listener.getConnectedClients().get(ip);
+                        int bytesIn = client.getBytesIn();
+                        int bytesOut = client.getBytesOut();
 
-                    Calendar cal = Calendar.getInstance();
-                    long milliseconds = cal.getTimeInMillis() - client.getConnectionStartUpDateTime().getTime();
+                        Calendar cal = Calendar.getInstance();
+                        long milliseconds = cal.getTimeInMillis() - client.getConnectionStartUpDateTime().getTime();
 
-                    Object[] item = new Object[3];
-                    item[0] = ip;
-                    item[1] = String.valueOf(bytesIn) + "/" + String.valueOf(bytesOut);
-                    item[2] = String.valueOf(milliseconds);
+                        long time = milliseconds / 1000;
+                        String seconds = Integer.toString((int) (time % 60));
+                        String minutes = Integer.toString((int) ((time % 3600) / 60));
+                        String hours = Integer.toString((int) (time / 3600));
 
-                    model.addRow(item);
+                        if (seconds.length() < 2)
+                        {
+                            seconds = "0" + seconds;
+                        }
+                        if (minutes.length() < 2)
+                        {
+                            minutes = "0" + minutes;
+                        }
+                        if (hours.length() < 2)
+                        {
+                            hours = "0" + hours;
+                        }
+
+                        String bytesInOut = String.valueOf(bytesIn) + "/" + String.valueOf(bytesOut);
+                        String timeConnected = String.valueOf(hours) + "h " + String.valueOf(minutes) + "m " + String.valueOf(seconds) + "s";
+
+                        boolean clientExists = false;
+                        for (int x = 0; x < jTableClients.getRowCount(); x++)
+                        {
+                            // Update existing client.
+                            if (jTableClients.getValueAt(x, 0).toString().equals(ip))
+                            {
+                                clientExists = true;
+                                jTableClients.setValueAt(bytesInOut, x, 1);
+                                jTableClients.setValueAt(timeConnected, x, 2);
+                                break;
+                            }
+                        }
+
+                        // Add new client.
+                        if (!clientExists)
+                        {
+
+                            Object[] item = new Object[3];
+                            item[0] = ip;
+                            item[1] = bytesInOut;
+                            item[2] = timeConnected;
+
+                            model.addRow(item);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+
+                try
+                {
+                    // Remove disconnected clients.
+                    for (int x = jTableClients.getRowCount() - 1; x >= 0; x--)
+                    {
+                        try
+                        {
+                            String ip = jTableClients.getValueAt(x, 0).toString();
+                            if (!listener.getConnectedClients().containsKey(ip))
+                            {
+                                model.removeRow(x);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
                 }
             }
         }
@@ -204,7 +273,7 @@ public class frmQueueInfo extends javax.swing.JFrame
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -234,14 +303,14 @@ public class frmQueueInfo extends javax.swing.JFrame
                                 .addGap(77, 77, 77))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addGap(118, 118, 118)
-                                .addComponent(jLabelConnectedClients, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE))
+                                .addComponent(jLabelConnectedClients, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 133, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 191, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(264, 264, 264))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1)
-                        .addContainerGap(427, Short.MAX_VALUE))))
+                        .addContainerGap(485, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
