@@ -35,7 +35,6 @@ public class HDMessageManager
     private String fLocation;
     private String fPriorityInteger;
 
-
     public HDMessageManager(String location, String priorityInteger)
     {
         fLocation = location;
@@ -167,10 +166,13 @@ public class HDMessageManager
                     {
                         minID = Math.min(tmpID, minID);
                     }
+
+                    fMessageCount++;
                 }
                 catch (Exception ex)
                 {
                 }
+
             }
             fLastMessageID = maxID;
             fFirstInMessage = minID;

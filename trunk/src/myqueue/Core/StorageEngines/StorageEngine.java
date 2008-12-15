@@ -66,4 +66,19 @@ public class StorageEngine
     {
         return 0;
     }
+
+    public long getNormalPriorityMessageCount()
+    {
+        return 0;
+    }
+
+    public long getAboveNormalPriorityMessageCount()
+    {
+        return 0;
+    }
+
+    public long getHighPriorityMessageCount()
+    {
+        return 0;
+    }
 }
