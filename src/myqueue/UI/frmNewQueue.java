@@ -149,7 +149,16 @@ public class frmNewQueue extends javax.swing.JFrame
             new String [] {
                 "IP Address", "Port", "Max Connections"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableListeners.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTableListeners);
 
         jButtonAddListener.setText("Add");
@@ -400,7 +409,6 @@ public class frmNewQueue extends javax.swing.JFrame
         }
 
         String name = jTextFieldName.getText();
-        String description = jTextFieldDescription.getText();
 
         int corePoolSize = 0;
         try
@@ -439,7 +447,6 @@ public class frmNewQueue extends javax.swing.JFrame
             JOptionPane.showMessageDialog(null, "Invalid time-out!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
 
         ArrayList listeners = new ArrayList();
 
