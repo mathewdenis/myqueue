@@ -54,6 +54,8 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     private boolean fIsReceiving = false;
     private ManualResetEvent fBeginReceiveWaitEvt = new ManualResetEvent(false);
     private MessageQueueMessage fReceivedMessage;
+    // Read whole queue.
+    private boolean fMessagePacketArrivedSuccessfully = false;
 
     /**
      * Create a new myQueue connector.
@@ -146,6 +148,43 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                     }
                     fMessageReceivedSuccessfully = true;
                     fBeginReceiveWaitEvt.Set();
+                    return;
+
+                case 5:
+                    try
+                    {
+                        String[] messagePacket = new String(data.getBytes(), 1, data.getLength() - 1).split(":");
+                        String normalPriorityMessagePacket = messagePacket[0];
+                        String aboveNormalPriorityMessagePacket = messagePacket[1];
+                        String highPriorityMessagePacket = messagePacket[2];
+
+                        long minNormalPriorityID = Long.parseLong(normalPriorityMessagePacket.split("-")[0]);
+                        long maxNormalPriorityID = Long.parseLong(normalPriorityMessagePacket.split("-")[1]);
+                        for (long i = minNormalPriorityID; i <= maxNormalPriorityID; i++)
+                        {
+                            fNormalPriorityMessagesReceived.add("PN" + String.valueOf(i));
+                        }
+
+                        long minAboveNormalPriorityID = Long.parseLong(aboveNormalPriorityMessagePacket.split("-")[0]);
+                        long maxAboveNormalPriorityID = Long.parseLong(aboveNormalPriorityMessagePacket.split("-")[1]);
+                        for (long i = minAboveNormalPriorityID; i <= maxAboveNormalPriorityID; i++)
+                        {
+                            fNormalPriorityMessagesReceived.add("PA" + String.valueOf(i));
+                        }
+
+                        long minHighPriorityID = Long.parseLong(highPriorityMessagePacket.split("-")[0]);
+                        long maxHighPriorityID = Long.parseLong(highPriorityMessagePacket.split("-")[1]);
+                        for (long i = minHighPriorityID; i <= maxHighPriorityID; i++)
+                        {
+                            fHighPriorityMessagesReceived.add("PH" + String.valueOf(i));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        fMessagePacketArrivedSuccessfully = false;
+                    }
+
+                    fWaitEvt.Set();
                     return;
 
                 case 9: // Fatal error.
@@ -386,6 +425,33 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         {
         }
         return fReceivedMessage;
+    }
+
+    public void ReadMessages() throws EnqueueMessageException, MyQueueConnectorDisconnectedException
+    {
+        synchronized (fSyncObject)
+        {
+            TryToConnect();
+
+            fMessagePacketArrivedSuccessfully = false;
+
+            fWaitEvt.Reset();
+            try
+            {
+                SendData("5" + fSplitter);
+            }
+            catch (Exception ex)
+            {
+                fWaitEvt.Set();
+                throw new MyQueueConnectorDisconnectedException();
+            }
+            fWaitEvt.WaitOne(10000);
+
+            if (!fMessagePacketArrivedSuccessfully)
+            {
+            }
+        }
+
     }
 
     private void TryToConnect() throws MyQueueConnectorDisconnectedException

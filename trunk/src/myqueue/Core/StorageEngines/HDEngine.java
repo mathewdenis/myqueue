@@ -99,6 +99,12 @@ public class HDEngine extends StorageEngine
     }
 
     @Override
+    public String GetMessagesPack()
+    {
+        return fNormalPriorityMessageManager.GetMessagesPack() + ":" + fAboveNormalPriorityMessageManager.GetMessagesPack() + ":" + fHighPriorityMessageManager.GetMessagesPack();
+    }
+
+    @Override
     public void Clear()
     {
         synchronized (fSyncObject)

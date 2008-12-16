@@ -121,6 +121,47 @@ public class HDMessageManager
         }
     }
 
+    public String GetMessagesPack()
+    {
+        String answer = "";
+        File dir = new File(fLocation);
+        File[] files = dir.listFiles();
+
+        // This filter only returns files.
+        FileFilter fileFilter = new FileFilter()
+        {
+
+            @Override
+            public boolean accept(File file)
+            {
+                return !file.isDirectory() && file.getName().endsWith("mqf");
+            }
+        };
+        files = dir.listFiles(fileFilter);
+        long minID = 0;
+        long maxID = 0;
+        for (File file : files)
+        {
+            try
+            {
+                long fileID = Long.parseLong(file.getName().replace(fPriorityInteger, "").replace(".mqf", ""));
+                if (minID == 0)
+                {
+                    minID = fileID;
+                }
+
+                minID = Math.min(minID, fileID);
+                maxID = Math.max(maxID, fileID);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        answer = String.valueOf(minID) + "-" + String.valueOf(maxID);
+        return answer;
+    }
+
     public void Start()
     {
         try
