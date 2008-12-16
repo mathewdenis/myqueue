@@ -43,15 +43,7 @@ public class HDEngine extends StorageEngine
     {
         synchronized (fSyncObject)
         {
-            if (fHighPriorityMessageManager.fMessageCount > 0)
-            {
-                return fHighPriorityMessageManager.Dequeue();
-            }
-            else if (fAboveNormalPriorityMessageManager.fMessageCount > 0)
-            {
-                return fAboveNormalPriorityMessageManager.Dequeue();
-            }
-            return fNormalPriorityMessageManager.Dequeue();
+            return fHighPriorityMessageManager.fMessageCount > 0 ? fHighPriorityMessageManager.Dequeue() : fAboveNormalPriorityMessageManager.fMessageCount > 0 ? fAboveNormalPriorityMessageManager.Dequeue() : fNormalPriorityMessageManager.Dequeue();
         }
     }
 
@@ -60,15 +52,7 @@ public class HDEngine extends StorageEngine
     {
         synchronized (fSyncObject)
         {
-            if (fHighPriorityMessageManager.fMessageCount > 0)
-            {
-                return fHighPriorityMessageManager.Peek();
-            }
-            else if (fAboveNormalPriorityMessageManager.fMessageCount > 0)
-            {
-                return fAboveNormalPriorityMessageManager.Peek();
-            }
-            return fNormalPriorityMessageManager.Peek();
+            return fHighPriorityMessageManager.fMessageCount > 0 ? fHighPriorityMessageManager.Peek() : fAboveNormalPriorityMessageManager.fMessageCount > 0 ? fAboveNormalPriorityMessageManager.Peek() : fNormalPriorityMessageManager.Peek();
         }
     }
 
@@ -76,15 +60,7 @@ public class HDEngine extends StorageEngine
     public byte[] GetMessageByID(String messageID)
     {
         String priorityIdicator = messageID.substring(0, 2);
-        if (priorityIdicator.equals("PH")) // High priority message.
-        {
-            return fHighPriorityMessageManager.GetMessageByID(messageID);
-        }
-        else if (priorityIdicator.equals("PA")) // Above normal priority message.
-        {
-            return fAboveNormalPriorityMessageManager.GetMessageByID(messageID);
-        }
-        return fNormalPriorityMessageManager.GetMessageByID(messageID); // Normal priority message.
+        return priorityIdicator.equals("PH") ? fHighPriorityMessageManager.GetMessageByID(messageID) : priorityIdicator.equals("PA") ? fAboveNormalPriorityMessageManager.GetMessageByID(messageID) : fNormalPriorityMessageManager.GetMessageByID(messageID);
     }
 
     @Override

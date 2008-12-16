@@ -93,19 +93,17 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                             client.SendData("0" + fSplitter); // Message enqueued successfully!
                             // Inform all clients that the message has been enqueued.
                             ReplyToAllExceptSender("3" + enqueuedMesageID + fSplitter, client);
-                            return;
                         }
                         else
                         {
                             client.SendData("1An error occured on server enqueue message procedure." + fSplitter); // A fatal error occured.
-                            return;
                         }
                     }
                     catch (Exception ex)
                     {
                         client.SendData("9Fatal error occured on server enqueue message procedure.\n" + ex.getMessage() + fSplitter); // A fatal error occured.
                     }
-                    break;
+                    return;
 
                 case 2: // Peek (2 - PeekedMessage - Splitter).
                     try
@@ -124,13 +122,12 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                         finalBytes[0] = (byte) '2';
                         System.arraycopy(fSplitterBytes, 0, finalBytes, peekedBytesLength, fSplitterLength);
                         client.SendData(finalBytes, 0, finalBytes.length);
-                        return;
                     }
                     catch (Exception ex)
                     {
                         client.SendData("9Fatal error occured on server peek message procedure.\n" + ex.getMessage() + fSplitter); // A fatal error occured.
                     }
-                    break;
+                    return;
 
                 case 3: // Dequeue (2 - DequeuedMessage - Splitter).
                     try
@@ -149,13 +146,12 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                         finalBytes[0] = (byte) '2';
                         System.arraycopy(fSplitterBytes, 0, finalBytes, peekedBytesLength, fSplitterLength);
                         client.SendData(finalBytes, 0, finalBytes.length);
-                        return;
                     }
                     catch (Exception ex)
                     {
                         client.SendData("9Fatal error occured on server dequeue message procedure.\n" + ex.getMessage() + fSplitter); // A fatal error occured.
                     }
-                    break;
+                    return;
 
                 case 4: // Request message (4 - Message - Splitter).
                     try
@@ -174,16 +170,15 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                         finalBytes[0] = (byte) '4';
                         System.arraycopy(fSplitterBytes, 0, finalBytes, peekedBytesLength, fSplitterLength);
                         client.SendData(finalBytes, 0, finalBytes.length);
-                        return;
                     }
                     catch (Exception ex)
                     {
                         client.SendData("9Fatal error occured on server request message procedure.\n" + ex.getMessage() + fSplitter); // A fatal error occured.
                     }
-                    break;
+                    return;
 
                 case 9: // Keep - Alive
-                    break;
+                    return;
             }
         }
         catch (Exception ex)
