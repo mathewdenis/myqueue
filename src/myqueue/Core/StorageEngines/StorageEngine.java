@@ -49,6 +49,15 @@ public class StorageEngine
         return null;
     }
 
+    public String GetMessagesPack()
+    {
+        return "";
+    }
+
+    public void Clear()
+    {
+    }
+
     public void StartEngine()
     {
     }
@@ -56,10 +65,6 @@ public class StorageEngine
     public String getLocation()
     {
         return fLocation;
-    }
-
-    public void Clear()
-    {
     }
 
     public long getMessageCount()

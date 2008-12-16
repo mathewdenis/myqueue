@@ -177,6 +177,17 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     }
                     return;
 
+                case 5: // Read whole queue.
+                    try
+                    {
+                        client.SendData("5" + fEngine.GetMessagesPack() + fSplitter);
+                    }
+                    catch (Exception ex)
+                    {
+                        client.SendData("9Fatal error occured on server GetMessagesPack procedure.\n" + ex.getMessage() + fSplitter); // A fatal error occured.
+                    }
+                    return;
+
                 case 9: // Keep - Alive
                     return;
             }
