@@ -19,6 +19,7 @@ import Extasys.DataFrame;
 import Extasys.ManualResetEvent;
 import Extasys.Network.TCP.Client.Connectors.TCPConnector;
 import java.net.InetAddress;
+import myqueue.Connector.Exceptions.CouldNotReceiveMessagesPacket;
 import myqueue.Connector.Exceptions.DequeueMessageException;
 import myqueue.Connector.Exceptions.EnqueueMessageException;
 import myqueue.Connector.Exceptions.MyQueueConnectorDisconnectedException;
@@ -427,7 +428,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         return fReceivedMessage;
     }
 
-    public void ReadMessages() throws EnqueueMessageException, MyQueueConnectorDisconnectedException
+    public void ReadMessages() throws MyQueueConnectorDisconnectedException, CouldNotReceiveMessagesPacket
     {
         synchronized (fSyncObject)
         {
@@ -449,6 +450,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
 
             if (!fMessagePacketArrivedSuccessfully)
             {
+                throw new CouldNotReceiveMessagesPacket();
             }
         }
 
