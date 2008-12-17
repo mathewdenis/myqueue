@@ -209,7 +209,7 @@ public class frmMain extends javax.swing.JFrame
         popupMenuTray.add(menuItemShowServer);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("myQueue");
+        setTitle("myQueue 1.0.0.1");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);

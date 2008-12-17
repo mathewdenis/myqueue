@@ -186,6 +186,8 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                         {
                             fHighPriorityMessagesReceived.add("PH" + String.valueOf(i));
                         }
+
+                        fMessagePacketArrivedSuccessfully = true;
                     }
                     catch (Exception ex)
                     {
@@ -212,7 +214,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     /**
      * Adds a String object to the end of the Queue.
      * @param data is the string data to be enqueued.
-     * @throws Exception
+     * @throws EnqueueMessageException, MyQueueConnectorDisconnectedException
      */
     public void Enqueue(String data) throws EnqueueMessageException, MyQueueConnectorDisconnectedException
     {
@@ -242,6 +244,12 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         }
     }
 
+    /**
+     * Adds a String object to the end of the Queue.
+     * @param data is the string data to be enqueued.
+     * @param priority is the message Priority (ex. MessageQueueMessage.PriorityNormal , MessageQueueMessage.PriorityAboveNormal, MessageQueueMessage.PriorityHigh).
+     * @throws EnqueueMessageException, MyQueueConnectorDisconnectedException
+     */
     public void Enqueue(String data, int priority) throws EnqueueMessageException, MyQueueConnectorDisconnectedException
     {
         synchronized (fSyncObject)
@@ -267,6 +275,26 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                 // Could not receive response from the server that certifies that the message has been enqueued successfully.
                 throw new EnqueueMessageException(fMessageEnqueueError);
             }
+        }
+    }
+
+    /**
+     * Enqueue data to server without waiting for comfirmation.
+     * @param data  data is the string data to be enqueued.
+     * @param priority is the message Priority (ex. MessageQueueMessage.PriorityNormal , MessageQueueMessage.PriorityAboveNormal, MessageQueueMessage.PriorityHigh).
+     * @throws EnqueueMessageException, MyQueueConnectorDisconnectedException
+     */
+    public void EnqueueAsynchronous(String data, int priority) throws EnqueueMessageException, MyQueueConnectorDisconnectedException
+    {
+        TryToConnect();
+
+        try
+        {
+            SendData("6" + String.valueOf(priority) + data + fSplitter);
+        }
+        catch (Exception ex)
+        {
+            throw new MyQueueConnectorDisconnectedException();
         }
     }
 

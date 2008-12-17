@@ -188,6 +188,23 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
                     }
                     return;
 
+                case 6: // Enqueue asynchronous
+                    try
+                    {
+                        byte[] messageBytes = new byte[data.getLength() - 1];
+                        System.arraycopy(data.getBytes(), 1, messageBytes, 0, data.getLength() - 1);
+                        String enqueuedMesageID = fEngine.Enqueue(messageBytes);
+
+                        if (enqueuedMesageID != null)
+                        {
+                            ReplyToAllExceptSender("3" + enqueuedMesageID + fSplitter, client);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                    return;
+
                 case 9: // Keep - Alive
                     return;
             }
