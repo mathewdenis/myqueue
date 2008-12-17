@@ -33,7 +33,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     private final String fSplitter = String.valueOf(((char) 3));
     private int fSplitterLength = 0;
     private byte[] fSplitterBytes = null;
-    private int fConnectionsTimeOut = 30000;
+    private int fConnectionsTimeOut;
 
     public MyQueue(String name, String description, StorageEngine engine, int corePoolSize, int maxPoolSize, int connectionsTimeOut)
     {
