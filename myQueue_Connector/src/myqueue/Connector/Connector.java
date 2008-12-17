@@ -170,7 +170,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                         long maxAboveNormalPriorityID = Long.parseLong(aboveNormalPriorityMessagePacket.split("-")[1]);
                         for (long i = minAboveNormalPriorityID; i <= maxAboveNormalPriorityID; i++)
                         {
-                            fNormalPriorityMessagesReceived.add("PA" + String.valueOf(i));
+                            fAboveNormalPriorityMessagesReceived.add("PA" + String.valueOf(i));
                         }
 
                         long minHighPriorityID = Long.parseLong(highPriorityMessagePacket.split("-")[0]);
