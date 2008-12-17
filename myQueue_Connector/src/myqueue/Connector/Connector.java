@@ -459,6 +459,11 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         return fReceivedMessage;
     }
 
+    /**
+     * Read all enqueued messages.
+     * @throws myqueue.Connector.Exceptions.MyQueueConnectorDisconnectedException
+     * @throws myqueue.Connector.Exceptions.CouldNotReceiveMessagesPacket
+     */
     public void ReadMessages() throws MyQueueConnectorDisconnectedException, CouldNotReceiveMessagesPacket
     {
         synchronized (fSyncObject)
