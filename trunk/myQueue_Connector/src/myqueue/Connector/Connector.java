@@ -139,19 +139,26 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                     return;
 
                 case 4: // Receive requested message.
-                    String requestedMessage = new String(data.getBytes(), 1, data.getLength() - 1);
-                    int indexOfRequestedMessageID = requestedMessage.indexOf('\n');
-                    if (indexOfRequestedMessageID > 0)
+                    try
                     {
-                        fReceivedMessage = new MessageQueueMessage(requestedMessage.substring(0, indexOfRequestedMessageID),
-                                requestedMessage.substring(indexOfRequestedMessageID + 2),
-                                Integer.valueOf(requestedMessage.substring(indexOfRequestedMessageID + 1, indexOfRequestedMessageID + 2)));
+                        String requestedMessage = new String(data.getBytes(), 1, data.getLength() - 1);
+                        int indexOfRequestedMessageID = requestedMessage.indexOf('\n');
+                        if (indexOfRequestedMessageID > 0)
+                        {
+                            fReceivedMessage = new MessageQueueMessage(requestedMessage.substring(0, indexOfRequestedMessageID),
+                                    requestedMessage.substring(indexOfRequestedMessageID + 2),
+                                    Integer.valueOf(requestedMessage.substring(indexOfRequestedMessageID + 1, indexOfRequestedMessageID + 2)));
+                        }
+                        fMessageReceivedSuccessfully = true;
                     }
-                    fMessageReceivedSuccessfully = true;
+                    catch (Exception ex)
+                    {
+                        fMessageReceivedSuccessfully = false;
+                    }
                     fBeginReceiveWaitEvt.Set();
                     return;
 
-                case 5:
+                case 5: // Receive all queue message packet.
                     try
                     {
                         String[] messagePacket = new String(data.getBytes(), 1, data.getLength() - 1).split(":");
@@ -388,26 +395,22 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                 {
                     // Request the message from the server.
                     fMessageReceivedSuccessfully = false;
-                    String messageID = "";
-                    if (!fHighPriorityMessagesReceived.isEmpty())
-                    {
-                        messageID = fHighPriorityMessagesReceived.dequeue().toString();
-                    }
-                    else if (!fAboveNormalPriorityMessagesReceived.isEmpty())
-                    {
-                        messageID = fAboveNormalPriorityMessagesReceived.dequeue().toString();
-                    }
-                    else if (!fNormalPriorityMessagesReceived.isEmpty())
-                    {
-                        messageID = fNormalPriorityMessagesReceived.dequeue().toString();
-                    }
+                    String messageID = !fHighPriorityMessagesReceived.isEmpty() ? fHighPriorityMessagesReceived.dequeue().toString() : !fAboveNormalPriorityMessagesReceived.isEmpty()
+                            ? fAboveNormalPriorityMessagesReceived.dequeue().toString() : !fNormalPriorityMessagesReceived.isEmpty() ? fNormalPriorityMessagesReceived.dequeue().toString() : "";
 
-                    SendData("4" + messageID + fSplitter);
-                    fBeginReceiveWaitEvt.WaitOne(timeOut);
-
-                    if (!fMessageReceivedSuccessfully)
+                    if (!messageID.equals(""))
                     {
-                        throw new ReceivedMessageException("Message " + messageID + " could not be received.");
+                        SendData("4" + messageID + fSplitter);
+                        fBeginReceiveWaitEvt.WaitOne(timeOut);
+
+                        if (!fMessageReceivedSuccessfully)
+                        {
+                            throw new ReceivedMessageException("Message " + messageID + " could not be received.");
+                        }
+                    }
+                    else
+                    {
+                        fWaitForMessagesEvt.WaitOne(timeOut);
                     }
                 }
             }
@@ -453,7 +456,6 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                 throw new CouldNotReceiveMessagesPacket();
             }
         }
-
     }
 
     private void TryToConnect() throws MyQueueConnectorDisconnectedException
