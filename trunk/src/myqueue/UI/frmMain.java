@@ -15,7 +15,6 @@
  */
 package myqueue.UI;
 
-import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.io.FileInputStream;
@@ -53,6 +52,8 @@ public class frmMain extends javax.swing.JFrame
         }
         initComponents();
 
+        
+
         // Load myQueueUI.properties.
         try
         {
@@ -77,7 +78,7 @@ public class frmMain extends javax.swing.JFrame
             osIsWindows = true;
         }
 
-        QueueManager.Load();
+        //QueueManager.Load();
         jTableQueues.getColumnModel().getColumn(0).setCellRenderer(new ImageTableCellRenderer());
         Update();
 

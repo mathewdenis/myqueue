@@ -63,7 +63,7 @@ public class frmNewListener extends JFrame
         {
         }
 
-        //Open form in the center of the screen.
+        // Open form in the center of the screen.
         Dimension us = this.getSize(), them = Toolkit.getDefaultToolkit().getScreenSize();
         int newX = (them.width - us.width) / 2;
         int newY = (them.height - us.height) / 2;
