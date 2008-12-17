@@ -194,7 +194,6 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
         }
         catch (Exception ex)
         {
-            System.err.println(ex.getMessage());
             try
             {
                 client.SendData("9" + fSplitter); // A fatal error occured.
