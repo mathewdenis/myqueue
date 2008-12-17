@@ -134,7 +134,7 @@ public class frmQueueInfo extends javax.swing.JFrame
                         for (int x = 0; x < jTableClients.getRowCount(); x++)
                         {
                             // Update existing client.
-                            if (jTableClients.getValueAt(x, 0).toString().equals(ip))
+                            if (jTableClients.getValueAt(x, 0).toString().equals(ip.substring(1)))
                             {
                                 clientExists = true;
                                 jTableClients.setValueAt(bytesInOut, x, 1);
@@ -146,9 +146,8 @@ public class frmQueueInfo extends javax.swing.JFrame
                         // Add new client.
                         if (!clientExists)
                         {
-
                             Object[] item = new Object[3];
-                            item[0] = ip;
+                            item[0] = ip.substring(1);
                             item[1] = bytesInOut;
                             item[2] = timeConnected;
 
@@ -167,7 +166,8 @@ public class frmQueueInfo extends javax.swing.JFrame
                     {
                         try
                         {
-                            String ip = jTableClients.getValueAt(x, 0).toString();
+                            String ip = "/" + jTableClients.getValueAt(x, 0).toString();
+
                             if (!listener.getConnectedClients().containsKey(ip))
                             {
                                 model.removeRow(x);
