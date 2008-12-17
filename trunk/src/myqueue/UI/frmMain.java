@@ -25,7 +25,6 @@ import java.io.ObjectOutputStream;
 import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import myqueue.Core.MyQueue;
 import myqueue.Core.QueueManager;
@@ -50,9 +49,7 @@ public class frmMain extends javax.swing.JFrame
         {
             System.err.println(ex.getMessage());
         }
-        initComponents();
-
-        
+        initComponents();       
 
         // Load myQueueUI.properties.
         try
@@ -369,7 +366,6 @@ public class frmMain extends javax.swing.JFrame
         {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR);
         }
-
     }//GEN-LAST:event_jMenuItemStartActionPerformed
 
     // Stop queue.
@@ -587,26 +583,7 @@ public class frmMain extends javax.swing.JFrame
         }
     }
 
-    public static void main(String args[])
-    {
-        try
-        {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (Exception ex)
-        {
-        }
-
-        java.awt.EventQueue.invokeLater(new Runnable()
-        {
-
-            @Override
-            public void run()
-            {
-                new frmMain().setVisible(true);
-            }
-        });
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
