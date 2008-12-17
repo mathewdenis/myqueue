@@ -114,11 +114,18 @@ public class frmLoading extends javax.swing.JFrame
 
     private void formWindowOpened(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowOpened
     {//GEN-HEADEREND:event_formWindowOpened
-        QueueManager.Load();
+        try
+        {
+            QueueManager.Load();
+        }
+        catch (Exception ex)
+        {
+        }
 
         frmMain frm = new frmMain();
         frm.setVisible(true);
         this.setVisible(false);
+
     }//GEN-LAST:event_formWindowOpened
 
     /**
