@@ -93,15 +93,9 @@ public class HDEngine extends StorageEngine
     @Override
     public void StartEngine()
     {
-        try
-        {
-            fNormalPriorityMessageManager.Start();
-            fAboveNormalPriorityMessageManager.Start();
-            fHighPriorityMessageManager.Start();
-        }
-        catch (Exception ex)
-        {
-        }
+        fNormalPriorityMessageManager.Start();
+        fAboveNormalPriorityMessageManager.Start();
+        fHighPriorityMessageManager.Start();
     }
 
     @Override
