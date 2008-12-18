@@ -107,7 +107,10 @@ public class HDEngine extends StorageEngine
     @Override
     public String GetMessagesPack()
     {
-        return fNormalPriorityMessageManager.GetMessagesPack() + ":" + fAboveNormalPriorityMessageManager.GetMessagesPack() + ":" + fHighPriorityMessageManager.GetMessagesPack();
+        synchronized (fSyncObject)
+        {
+            return fNormalPriorityMessageManager.GetMessagesPack() + ":" + fAboveNormalPriorityMessageManager.GetMessagesPack() + ":" + fHighPriorityMessageManager.GetMessagesPack();
+        }
     }
 
     @Override
