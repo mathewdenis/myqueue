@@ -168,23 +168,32 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
 
                         long minNormalPriorityID = Long.parseLong(normalPriorityMessagePacket.split("-")[0]);
                         long maxNormalPriorityID = Long.parseLong(normalPriorityMessagePacket.split("-")[1]);
-                        for (long i = minNormalPriorityID; i <= maxNormalPriorityID; i++)
+                        if (minNormalPriorityID > 0)
                         {
-                            fNormalPriorityMessagesReceived.add("PN" + String.valueOf(i));
+                            for (long i = minNormalPriorityID; i <= maxNormalPriorityID; i++)
+                            {
+                                fNormalPriorityMessagesReceived.add("PN" + String.valueOf(i));
+                            }
                         }
 
                         long minAboveNormalPriorityID = Long.parseLong(aboveNormalPriorityMessagePacket.split("-")[0]);
                         long maxAboveNormalPriorityID = Long.parseLong(aboveNormalPriorityMessagePacket.split("-")[1]);
-                        for (long i = minAboveNormalPriorityID; i <= maxAboveNormalPriorityID; i++)
+                        if (minAboveNormalPriorityID > 0)
                         {
-                            fAboveNormalPriorityMessagesReceived.add("PA" + String.valueOf(i));
+                            for (long i = minAboveNormalPriorityID; i <= maxAboveNormalPriorityID; i++)
+                            {
+                                fAboveNormalPriorityMessagesReceived.add("PA" + String.valueOf(i));
+                            }
                         }
 
                         long minHighPriorityID = Long.parseLong(highPriorityMessagePacket.split("-")[0]);
                         long maxHighPriorityID = Long.parseLong(highPriorityMessagePacket.split("-")[1]);
-                        for (long i = minHighPriorityID; i <= maxHighPriorityID; i++)
+                        if (minHighPriorityID > 0)
                         {
-                            fHighPriorityMessagesReceived.add("PH" + String.valueOf(i));
+                            for (long i = minHighPriorityID; i <= maxHighPriorityID; i++)
+                            {
+                                fHighPriorityMessagesReceived.add("PH" + String.valueOf(i));
+                            }
                         }
 
                         fMessagePacketArrivedSuccessfully = true;
@@ -403,7 +412,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         {
             timeOut = 5000;
         }
-        if (!fIsReceiving)
+        if (!fIsReceiving && (fNormalPriorityMessagesReceived.isEmpty() && fAboveNormalPriorityMessagesReceived.isEmpty() && fHighPriorityMessagesReceived.isEmpty()))
         {
             fBeginReceiveWaitEvt.WaitOne(timeOut);
             return null;
@@ -417,7 +426,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
             fBeginReceiveWaitEvt.Reset();
 
             fReceivedMessage = null;
-            if ((!fNormalPriorityMessagesReceived.isEmpty() || !fAboveNormalPriorityMessagesReceived.isEmpty() || !fHighPriorityMessagesReceived.isEmpty()) && fIsReceiving)
+            if ((!fNormalPriorityMessagesReceived.isEmpty() || !fAboveNormalPriorityMessagesReceived.isEmpty() || !fHighPriorityMessagesReceived.isEmpty()))
             {
                 synchronized (fSyncObject)
                 {
