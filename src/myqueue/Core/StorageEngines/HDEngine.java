@@ -43,7 +43,9 @@ public class HDEngine extends StorageEngine
     {
         synchronized (fSyncObject)
         {
-            return fHighPriorityMessageManager.fMessageCount > 0 ? fHighPriorityMessageManager.Dequeue() : fAboveNormalPriorityMessageManager.fMessageCount > 0 ? fAboveNormalPriorityMessageManager.Dequeue() : fNormalPriorityMessageManager.Dequeue();
+            return fHighPriorityMessageManager.fMessageCount > 0 ? fHighPriorityMessageManager.Dequeue()
+                    : fAboveNormalPriorityMessageManager.fMessageCount > 0 ? fAboveNormalPriorityMessageManager.Dequeue()
+                    : fNormalPriorityMessageManager.Dequeue();
         }
     }
 
@@ -52,7 +54,9 @@ public class HDEngine extends StorageEngine
     {
         synchronized (fSyncObject)
         {
-            return fHighPriorityMessageManager.fMessageCount > 0 ? fHighPriorityMessageManager.Peek() : fAboveNormalPriorityMessageManager.fMessageCount > 0 ? fAboveNormalPriorityMessageManager.Peek() : fNormalPriorityMessageManager.Peek();
+            return fHighPriorityMessageManager.fMessageCount > 0 ? fHighPriorityMessageManager.Peek()
+                    : fAboveNormalPriorityMessageManager.fMessageCount > 0 ? fAboveNormalPriorityMessageManager.Peek()
+                    : fNormalPriorityMessageManager.Peek();
         }
     }
 
@@ -60,7 +64,9 @@ public class HDEngine extends StorageEngine
     public byte[] GetMessageByID(String messageID)
     {
         String priorityIdicator = messageID.substring(0, 2);
-        return priorityIdicator.equals("PH") ? fHighPriorityMessageManager.GetMessageByID(messageID) : priorityIdicator.equals("PA") ? fAboveNormalPriorityMessageManager.GetMessageByID(messageID) : fNormalPriorityMessageManager.GetMessageByID(messageID);
+        return priorityIdicator.equals("PH") ? fHighPriorityMessageManager.GetMessageByID(messageID)
+                : priorityIdicator.equals("PA") ? fAboveNormalPriorityMessageManager.GetMessageByID(messageID)
+                : fNormalPriorityMessageManager.GetMessageByID(messageID);
     }
 
     @Override
