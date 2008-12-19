@@ -52,8 +52,7 @@ public class DataReader
         {
             File file = new File(fLocation + fileName + fFileExtension);
             InputStream inputStream = new FileInputStream(file);
-            long length = file.length();
-            byte[] bytes = new byte[(int) length];
+            byte[] bytes = new byte[(int)file.length()];
             inputStream.read(bytes, 0, bytes.length);
             inputStream.close();
             return bytes;
