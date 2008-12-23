@@ -75,7 +75,6 @@ public class frmMain extends javax.swing.JFrame
             osIsWindows = true;
         }
 
-        //QueueManager.Load();
         jTableQueues.getColumnModel().getColumn(0).setCellRenderer(new ImageTableCellRenderer());
         Update();
 
