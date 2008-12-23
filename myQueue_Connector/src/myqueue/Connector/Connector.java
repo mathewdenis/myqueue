@@ -158,7 +158,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                     fBeginReceiveWaitEvt.Set();
                     return;
 
-                case 5: // Receive all queue message packet.
+                case 5: // Receive all enqueued messages packet.
                     try
                     {
                         String[] messagePacket = new String(data.getBytes(), 1, data.getLength() - 1).split(":");
@@ -166,6 +166,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                         String aboveNormalPriorityMessagePacket = messagePacket[1];
                         String highPriorityMessagePacket = messagePacket[2];
 
+                        // Normal priority IDs
                         long minNormalPriorityID = Long.parseLong(normalPriorityMessagePacket.split("-")[0]);
                         long maxNormalPriorityID = Long.parseLong(normalPriorityMessagePacket.split("-")[1]);
                         if (minNormalPriorityID > 0)
@@ -176,6 +177,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                             }
                         }
 
+                        // Above Normal priority IDs
                         long minAboveNormalPriorityID = Long.parseLong(aboveNormalPriorityMessagePacket.split("-")[0]);
                         long maxAboveNormalPriorityID = Long.parseLong(aboveNormalPriorityMessagePacket.split("-")[1]);
                         if (minAboveNormalPriorityID > 0)
@@ -186,6 +188,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                             }
                         }
 
+                        // High priority IDs
                         long minHighPriorityID = Long.parseLong(highPriorityMessagePacket.split("-")[0]);
                         long maxHighPriorityID = Long.parseLong(highPriorityMessagePacket.split("-")[1]);
                         if (minHighPriorityID > 0)
@@ -520,8 +523,8 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     {
         fWaitEvt = new ManualResetEvent(false);
         super.Stop();
-        super.RemoveConnector("myQueueConnector");
-        super.AddConnector("myQueueConnector", fIP, fPort, 65535, fSplitter);
+        super.RemoveConnector("QCon");
+        super.AddConnector("QCon", fIP, fPort, 65535, fSplitter);
         super.Start();
     }
 
