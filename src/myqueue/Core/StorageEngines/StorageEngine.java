@@ -23,6 +23,7 @@ public class StorageEngine
 {
 
     private String fLocation;
+    private boolean fJournalRecording;
 
     public StorageEngine(String location)
     {
@@ -65,6 +66,11 @@ public class StorageEngine
     public String getLocation()
     {
         return fLocation;
+    }
+
+    public boolean isJournalRecording()
+    {
+        return fJournalRecording;
     }
 
     public long getMessageCount()

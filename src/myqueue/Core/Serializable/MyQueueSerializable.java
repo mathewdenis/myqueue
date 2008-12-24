@@ -33,4 +33,5 @@ public class MyQueueSerializable implements Serializable
     public int ConnectionsTimeOut;
     public ArrayList TCPListeners = new ArrayList();
     public boolean Running;
+    public boolean JournalRecording;
 }

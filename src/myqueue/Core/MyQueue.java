@@ -34,10 +34,12 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     private int fSplitterLength = 0;
     private byte[] fSplitterBytes = null;
     private int fConnectionsTimeOut;
+    private boolean fJournalRecording;
 
-    public MyQueue(String name, String description, StorageEngine engine, int corePoolSize, int maxPoolSize, int connectionsTimeOut)
+    public MyQueue(String name, String description, StorageEngine engine, int corePoolSize, int maxPoolSize, int connectionsTimeOut, boolean journalRecording)
     {
         super(name, description, corePoolSize, maxPoolSize);
+
         fEngine = engine;
         fCorePoolsSize = corePoolSize;
         fMaxPoolSize = maxPoolSize;
@@ -45,6 +47,8 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
         fSplitterLength = fSplitter.length();
         fSplitterBytes = fSplitter.getBytes();
         fConnectionsTimeOut = connectionsTimeOut;
+
+        fJournalRecording = journalRecording;
     }
 
     @Override
@@ -271,5 +275,10 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
     public int getConnectionsTimeOut()
     {
         return fConnectionsTimeOut;
+    }
+
+    public boolean isJournalRecording()
+    {
+        return fJournalRecording;
     }
 }
