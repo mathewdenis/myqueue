@@ -28,18 +28,29 @@ public class MessageQueueMessage
     public static int PriorityNormal = 0;
     public static int PriorityAboveNormal = 1;
     public static int PriorityHigh = 2;
+    private String fSplitter = String.valueOf(((char) 3));
 
     public MessageQueueMessage(String id, String data)
     {
         fID = id;
-        fBinaryData = data;
+        fBinaryData = RevertSpecialCharacters(data);
     }
 
     public MessageQueueMessage(String id, String data, int priority)
     {
         fID = id;
-        fBinaryData = data;
+        fBinaryData = RevertSpecialCharacters(data);
         fPriority = priority;
+    }
+
+    // For Dequeue,Peek and Receive methods.
+    private String RevertSpecialCharacters(String data)
+    {
+        if (data == null)
+        {
+            return null;
+        }
+        return data.replace("#_!3!_#", String.valueOf(fSplitter));
     }
 
     /**

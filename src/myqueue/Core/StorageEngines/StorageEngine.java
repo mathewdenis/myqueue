@@ -68,6 +68,11 @@ public class StorageEngine
         return fLocation;
     }
 
+    public void setJournalRecording(boolean value)
+    {
+        fJournalRecording = value;
+    }
+
     public boolean isJournalRecording()
     {
         return fJournalRecording;

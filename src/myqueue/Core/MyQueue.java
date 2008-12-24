@@ -41,6 +41,7 @@ public class MyQueue extends Extasys.Network.TCP.Server.ExtasysTCPServer
         super(name, description, corePoolSize, maxPoolSize);
 
         fEngine = engine;
+        fEngine.setJournalRecording(journalRecording);
         fCorePoolsSize = corePoolSize;
         fMaxPoolSize = maxPoolSize;
 
