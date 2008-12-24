@@ -202,7 +202,7 @@ public class frmNewQueue extends javax.swing.JFrame
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel2.setText("The number of threads to keep in the pool, even if they are idle.");
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel7.setText("The maximum number of threads to allow in the pool.");
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 10));
@@ -300,9 +300,9 @@ public class frmNewQueue extends javax.swing.JFrame
                         .addGap(55, 55, 55))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jCheckBoxJournalRecording)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel15)
-                        .addContainerGap(138, Short.MAX_VALUE))))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -353,7 +353,7 @@ public class frmNewQueue extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCheckBoxJournalRecording)
                     .addComponent(jLabel15))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonOK)
                     .addComponent(jButtonCancel))
