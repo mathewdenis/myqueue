@@ -211,8 +211,8 @@ public class frmNewQueue extends javax.swing.JFrame
         jLabel9.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel9.setText("Description for this queue.");
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 10));
-        jLabel10.setText("The path at witch the queue saves the messages.");
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel10.setText("The path at which the queue saves the messages.");
 
         jLabel11.setText("Listeners:");
 
@@ -230,7 +230,7 @@ public class frmNewQueue extends javax.swing.JFrame
         jCheckBoxJournalRecording.setSelected(true);
         jCheckBoxJournalRecording.setText("Journal recording ");
 
-        jLabel15.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel15.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel15.setText("Journal allow you to save copies of messages as they are processed.");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -274,7 +274,7 @@ public class frmNewQueue extends javax.swing.JFrame
                         .addGap(32, 32, 32)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jTextFieldLocation, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
+                                .addComponent(jTextFieldLocation, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton1))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -285,7 +285,7 @@ public class frmNewQueue extends javax.swing.JFrame
                             .addComponent(jLabel8)
                             .addComponent(jLabel9)
                             .addComponent(jLabel10))
-                        .addContainerGap(18, Short.MAX_VALUE))
+                        .addContainerGap(17, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButtonOK)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
