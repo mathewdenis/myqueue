@@ -28,6 +28,7 @@ public class HDEngine extends StorageEngine
     private HDMessageManager fAboveNormalPriorityMessageManager;
     private HDMessageManager fHighPriorityMessageManager;
     private final Object fSyncObject = new Object();
+    private HDEngine fJournalEngine;
 
     public HDEngine(String location)
     {
@@ -64,9 +65,19 @@ public class HDEngine extends StorageEngine
     public byte[] GetMessageByID(String messageID)
     {
         String priorityIdicator = messageID.substring(0, 2);
-        return priorityIdicator.equals("PH") ? fHighPriorityMessageManager.GetMessageByID(messageID)
+        byte[] bytesToReturn = null;
+
+        // Search for message in queue.
+        bytesToReturn = priorityIdicator.equals("PH") ? fHighPriorityMessageManager.GetMessageByID(messageID)
                 : priorityIdicator.equals("PA") ? fAboveNormalPriorityMessageManager.GetMessageByID(messageID)
                 : fNormalPriorityMessageManager.GetMessageByID(messageID);
+
+        // If not message found then search for message in journal.
+        if (bytesToReturn == null && isJournalRecording())
+        {
+            return fJournalEngine.GetMessageByID(messageID);
+        }
+        return bytesToReturn;
     }
 
     @Override
@@ -74,6 +85,13 @@ public class HDEngine extends StorageEngine
     {
         synchronized (fSyncObject)
         {
+            // Write the message to Journal.
+            if (isJournalRecording())
+            {
+                fJournalEngine.Enqueue(bytes);
+            }
+
+            // Write the message to queue.
             int messagePriority = Integer.parseInt(new String(bytes, 0, 1));
             switch (messagePriority)
             {
@@ -96,6 +114,11 @@ public class HDEngine extends StorageEngine
         fNormalPriorityMessageManager.Start();
         fAboveNormalPriorityMessageManager.Start();
         fHighPriorityMessageManager.Start();
+        if (isJournalRecording())
+        {
+            fJournalEngine = new HDEngine(getLocation() + "/Journal");
+            fJournalEngine.StartEngine();
+        }
     }
 
     @Override
@@ -115,6 +138,12 @@ public class HDEngine extends StorageEngine
             fNormalPriorityMessageManager.ClearMessages();
             fAboveNormalPriorityMessageManager.ClearMessages();
             fHighPriorityMessageManager.ClearMessages();
+
+            // Clear journal.
+            if (fJournalEngine != null)
+            {
+                fJournalEngine.Clear();
+            }
         }
     }
 

@@ -39,7 +39,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     // myQueue Server
     private InetAddress fIP;
     private int fPort;
-    private String fSplitter = String.valueOf(((char) 3));
+    private String fSplitter = String.valueOf(((char) 3)); // Splitter is olso defined in MessageQueueMessageClass
     // Enqueue
     private boolean fMessageEnqueuedSuccessfully = false;
     private String fMessageEnqueueError = "";
@@ -232,6 +232,11 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     {
         synchronized (fSyncObject)
         {
+            if (data == null)
+            {
+                return;
+            }
+            data = ChangeSpecialCharacters(data);
             TryToConnect();
 
             fMessageEnqueuedSuccessfully = false;
@@ -266,6 +271,11 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     {
         synchronized (fSyncObject)
         {
+            if (data == null)
+            {
+                return;
+            }
+            data = ChangeSpecialCharacters(data);
             TryToConnect();
 
             fMessageEnqueuedSuccessfully = false;
@@ -298,6 +308,12 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
      */
     public void EnqueueAsynchronous(String data, int priority) throws EnqueueMessageException, MyQueueConnectorDisconnectedException
     {
+        if (data == null)
+        {
+            return;
+        }
+        data = ChangeSpecialCharacters(data);
+
         TryToConnect();
 
         try
@@ -528,6 +544,13 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         super.Start();
     }
 
+    // For Enqueue and Enqueue asynchronous methods.
+    private String ChangeSpecialCharacters(String data)
+    {
+        return data.replace(String.valueOf(fSplitter), "#_!3!_#");
+    }
+
+    
     private void Disconnect()
     {
         super.Stop();
