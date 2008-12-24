@@ -139,7 +139,7 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="0"/>
-    <Property name="title" type="java.lang.String" value="myQueue 1.0.0.1"/>
+    <Property name="title" type="java.lang.String" value="myQueue 1.0.0.5"/>
   </Properties>
   <AccessibilityProperties>
     <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="myQueue 1.0.0.5"/>
