@@ -207,7 +207,7 @@ public class frmMain extends javax.swing.JFrame
         popupMenuTray.add(menuItemShowServer);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("myQueue 1.0.0.1");
+        setTitle("myQueue 1.0.0.5");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -367,20 +367,29 @@ public class frmMain extends javax.swing.JFrame
     // Start queue.
     private void jMenuItemStartActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemStartActionPerformed
     {//GEN-HEADEREND:event_jMenuItemStartActionPerformed
-        try
+
+        java.awt.EventQueue.invokeLater(new Runnable()
         {
-            String selectedServer = "";
-            if (jTableQueues.getSelectedRow() >= 0)
+
+            @Override
+            public void run()
             {
-                selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
-                QueueManager.StartQueue(selectedServer);
-                Update();
+                try
+                {
+                    String selectedServer = "";
+                    if (jTableQueues.getSelectedRow() >= 0)
+                    {
+                        selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
+                        QueueManager.StartQueue(selectedServer);
+                        Update();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR);
+                }
             }
-        }
-        catch (Exception ex)
-        {
-            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR);
-        }
+        });
     }//GEN-LAST:event_jMenuItemStartActionPerformed
 
     // Stop queue.
@@ -452,24 +461,31 @@ public class frmMain extends javax.swing.JFrame
     // Clear queue.
     private void jMenuItemClearActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemClearActionPerformed
     {//GEN-HEADEREND:event_jMenuItemClearActionPerformed
-        try
+        java.awt.EventQueue.invokeLater(new Runnable()
         {
-            String selectedServer = "";
-            if (jTableQueues.getSelectedRow() >= 0)
+            @Override
+            public void run()
             {
-                selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
-                int answer = JOptionPane.showConfirmDialog(null, "Clear " + selectedServer + " messages?", "Clear Queue", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                if (answer == JOptionPane.YES_OPTION)
+                try
                 {
-                    QueueManager.ClearQueue(selectedServer);
-                    Update();
+                    String selectedServer = "";
+                    if (jTableQueues.getSelectedRow() >= 0)
+                    {
+                        selectedServer = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 1).toString();
+                        int answer = JOptionPane.showConfirmDialog(null, "Clear " + selectedServer + " messages?", "Clear Queue", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                        if (answer == JOptionPane.YES_OPTION)
+                        {
+                            QueueManager.ClearQueue(selectedServer);
+                            Update();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR);
                 }
             }
-        }
-        catch (Exception ex)
-        {
-            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR);
-        }
+        });
     }//GEN-LAST:event_jMenuItemClearActionPerformed
 
     private void jMenuItemInfoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemInfoActionPerformed

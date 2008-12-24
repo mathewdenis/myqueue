@@ -136,6 +136,7 @@ public class HDMessageManager
     {
         try
         {
+            fMessageCount = 0;
             // Create my folder.
             File myFolder = new File(fLocation);
             if (!myFolder.exists())
