@@ -30,6 +30,7 @@ import java.util.Hashtable;
 import javax.swing.JOptionPane;
 import myqueue.Core.Serializable.TCPListenerSerializable;
 import myqueue.Core.StorageEngines.HDEngine;
+import myqueue.UI.frmLoading;
 
 /**
  *
@@ -39,6 +40,7 @@ public class QueueManager
 {
 
     private static Hashtable<String, MyQueue> fQueues = new Hashtable<String, MyQueue>();
+    private static frmLoading fProgress;
 
     public QueueManager()
     {
@@ -245,57 +247,75 @@ public class QueueManager
         }
     }
 
-    public static void Load()
+    public static void Load(frmLoading progress)
     {
-        File dir = new File("MyQueueActiveQueues");
-        File[] files = dir.listFiles();
-
-        // This filter only returns files.
-        FileFilter fileFilter = new FileFilter()
+        fProgress = progress;
+        Thread loadThread = new Thread(new Runnable()
         {
 
             @Override
-            public boolean accept(File file)
+            public void run()
             {
-                return !file.isDirectory() && file.getName().endsWith("queue");
-            }
-        };
-        files = dir.listFiles(fileFilter);
+                File dir = new File("MyQueueActiveQueues");
+                File[] files = dir.listFiles();
 
-        FileInputStream fis = null;
-        ObjectInputStream in = null;
-        for (File file : files)
-        {
-            try
-            {
-                fis = new FileInputStream(file.getPath());
-                in = new ObjectInputStream(fis);
-                MyQueueSerializable tmp = (MyQueueSerializable) in.readObject();
-
-                // Listeners.
-                ArrayList listeners = new ArrayList();
-                for (int i = 0; i < tmp.TCPListeners.size(); i++)
+                // This filter only returns files.
+                FileFilter fileFilter = new FileFilter()
                 {
-                    TCPListenerSerializable tmpListener = (TCPListenerSerializable) tmp.TCPListeners.get(i);
-                    TCPListener listener = new TCPListener("", tmpListener.IPAddress, tmpListener.Port, tmpListener.MaxConnections, 65535, tmp.ConnectionsTimeOut, 100, tmpListener.Splitter);
-                    listeners.add(listener);
+
+                    @Override
+                    public boolean accept(File file)
+                    {
+                        return !file.isDirectory() && file.getName().endsWith("queue");
+                    }
+                };
+                files = dir.listFiles(fileFilter);
+
+                // Set maximum value to progress.
+                fProgress.SetMaximumProgressValue(files.length);
+
+                FileInputStream fis = null;
+                ObjectInputStream in = null;
+                for (File file : files)
+                {
+                    try
+                    {
+                        fProgress.UpdateStatus("Loading " + file.getName());
+                        fis = new FileInputStream(file.getPath());
+                        in = new ObjectInputStream(fis);
+                        MyQueueSerializable tmp = (MyQueueSerializable) in.readObject();
+
+                        // Listeners.
+                        ArrayList listeners = new ArrayList();
+                        for (int i = 0; i < tmp.TCPListeners.size(); i++)
+                        {
+                            TCPListenerSerializable tmpListener = (TCPListenerSerializable) tmp.TCPListeners.get(i);
+                            TCPListener listener = new TCPListener("", tmpListener.IPAddress, tmpListener.Port, tmpListener.MaxConnections, 65535, tmp.ConnectionsTimeOut, 100, tmpListener.Splitter);
+                            listeners.add(listener);
+                        }
+
+                        String queueFileName = file.getName().substring(0, file.getName().lastIndexOf("."));
+                        CreateNewQueue(queueFileName, tmp.Description, tmp.Location, tmp.CorePoolsSize, tmp.MaxPoolSize, listeners, tmp.ConnectionsTimeOut, tmp.JournalRecording);
+
+                        if (tmp.Running)
+                        {
+                            StartQueue(tmp.Name);
+                        }
+
+                        in.close();
+                    }
+                    catch (Exception ex)
+                    {
+                        System.err.println(ex.getMessage());
+                    }
+
+                    fProgress.ProgressPlus();
                 }
 
-                String queueFileName = file.getName().substring(0, file.getName().lastIndexOf("."));
-                CreateNewQueue(queueFileName, tmp.Description, tmp.Location, tmp.CorePoolsSize, tmp.MaxPoolSize, listeners, tmp.ConnectionsTimeOut, tmp.JournalRecording);
-
-                if (tmp.Running)
-                {
-                    StartQueue(tmp.Name);
-                }
-
-                in.close();
+                fProgress.LoadFinished();
             }
-            catch (Exception ex)
-            {
-                System.err.println(ex.getMessage());
-            }
-        }
+        });
+        loadThread.start();
     }
 
     public static Hashtable<String, MyQueue> getQueues()

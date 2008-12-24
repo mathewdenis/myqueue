@@ -287,6 +287,8 @@ public class frmMain extends javax.swing.JFrame
                 .addContainerGap())
         );
 
+        getAccessibleContext().setAccessibleName("myQueue 1.0.0.5");
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
