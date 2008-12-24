@@ -76,6 +76,7 @@ public class frmNewQueue extends javax.swing.JFrame
         jTextFieldLocation.setText(tmp.getEngine().getLocation());
         jTextFieldCorePoolSize.setText(String.valueOf(tmp.getCorePoolSize()));
         jTextFieldMaxPoolSize.setText(String.valueOf(tmp.getMaxPoolSize()));
+        jCheckBoxJournalRecording.setSelected(tmp.isJournalRecording());
 
         // Listeners.
         DefaultTableModel model = (DefaultTableModel) jTableListeners.getModel();
@@ -121,6 +122,8 @@ public class frmNewQueue extends javax.swing.JFrame
         jLabel13 = new javax.swing.JLabel();
         jTextFieldTimeOut = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
+        jCheckBoxJournalRecording = new javax.swing.JCheckBox();
+        jLabel15 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("New Queue");
@@ -199,7 +202,7 @@ public class frmNewQueue extends javax.swing.JFrame
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel2.setText("The number of threads to keep in the pool, even if they are idle.");
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 10));
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel7.setText("The maximum number of threads to allow in the pool.");
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 10));
@@ -208,7 +211,7 @@ public class frmNewQueue extends javax.swing.JFrame
         jLabel9.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel9.setText("Description for this queue.");
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel10.setText("The path at witch the queue saves the messages.");
 
         jLabel11.setText("Listeners:");
@@ -223,6 +226,12 @@ public class frmNewQueue extends javax.swing.JFrame
 
         jLabel14.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel14.setText("The time in milliseconds a client can be inactive.");
+
+        jCheckBoxJournalRecording.setSelected(true);
+        jCheckBoxJournalRecording.setText("Journal recording ");
+
+        jLabel15.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel15.setText("Journal allow you to save copies of messages as they are processed.");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -288,7 +297,12 @@ public class frmNewQueue extends javax.swing.JFrame
                         .addComponent(jTextFieldTimeOut, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel14)
-                        .addGap(55, 55, 55))))
+                        .addGap(55, 55, 55))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jCheckBoxJournalRecording)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel15)
+                        .addContainerGap(138, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -335,7 +349,11 @@ public class frmNewQueue extends javax.swing.JFrame
                     .addComponent(jLabel13)
                     .addComponent(jTextFieldTimeOut, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jCheckBoxJournalRecording)
+                    .addComponent(jLabel15))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonOK)
                     .addComponent(jButtonCancel))
@@ -477,7 +495,7 @@ public class frmNewQueue extends javax.swing.JFrame
             {
             }
 
-            QueueManager.CreateNewQueue(jTextFieldName.getText(), jTextFieldDescription.getText(), jTextFieldLocation.getText(), corePoolSize, maxPoolSize, listeners, timeOut);
+            QueueManager.CreateNewQueue(jTextFieldName.getText(), jTextFieldDescription.getText(), jTextFieldLocation.getText(), corePoolSize, maxPoolSize, listeners, timeOut, jCheckBoxJournalRecording.isSelected());
 
             if (fQueueToEditIsActive)
             {
@@ -503,12 +521,14 @@ public class frmNewQueue extends javax.swing.JFrame
     private javax.swing.JButton jButtonCancel;
     private javax.swing.JButton jButtonOK;
     private javax.swing.JButton jButtonRemoveListener;
+    private javax.swing.JCheckBox jCheckBoxJournalRecording;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

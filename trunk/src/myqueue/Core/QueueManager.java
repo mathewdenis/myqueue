@@ -44,7 +44,7 @@ public class QueueManager
     {
     }
 
-    public static void CreateNewQueue(String name, String description, String location, int corePoolSize, int maxPoolSize, ArrayList listeners, int connectionsTimeOut) throws Exception
+    public static void CreateNewQueue(String name, String description, String location, int corePoolSize, int maxPoolSize, ArrayList listeners, int connectionsTimeOut, boolean journalRecording) throws Exception
     {
         name = name.trim();
         description = description.trim();
@@ -90,7 +90,7 @@ public class QueueManager
         }
 
         HDEngine engine = new HDEngine(location);
-        MyQueue queue = new MyQueue(name, description, engine, corePoolSize, maxPoolSize, connectionsTimeOut);
+        MyQueue queue = new MyQueue(name, description, engine, corePoolSize, maxPoolSize, connectionsTimeOut, journalRecording);
 
         for (int i = 0; i < listeners.size(); i++)
         {
@@ -174,7 +174,6 @@ public class QueueManager
     private static void Save()
     {
         // Check if file QueueData exists.
-
         File tmpFolder = new File("MyQueueActiveQueues");
         if (!tmpFolder.exists())
         {
@@ -216,6 +215,7 @@ public class QueueManager
         {
             tmp.Engine = EStorageEngine.HDEngine;
         }
+        tmp.JournalRecording = queue.isJournalRecording();
 
         // Listeners.
         for (int i = 0; i < queue.getListeners().size(); i++)
@@ -282,7 +282,7 @@ public class QueueManager
                 }
 
                 String queueFileName = file.getName().substring(0, file.getName().lastIndexOf("."));
-                CreateNewQueue(queueFileName, tmp.Description, tmp.Location, tmp.CorePoolsSize, tmp.MaxPoolSize, listeners, tmp.ConnectionsTimeOut);
+                CreateNewQueue(queueFileName, tmp.Description, tmp.Location, tmp.CorePoolsSize, tmp.MaxPoolSize, listeners, tmp.ConnectionsTimeOut, tmp.JournalRecording);
 
                 if (tmp.Running)
                 {
