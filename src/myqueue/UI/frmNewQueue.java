@@ -114,8 +114,6 @@ public class frmNewQueue extends javax.swing.JFrame
         jButtonCancel = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
@@ -205,12 +203,6 @@ public class frmNewQueue extends javax.swing.JFrame
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel7.setText("The maximum number of threads to allow in the pool.");
 
-        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 10));
-        jLabel8.setText("Name for this queue.");
-
-        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 10));
-        jLabel9.setText("Description for this queue.");
-
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel10.setText("The path at which the queue saves the messages.");
 
@@ -281,10 +273,7 @@ public class frmNewQueue extends javax.swing.JFrame
                                 .addComponent(jTextFieldName, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jTextFieldDescription, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel10))
+                        .addComponent(jLabel10)
                         .addContainerGap(17, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButtonOK)
@@ -310,13 +299,11 @@ public class frmNewQueue extends javax.swing.JFrame
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextFieldName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
+                    .addComponent(jTextFieldName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextFieldDescription, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
+                    .addComponent(jTextFieldDescription, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldLocation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -535,8 +522,6 @@ public class frmNewQueue extends javax.swing.JFrame
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTableListeners;
     private javax.swing.JTextField jTextFieldCorePoolSize;
