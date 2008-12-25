@@ -211,13 +211,13 @@ public class frmNewQueue extends javax.swing.JFrame
         jLabel9.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel9.setText("Description for this queue.");
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel10.setText("The path at which the queue saves the messages.");
 
         jLabel11.setText("Listeners:");
 
-        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 10));
-        jLabel12.setText("Add one or more listeners to this queue. Make sure the listener's has enought maximum connections for your clients.");
+        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel12.setText("Add one or more listeners to this queue.");
         jLabel12.setAutoscrolls(true);
 
         jLabel13.setText("Connections time out (ms):");
