@@ -57,7 +57,7 @@ public class frmAbout extends javax.swing.JFrame
 
         jLabel4.setText("http://code.google.com/p/myqueue/");
 
-        jLabel5.setText("Created by Nikos Siatras");
+        jLabel5.setText("Copyright (C) 2008-2009 Nikos Siatras");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

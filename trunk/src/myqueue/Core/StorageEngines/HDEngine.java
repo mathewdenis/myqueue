@@ -73,11 +73,7 @@ public class HDEngine extends StorageEngine
                 : fNormalPriorityMessageManager.GetMessageByID(messageID);
 
         // If not message found then search for message in journal.
-        if (bytesToReturn == null && isJournalRecording())
-        {
-            return fJournalEngine.GetMessageByID(messageID);
-        }
-        return bytesToReturn;
+        return bytesToReturn == null && isJournalRecording() ? fJournalEngine.GetMessageByID(messageID) : bytesToReturn;
     }
 
     @Override

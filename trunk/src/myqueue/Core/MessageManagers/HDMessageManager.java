@@ -17,6 +17,8 @@ package myqueue.Core.MessageManagers;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Arrays;
+import java.util.Comparator;
 import myqueue.Core.File.DataReader;
 import myqueue.Core.File.DataWriter;
 
@@ -160,32 +162,45 @@ public class HDMessageManager
             };
             files = dir.listFiles(fileFilter);
 
-            long maxID = 0;
-            long minID = 0;
-            for (File file : files)
+            // Sort files by ID.
+            Arrays.sort(files, new Comparator()
             {
-                try
+
+                @Override
+                public int compare(Object o1, Object o2)
                 {
-                    int tmpID = Integer.parseInt(file.getName().replace(fPriorityInteger, "").replace(".mqf", ""));
+                    long id1, id2;
+                    id1 = Long.parseLong(((File) o1).getName().replace(fPriorityInteger, "").replace(".mqf", ""));
+                    id2 = Long.parseLong(((File) o2).getName().replace(fPriorityInteger, "").replace(".mqf", ""));
 
-                    maxID = Math.max(maxID, tmpID);
-
-                    if (minID == 0)
+                    if (id1 < id2)
                     {
-                        minID = tmpID;
+                        return -1;
+                    }
+                    else if (id1 > id2)
+                    {
+                        return 1;
                     }
                     else
                     {
-                        minID = Math.min(tmpID, minID);
+                        return 0;
                     }
-
-                    fMessageCount++;
                 }
-                catch (Exception ex)
-                {
-                }
+            });
 
+            long maxID = 0;
+            long minID = 0;
+
+            if (files.length > 0)
+            {
+                // minID is the files[0] id.
+                minID = Integer.parseInt(files[0].getName().replace(fPriorityInteger, "").replace(".mqf", ""));
+                // maxID is the files[files.length - 1] id.
+                maxID = Integer.parseInt(files[files.length - 1].getName().replace(fPriorityInteger, "").replace(".mqf", ""));
             }
+
+            fMessageCount = files.length;
+
             fLastMessageID = maxID;
             fFirstInMessage = minID;
             if (fFirstInMessage == 0)
