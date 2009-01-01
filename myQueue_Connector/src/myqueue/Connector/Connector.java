@@ -18,6 +18,8 @@ package myqueue.Connector;
 import Extasys.DataFrame;
 import Extasys.ManualResetEvent;
 import Extasys.Network.TCP.Client.Connectors.TCPConnector;
+import Extasys.Network.TCP.Client.Exceptions.ConnectorCannotSendPacketException;
+import Extasys.Network.TCP.Client.Exceptions.ConnectorDisconnectedException;
 import java.net.InetAddress;
 import myqueue.Connector.Exceptions.CouldNotReceiveMessagesPacket;
 import myqueue.Connector.Exceptions.DequeueMessageException;
@@ -550,7 +552,6 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
         return data.replace(String.valueOf(fSplitter), "#_!3!_#");
     }
 
-    
     private void Disconnect()
     {
         super.Stop();
