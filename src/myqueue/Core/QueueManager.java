@@ -1,5 +1,5 @@
 /* myQueue
- * Copyright (C) 2008 Nikos Siatras
+ * Copyright (C) 2008-2009 Nikos Siatras
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -65,12 +65,12 @@ public class QueueManager
 
         if (corePoolSize < 10)
         {
-            throw new Exception("Core pool size must be grater than 10.");
+            throw new Exception("Core pool size must be greater than 10.");
         }
 
         if (maxPoolSize < corePoolSize)
         {
-            throw new Exception("Max pool size must be grater than core poolsize.");
+            throw new Exception("Max pool size must be greater than core poolsize.");
         }
 
         if (listeners == null || listeners.size() == 0)
