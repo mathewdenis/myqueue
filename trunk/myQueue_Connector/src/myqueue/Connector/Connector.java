@@ -1,5 +1,5 @@
 /* myQueue
- * Copyright (C) 2008 Nikos Siatras
+ * Copyright (C) 2008-2009 Nikos Siatras
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -18,8 +18,6 @@ package myqueue.Connector;
 import Extasys.DataFrame;
 import Extasys.ManualResetEvent;
 import Extasys.Network.TCP.Client.Connectors.TCPConnector;
-import Extasys.Network.TCP.Client.Exceptions.ConnectorCannotSendPacketException;
-import Extasys.Network.TCP.Client.Exceptions.ConnectorDisconnectedException;
 import java.net.InetAddress;
 import myqueue.Connector.Exceptions.CouldNotReceiveMessagesPacket;
 import myqueue.Connector.Exceptions.DequeueMessageException;
