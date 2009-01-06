@@ -146,7 +146,7 @@ public class HDMessageManager
                 myFolder.mkdirs();
             }
 
-            // Find the last message id in the engine location.
+            // Make a list of the message queue messages(files).
             File dir = new File(fLocation);
             File[] files = dir.listFiles();
 
