@@ -207,7 +207,7 @@ public class frmMain extends javax.swing.JFrame
         popupMenuTray.add(menuItemShowServer);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("myQueue 1.0.0.5");
+        setTitle("myQueue 1.0.0.6");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -286,8 +286,6 @@ public class frmMain extends javax.swing.JFrame
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
                 .addContainerGap())
         );
-
-        getAccessibleContext().setAccessibleName("myQueue 1.0.0.5");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
