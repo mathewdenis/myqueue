@@ -72,8 +72,16 @@ public class MessageQueueMessage
     }
 
     /**
+     * Set message's data.
+     */
+    public void setData(String data)
+    {
+        fBinaryData = data;
+    }
+
+    /**
      * Message priority.
-     * @return
+     * @return message's priority.
      */
     public int getPriority()
     {

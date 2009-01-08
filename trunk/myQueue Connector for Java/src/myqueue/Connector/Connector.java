@@ -224,7 +224,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     }
 
     /**
-     * Adds a String object to the end of the Queue.
+     * Adds a String message (object) to the end of the Queue with Normal priority.
      * @param data is the string data to be enqueued.
      * @throws EnqueueMessageException, MyQueueConnectorDisconnectedException
      */
@@ -262,7 +262,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     }
 
     /**
-     * Adds a String object to the end of the Queue.
+     * Adds a String message (object) to the end of the Queue.
      * @param data is the string data to be enqueued.
      * @param priority is the message Priority (ex. MessageQueueMessage.PriorityNormal , MessageQueueMessage.PriorityAboveNormal, MessageQueueMessage.PriorityHigh).
      * @throws EnqueueMessageException, MyQueueConnectorDisconnectedException
@@ -302,7 +302,7 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
 
     /**
      * Enqueue data to server without waiting for comfirmation.
-     * @param data  data is the string data to be enqueued.
+     * @param data is the string data to be enqueued.
      * @param priority is the message Priority (ex. MessageQueueMessage.PriorityNormal , MessageQueueMessage.PriorityAboveNormal, MessageQueueMessage.PriorityHigh).
      * @throws EnqueueMessageException, MyQueueConnectorDisconnectedException
      */
