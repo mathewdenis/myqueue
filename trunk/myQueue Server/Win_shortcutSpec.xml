@@ -1,0 +1,6 @@
+<shortcuts>
+    <skipIfNotSupported/>
+    <programGroup location="applications" defaultName="$APP_NAME $APP_VER"/>
+    <shortcut name="myQueue" description="myQueue Server" encoding="UTF-8" workingDirectory="$INSTALL_PATH" target="$INSTALL_PATH/dist/myQueue.jar" programGroup="yes" desktop="yes" startup="no"/>
+    <shortcut name="Uninstall myQueue" description="Uninstall myQueue" encoding="UTF-8" workingDirectory="$INSTALL_PATH/Uninstaller/" target="$INSTALL_PATH/Uninstaller/uninstaller.jar" programGroup="yes"/>
+</shortcuts>
