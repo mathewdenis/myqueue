@@ -208,7 +208,7 @@ public class frmNewQueue extends javax.swing.JFrame
 
         jLabel11.setText("Listeners:");
 
-        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel12.setText("Add one or more listeners to this queue.");
         jLabel12.setAutoscrolls(true);
 
