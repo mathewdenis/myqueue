@@ -1,0 +1,55 @@
+<installation version="1.0">
+    <info>
+        <appname>myQueue Server</appname>
+        <appversion>1.0.0.6</appversion>
+        <appsubpath>$APP_NAME</appsubpath>
+        <javaversion>1.6</javaversion>
+        <url>http://www.codeforte.org</url>
+        <authors>
+            <author email="nsi@codeforte.org" name="Nikos Siatras"/>
+        </authors>
+    </info>
+    <guiprefs height="450" resizable="yes" width="600">
+        <modifier key="useFlags" value="no"/>
+        <modifier key="langDisplayType" value="native"/>
+        <modifier key="allYGap" value="8"/>
+        <modifier key="allXGap" value="4"/>
+        <modifier key="layoutAnchor" value="NORTHWEST"/>
+    </guiprefs>
+    <locale>
+        <langpack iso3="eng"/>
+    </locale>
+    <native name="ShellLink.dll" type="izpack">
+        <os family="windows"/>
+    </native>
+    <native name="COIOSHelper.dll" stage="both" type="3rdparty">
+        <os family="windows"/>
+    </native>
+    <listeners>
+        <listener installer="RegistryInstallerListener" uninstaller="RegistryUninstallerListener">
+            <os family="windows"/>
+        </listener>
+    </listeners>
+    <variables/>
+    <resources>
+        <res src="Licence.txt" id="LicencePanel.licence"/>
+        <res src="Win_shortcutSpec.xml" id="Win_shortcutSpec.xml"/>
+        <res src="Unix_shortcutSpec.xml" id="Unix_shortcutSpec.xml"/>
+    </resources>
+    <panels>
+        <panel classname="CheckedHelloPanel"/>
+        <panel classname="LicencePanel"/>
+        <panel classname="PacksPanel"/>
+        <panel classname="TargetPanel"/>
+        <panel classname="InstallPanel"/>
+        <panel classname="ShortcutPanel"/>
+        <panel classname="SimpleFinishPanel"/>
+    </panels>
+    <packs>
+        <pack name="Core" required="yes">
+            <description>Core Files</description>
+            <file targetdir="$INSTALL_PATH" src="dist"/>
+            <file targetdir="$INSTALL_PATH" src="src/Images"/>
+        </pack>
+    </packs>
+</installation>

@@ -1,0 +1,5 @@
+<shortcuts>
+    <skipIfNotSupported/>
+    <programGroup location="applications" defaultName="$APP_NAME $APP_VER"/>
+    <shortcut startMenu="yes" name="myQueue" encoding="UTF-8" applications="yes" target="$INSTALL_PATH" programGroup="yes" description="myQueue Server Folder" desktop="yes"/>
+</shortcuts>
