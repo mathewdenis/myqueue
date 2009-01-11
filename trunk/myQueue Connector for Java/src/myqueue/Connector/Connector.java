@@ -420,17 +420,13 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
     /**
      * Receive message from the server.
      * @param timeOut is the time in milliseconds the connector will wait to receive a new message from the server.
-     * As timeout use an integer above 2000 and below 20000 otherwise the timeout will be automatically set to 5000.
-     * @return MessageQueueMessage
-     * @throws myqueue.Connector.Exceptions.MyQueueConnectorDisconnectedException
+     * As timeout use an integer smaller than your myQueue server's time-out.
+     * @return MessageQueueMessage is the received message.
+     * @throws MyQueueConnectorDisconnectedException,ReceivedMessageException
      * @throws java.lang.Exception
      */
     public MessageQueueMessage Receive(int timeOut) throws MyQueueConnectorDisconnectedException, ReceivedMessageException
     {
-        if (timeOut < 2000 || timeOut > 20000)
-        {
-            timeOut = 5000;
-        }
         if (!fIsReceiving && (fNormalPriorityMessagesReceived.isEmpty() && fAboveNormalPriorityMessagesReceived.isEmpty() && fHighPriorityMessagesReceived.isEmpty()))
         {
             fBeginReceiveWaitEvt.WaitOne(timeOut);
@@ -466,7 +462,10 @@ public class Connector extends Extasys.Network.TCP.Client.ExtasysTCPClient
                     }
                     else
                     {
-                        fWaitForMessagesEvt.WaitOne(timeOut);
+                        if (fIsReceiving)
+                        {
+                            fWaitForMessagesEvt.WaitOne(timeOut);
+                        }
                     }
                 }
             }
