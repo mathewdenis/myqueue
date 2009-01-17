@@ -75,13 +75,6 @@ public class frmMain extends javax.swing.JFrame
         }
         ShowForm();
 
-        /*String osName = System.getProperty("os.name");
-        boolean osIsWindows = false;
-        if (osName.contains("Windows"))
-        {
-        osIsWindows = true;
-        }*/
-
         Update();
 
         try
@@ -106,20 +99,7 @@ public class frmMain extends javax.swing.JFrame
                     ImageIcon trayImage = new ImageIcon(getClass().getResource(trayIconPath));
                     fTrayIcon = new TrayIcon(trayImage.getImage().getScaledInstance(tray.getTrayIconSize().width, tray.getTrayIconSize().height, 0));
                 }
-
-                /*if (osIsWindows)
-                {
-                trayIconPath = "/Images/data-server-16x16.png";
-                ImageIcon trayImage = new ImageIcon(getClass().getResource(trayIconPath));
-                fTrayIcon = new TrayIcon(trayImage.getImage());
-                }
-                else
-                {
-                trayIconPath = "/Images/data-server-32x32.png";
-                ImageIcon trayImage = new ImageIcon(getClass().getResource(trayIconPath));
-                fTrayIcon = new TrayIcon(trayImage.getImage().getScaledInstance(tray.getTrayIconSize().width, tray.getTrayIconSize().height, 0));
-                }*/
-
+                
                 fTrayIcon.setToolTip("myQueue Server");
 
                 fTrayIcon.setPopupMenu(popupMenuTray);
