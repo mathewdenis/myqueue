@@ -29,6 +29,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import myqueue.Core.MyQueue;
 import myqueue.Core.QueueManager;
+import myqueue.UI.PropertiesViews.MainProperties;
+import myqueue.UI.PropertiesViews.MyQueueServerProperties;
 
 /**
  *
@@ -40,6 +42,8 @@ public class frmMain extends javax.swing.JFrame
     private TrayIcon fTrayIcon;
     private DefaultMutableTreeNode fMyQueueNode = new DefaultMutableTreeNode("myQueue Servers");
     private MyJTreeCellRenderer fMyJTreeCellRenderer = new MyJTreeCellRenderer(this);
+    private MainProperties fMainPropertiesView = new MainProperties(this);
+    private MyQueueServerProperties fMyQueueServerPropertiesView = new MyQueueServerProperties(this);
 
     public frmMain()
     {
@@ -55,8 +59,21 @@ public class frmMain extends javax.swing.JFrame
         initComponents();
 
         // Create Root treeNode
-        ((DefaultTreeModel) jTree1.getModel()).insertNodeInto(fMyQueueNode, (DefaultMutableTreeNode) jTree1.getModel().getRoot(), 0);
         jTree1.setCellRenderer(fMyJTreeCellRenderer);
+        ((DefaultTreeModel) jTree1.getModel()).insertNodeInto(fMyQueueNode, (DefaultMutableTreeNode) jTree1.getModel().getRoot(), 0);
+
+        jDesktopPane1.add(fMainPropertiesView);
+        jDesktopPane1.add(fMyQueueServerPropertiesView);
+        fMainPropertiesView.setVisible(true);
+
+        try
+        {
+            fMainPropertiesView.setMaximum(true);
+            fMyQueueServerPropertiesView.setMaximum(true);
+        }
+        catch (Exception ex)
+        {
+        }
 
         // Load myQueueUI.properties.
         try
@@ -99,7 +116,7 @@ public class frmMain extends javax.swing.JFrame
                     ImageIcon trayImage = new ImageIcon(getClass().getResource(trayIconPath));
                     fTrayIcon = new TrayIcon(trayImage.getImage().getScaledInstance(tray.getTrayIconSize().width, tray.getTrayIconSize().height, 0));
                 }
-                
+
                 fTrayIcon.setToolTip("myQueue Server");
 
                 fTrayIcon.setPopupMenu(popupMenuTray);
@@ -128,6 +145,7 @@ public class frmMain extends javax.swing.JFrame
         jMenuItemClear = new javax.swing.JMenuItem();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
+        jDesktopPane1 = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -218,7 +236,7 @@ public class frmMain extends javax.swing.JFrame
         jPopupMenuMyQueueServers.add(jMenuItemClear);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("myQueue 1.0.0.6");
+        setTitle("myQueue 2.0.0.5");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -229,6 +247,11 @@ public class frmMain extends javax.swing.JFrame
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jTree1.setComponentPopupMenu(jPopupMenuMyQueueServers);
         jTree1.setRootVisible(false);
+        jTree1.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                jTree1ValueChanged(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTree1);
 
         jMenu1.setText("File");
@@ -272,13 +295,17 @@ public class frmMain extends javax.swing.JFrame
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(669, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jDesktopPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -325,6 +352,11 @@ public class frmMain extends javax.swing.JFrame
 
             QueueManager.StopAllQueues();
             this.dispose();
+
+            // Dipose Properties Views.
+            fMainPropertiesView.Dispose();
+            fMyQueueServerPropertiesView.Dispose();
+
             System.exit(0);
         }
     }
@@ -332,7 +364,6 @@ public class frmMain extends javax.swing.JFrame
     // Start queue.
     private void jMenuItemStartActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemStartActionPerformed
     {//GEN-HEADEREND:event_jMenuItemStartActionPerformed
-
         java.awt.EventQueue.invokeLater(new Runnable()
         {
 
@@ -530,6 +561,43 @@ public class frmMain extends javax.swing.JFrame
         frm.setVisible(true);
     }//GEN-LAST:event_jMenuItemNewQueueActionPerformed
 
+    // Selection changed.
+    private void jTree1ValueChanged(javax.swing.event.TreeSelectionEvent evt)//GEN-FIRST:event_jTree1ValueChanged
+    {//GEN-HEADEREND:event_jTree1ValueChanged
+        TreePath selectedPath = jTree1.getSelectionPath();
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) (selectedPath.getLastPathComponent());
+        String selectedNodeText = selectedNode.getUserObject().toString();
+
+        if (selectedNode == fMyQueueNode)
+        {
+            fMainPropertiesView.setVisible(true);
+            try
+            {
+                fMainPropertiesView.setMaximum(true);
+            }
+            catch (Exception ex)
+            {
+            }
+            fMyQueueServerPropertiesView.setVisible(false);
+        }
+        else
+        {
+            if (selectedNode.getParent() == fMyQueueNode) // myQueue server is selected.
+            {
+                fMyQueueServerPropertiesView.SetMyQueueServer(selectedNodeText);
+                fMyQueueServerPropertiesView.setVisible(true);
+                try
+                {
+                    fMyQueueServerPropertiesView.setMaximum(true);
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+            fMainPropertiesView.setVisible(false);
+        }
+    }//GEN-LAST:event_jTree1ValueChanged
+
     public DefaultMutableTreeNode AddServerTreeNode(Object serverName, boolean shouldBeVisible)
     {
         DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(serverName);
@@ -614,6 +682,7 @@ public class frmMain extends javax.swing.JFrame
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
@@ -627,9 +696,13 @@ public class frmMain extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItemNewQueue;
     private javax.swing.JMenuItem jMenuItemStart;
     private javax.swing.JMenuItem jMenuItemStop;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     public javax.swing.JPopupMenu jPopupMenuMyQueueServers;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTree jTree1;
     private java.awt.MenuItem menuItemShowServer;
     private java.awt.PopupMenu popupMenuTray;
