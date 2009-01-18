@@ -52,7 +52,7 @@ public class frmAbout extends javax.swing.JFrame
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/data-server-128x128.png"))); // NOI18N
 
-        jLabel2.setText("myQueue Version 1.0.0.6");
+        jLabel2.setText("myQueue Version 2.0.0.5");
 
         jLabel3.setText("myQueue is under GNU General Public License v3");
 
