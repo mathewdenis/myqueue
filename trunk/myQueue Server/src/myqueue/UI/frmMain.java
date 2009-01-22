@@ -377,6 +377,11 @@ public class frmMain extends javax.swing.JFrame
                     String selectedServer = selectedNode.getUserObject().toString();
                     QueueManager.StartQueue(selectedServer);
                     Update();
+
+                    if (fMyQueueServerPropertiesView.fMyQueueServerName.equals(selectedServer))
+                    {
+                        fMyQueueServerPropertiesView.Update();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -396,6 +401,11 @@ public class frmMain extends javax.swing.JFrame
             String selectedServer = selectedNode.getUserObject().toString();
             QueueManager.StopQueue(selectedServer);
             Update();
+
+            if (fMyQueueServerPropertiesView.fMyQueueServerName.equals(selectedServer))
+            {
+                fMyQueueServerPropertiesView.Update();
+            }
         }
         catch (Exception ex)
         {
@@ -652,7 +662,7 @@ public class frmMain extends javax.swing.JFrame
                 if (serverNode.getUserObject().toString().equals(queue.getName()))
                 {
                     existsInTree = true;
-                    
+
                     break;
                 }
             }
