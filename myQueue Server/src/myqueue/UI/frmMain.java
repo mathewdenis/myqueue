@@ -641,7 +641,7 @@ public class frmMain extends javax.swing.JFrame
     public void Update()
     {
         String name, description, location, poolSize;
-
+        jTree1.repaint();
         // Add new myQueue server in tree.
         for (MyQueue queue : QueueManager.getQueues().values())
         {
@@ -652,6 +652,7 @@ public class frmMain extends javax.swing.JFrame
                 if (serverNode.getUserObject().toString().equals(queue.getName()))
                 {
                     existsInTree = true;
+                    
                     break;
                 }
             }
@@ -662,7 +663,7 @@ public class frmMain extends javax.swing.JFrame
             }
         }
 
-        // Remote deleted servers.
+        // Remove deleted servers.
         for (int i = fMyQueueNode.getChildCount() - 1; i >= 0; i--)
         {
             boolean serverExists = false;
