@@ -30,6 +30,7 @@ import javax.swing.tree.TreePath;
 import myqueue.Core.MyQueue;
 import myqueue.Core.QueueManager;
 import myqueue.UI.PropertiesViews.MainProperties;
+import myqueue.UI.PropertiesViews.MyQueueServerInfo;
 import myqueue.UI.PropertiesViews.MyQueueServerProperties;
 
 /**
@@ -44,6 +45,7 @@ public class frmMain extends javax.swing.JFrame
     private MyJTreeCellRenderer fMyJTreeCellRenderer = new MyJTreeCellRenderer(this);
     private MainProperties fMainPropertiesView = new MainProperties(this);
     private MyQueueServerProperties fMyQueueServerPropertiesView = new MyQueueServerProperties(this);
+    private MyQueueServerInfo fMyQueueServerInfoView = new MyQueueServerInfo(this);
 
     public frmMain()
     {
@@ -64,16 +66,9 @@ public class frmMain extends javax.swing.JFrame
 
         jDesktopPane1.add(fMainPropertiesView);
         jDesktopPane1.add(fMyQueueServerPropertiesView);
-        fMainPropertiesView.setVisible(true);
+        jDesktopPane1.add(fMyQueueServerInfoView);
 
-        try
-        {
-            fMainPropertiesView.setMaximum(true);
-            fMyQueueServerPropertiesView.setMaximum(true);
-        }
-        catch (Exception ex)
-        {
-        }
+        ShowMainView();
 
         // Load myQueueUI.properties.
         try
@@ -420,9 +415,9 @@ public class frmMain extends javax.swing.JFrame
         {
             TreePath selectedPath = jTree1.getSelectionPath();
             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) (selectedPath.getLastPathComponent());
-            String selectedServer = selectedNode.getUserObject().toString();
-            frmNewQueue frm = new frmNewQueue(this, selectedServer);
-            frm.setVisible(true);
+            String selectedNodeText = selectedNode.getUserObject().toString();
+
+            ShowMyQueueServerPropertiesView(selectedNodeText);
         }
         catch (Exception ex)
         {
@@ -571,6 +566,53 @@ public class frmMain extends javax.swing.JFrame
         frm.setVisible(true);
     }//GEN-LAST:event_jMenuItemNewQueueActionPerformed
 
+    public void ShowMainView()
+    {
+        try
+        {
+            fMainPropertiesView.setVisible(true);
+            fMainPropertiesView.setMaximum(true);
+        }
+        catch (Exception ex)
+        {
+        }
+        fMyQueueServerPropertiesView.setVisible(false);
+        fMyQueueServerInfoView.setVisible(false);
+    }
+
+    public void ShowMyQueueServerPropertiesView(String serverName)
+    {
+        try
+        {
+            fMainPropertiesView.setVisible(false);
+
+            fMyQueueServerPropertiesView.setVisible(true);
+            fMyQueueServerPropertiesView.SetMyQueueServer(serverName);
+            fMyQueueServerPropertiesView.setMaximum(true);
+
+            fMyQueueServerInfoView.setVisible(false);
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+
+    public void ShowMyQueueInfoView(String serverName)
+    {
+        try
+        {
+            fMainPropertiesView.setVisible(false);
+            fMyQueueServerPropertiesView.setVisible(false);
+
+            fMyQueueServerInfoView.setVisible(true);
+            fMyQueueServerInfoView.setMaximum(true);
+            fMyQueueServerInfoView.SetMyQueueServer(serverName);
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+
     // Selection changed.
     private void jTree1ValueChanged(javax.swing.event.TreeSelectionEvent evt)//GEN-FIRST:event_jTree1ValueChanged
     {//GEN-HEADEREND:event_jTree1ValueChanged
@@ -580,31 +622,14 @@ public class frmMain extends javax.swing.JFrame
 
         if (selectedNode == fMyQueueNode)
         {
-            fMainPropertiesView.setVisible(true);
-            try
-            {
-                fMainPropertiesView.setMaximum(true);
-            }
-            catch (Exception ex)
-            {
-            }
-            fMyQueueServerPropertiesView.setVisible(false);
+            ShowMainView();
         }
         else
         {
             if (selectedNode.getParent() == fMyQueueNode) // myQueue server is selected.
             {
-                fMyQueueServerPropertiesView.SetMyQueueServer(selectedNodeText);
-                fMyQueueServerPropertiesView.setVisible(true);
-                try
-                {
-                    fMyQueueServerPropertiesView.setMaximum(true);
-                }
-                catch (Exception ex)
-                {
-                }
+                ShowMyQueueInfoView(selectedNodeText);
             }
-            fMainPropertiesView.setVisible(false);
         }
     }//GEN-LAST:event_jTree1ValueChanged
 
@@ -662,7 +687,6 @@ public class frmMain extends javax.swing.JFrame
                 if (serverNode.getUserObject().toString().equals(queue.getName()))
                 {
                     existsInTree = true;
-
                     break;
                 }
             }
