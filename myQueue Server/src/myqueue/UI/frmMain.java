@@ -238,6 +238,8 @@ public class frmMain extends javax.swing.JFrame
             }
         });
 
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(104, 324));
+
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("myQueue");
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jTree1.setComponentPopupMenu(jPopupMenuMyQueueServers);
@@ -290,9 +292,9 @@ public class frmMain extends javax.swing.JFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE)
+                .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 617, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -300,8 +302,8 @@ public class frmMain extends javax.swing.JFrame
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jDesktopPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
+                    .addComponent(jDesktopPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -437,10 +439,10 @@ public class frmMain extends javax.swing.JFrame
             int answer = JOptionPane.showConfirmDialog(null, "Delete " + selectedServer + "?", "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             if (answer == JOptionPane.YES_OPTION)
             {
+                ShowMainView();
                 QueueManager.DeleteQueue(selectedServer);
                 Update();
             }
-
         }
         catch (Exception ex)
         {
@@ -567,6 +569,25 @@ public class frmMain extends javax.swing.JFrame
         frm.setVisible(true);
     }//GEN-LAST:event_jMenuItemNewQueueActionPerformed
 
+    private void jTree1ValueChanged(javax.swing.event.TreeSelectionEvent evt)//GEN-FIRST:event_jTree1ValueChanged
+    {//GEN-HEADEREND:event_jTree1ValueChanged
+        TreePath selectedPath = jTree1.getSelectionPath();
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) (selectedPath.getLastPathComponent());
+        String selectedNodeText = selectedNode.getUserObject().toString();
+
+        if (selectedNode == fMyQueueNode)
+        {
+            ShowMainView();
+        }
+        else
+        {
+            if (selectedNode.getParent() == fMyQueueNode) // myQueue server is selected.
+            {
+                ShowMyQueueInfoView(selectedNodeText);
+            }
+        }
+}//GEN-LAST:event_jTree1ValueChanged
+
     public void ShowMainView()
     {
         try
@@ -588,8 +609,8 @@ public class frmMain extends javax.swing.JFrame
             fMainPropertiesView.setVisible(false);
 
             fMyQueueServerPropertiesView.setVisible(true);
-            fMyQueueServerPropertiesView.SetMyQueueServer(serverName);
             fMyQueueServerPropertiesView.setMaximum(true);
+            fMyQueueServerPropertiesView.SetMyQueueServer(serverName);
 
             fMyQueueServerInfoView.setVisible(false);
         }
@@ -611,29 +632,11 @@ public class frmMain extends javax.swing.JFrame
         }
         catch (Exception ex)
         {
+            System.err.println(ex.getMessage());
         }
     }
 
     // Selection changed.
-    private void jTree1ValueChanged(javax.swing.event.TreeSelectionEvent evt)//GEN-FIRST:event_jTree1ValueChanged
-    {//GEN-HEADEREND:event_jTree1ValueChanged
-        TreePath selectedPath = jTree1.getSelectionPath();
-        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) (selectedPath.getLastPathComponent());
-        String selectedNodeText = selectedNode.getUserObject().toString();
-
-        if (selectedNode == fMyQueueNode)
-        {
-            ShowMainView();
-        }
-        else
-        {
-            if (selectedNode.getParent() == fMyQueueNode) // myQueue server is selected.
-            {
-                ShowMyQueueInfoView(selectedNodeText);
-            }
-        }
-    }//GEN-LAST:event_jTree1ValueChanged
-
     public DefaultMutableTreeNode AddServerTreeNode(Object serverName, boolean shouldBeVisible)
     {
         DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(serverName);
@@ -650,14 +653,20 @@ public class frmMain extends javax.swing.JFrame
     {
         DefaultTreeModel model = (DefaultTreeModel) jTree1.getModel();
 
-        for (int i = 0; i < fMyQueueNode.getChildCount(); i++)
+        try
         {
-            DefaultMutableTreeNode child = (DefaultMutableTreeNode) fMyQueueNode.getChildAt(i);
-            if (child.getUserObject().toString().equals(serverName))
+            for (int i = 0; i < fMyQueueNode.getChildCount(); i++)
             {
-                model.removeNodeFromParent(child);
-                break;
+                DefaultMutableTreeNode child = (DefaultMutableTreeNode) fMyQueueNode.getChildAt(i);
+                if (child.getUserObject().toString().equals(serverName))
+                {
+                    model.removeNodeFromParent(child);
+                    break;
+                }
             }
+        }
+        catch (Exception ex)
+        {
         }
         jTree1.repaint();
     }
