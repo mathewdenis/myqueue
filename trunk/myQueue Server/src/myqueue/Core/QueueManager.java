@@ -50,7 +50,7 @@ public class QueueManager
     {
         name = name.trim();
         description = description.trim();
-        location = location.trim();
+
 
         // Check if name is unique.
         if (fQueues.containsKey(name))
@@ -73,17 +73,20 @@ public class QueueManager
             throw new Exception("Max pool size must be greater than core poolsize.");
         }
 
-        if (listeners == null || listeners.size() == 0)
+        /*if (listeners != null && listeners.size() == 0)
         {
             throw new Exception("Please add one or more listeners to this queue.");
-        }
+        }*/
 
         try
         {
-            File tmpFile = new File(location);
-            if (!tmpFile.exists())
+            if (location != null)
             {
-                throw new Exception("Please select a valid location for this queue.");
+                File tmpFile = new File(location);
+                if (!tmpFile.exists())
+                {
+                    throw new Exception("Please select a valid location for this queue.");
+                }
             }
         }
         catch (Exception ex)
@@ -94,10 +97,13 @@ public class QueueManager
         HDEngine engine = new HDEngine(location);
         MyQueue queue = new MyQueue(name, description, engine, corePoolSize, maxPoolSize, connectionsTimeOut, journalRecording);
 
-        for (int i = 0; i < listeners.size(); i++)
+        if (listeners != null)
         {
-            TCPListener listener = (TCPListener) listeners.get(i);
-            queue.AddListener(listener.getName(), listener.getIPAddress(), listener.getPort(), listener.getMaxConnections(), listener.getReadBufferSize(), listener.getConnectionTimeOut(), 100, listener.getMessageSplitter());
+            for (int i = 0; i < listeners.size(); i++)
+            {
+                TCPListener listener = (TCPListener) listeners.get(i);
+                queue.AddListener(listener.getName(), listener.getIPAddress(), listener.getPort(), listener.getMaxConnections(), listener.getReadBufferSize(), listener.getConnectionTimeOut(), 100, listener.getMessageSplitter());
+            }
         }
 
         fQueues.put(name, queue);

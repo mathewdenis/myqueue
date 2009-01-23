@@ -242,6 +242,7 @@ public class frmMain extends javax.swing.JFrame
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jTree1.setComponentPopupMenu(jPopupMenuMyQueueServers);
         jTree1.setRootVisible(false);
+        jTree1.setShowsRootHandles(true);
         jTree1.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
                 jTree1ValueChanged(evt);
@@ -731,13 +732,9 @@ public class frmMain extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItemNewQueue;
     private javax.swing.JMenuItem jMenuItemStart;
     private javax.swing.JMenuItem jMenuItemStop;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     public javax.swing.JPopupMenu jPopupMenuMyQueueServers;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTree jTree1;
     private java.awt.MenuItem menuItemShowServer;
     private java.awt.PopupMenu popupMenuTray;
