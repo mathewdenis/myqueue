@@ -22,6 +22,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -59,6 +63,27 @@ public class frmMain extends javax.swing.JFrame
             System.err.println(ex.getMessage());
         }
         initComponents();
+
+        //System.getProperties().list(System.out);
+
+        /* OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+        for (Method method : operatingSystemMXBean.getClass().getDeclaredMethods())
+        {
+        method.setAccessible(true);
+        if (method.getName().startsWith("get") && Modifier.isPublic(method.getModifiers()))
+        {
+        Object value;
+        try
+        {
+        value = method.invoke(operatingSystemMXBean);
+        }
+        catch (Exception e)
+        {
+        value = e;
+        }
+        System.out.println(method.getName() + " = " + value);
+        }
+        } */
 
         // Create Root treeNode
         jTree1.setCellRenderer(fMyJTreeCellRenderer);
@@ -135,7 +160,6 @@ public class frmMain extends javax.swing.JFrame
         jMenuItemStop = new javax.swing.JMenuItem();
         jMenuItemEdit = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
-        jMenuItemInfo = new javax.swing.JMenuItem();
         jMenuItemDelete = new javax.swing.JMenuItem();
         jMenuItemClear = new javax.swing.JMenuItem();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -201,15 +225,6 @@ public class frmMain extends javax.swing.JFrame
         });
         jPopupMenuMyQueueServers.add(jMenuItemEdit);
         jPopupMenuMyQueueServers.add(jSeparator1);
-
-        jMenuItemInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Button-Info-16x16.png"))); // NOI18N
-        jMenuItemInfo.setText("Info");
-        jMenuItemInfo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemInfoActionPerformed(evt);
-            }
-        });
-        jPopupMenuMyQueueServers.add(jMenuItemInfo);
 
         jMenuItemDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Button-Delete-16x16.png"))); // NOI18N
         jMenuItemDelete.setText("Delete");
@@ -479,22 +494,6 @@ public class frmMain extends javax.swing.JFrame
         });
     }//GEN-LAST:event_jMenuItemClearActionPerformed
 
-    private void jMenuItemInfoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemInfoActionPerformed
-    {//GEN-HEADEREND:event_jMenuItemInfoActionPerformed
-        try
-        {
-            TreePath selectedPath = jTree1.getSelectionPath();
-            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) (selectedPath.getLastPathComponent());
-            String selectedServer = selectedNode.getUserObject().toString();
-            frmQueueInfo frm = new frmQueueInfo(selectedServer);
-            frm.setVisible(true);
-        }
-        catch (Exception ex)
-        {
-            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR);
-        }
-    }//GEN-LAST:event_jMenuItemInfoActionPerformed
-
     // Closing form.
     private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
     {//GEN-HEADEREND:event_formWindowClosing
@@ -542,7 +541,6 @@ public class frmMain extends javax.swing.JFrame
             }
             jMenuItemEdit.setVisible(true);
             jSeparator1.setVisible(true);
-            jMenuItemInfo.setVisible(true);
             jMenuItemDelete.setVisible(true);
             jMenuItemClear.setVisible(true);
         }
@@ -556,7 +554,6 @@ public class frmMain extends javax.swing.JFrame
                 jMenuItemStop.setVisible(false);
                 jMenuItemEdit.setVisible(false);
                 jSeparator1.setVisible(false);
-                jMenuItemInfo.setVisible(false);
                 jMenuItemDelete.setVisible(false);
                 jMenuItemClear.setVisible(false);
             }
@@ -737,7 +734,6 @@ public class frmMain extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItemClear;
     private javax.swing.JMenuItem jMenuItemDelete;
     private javax.swing.JMenuItem jMenuItemEdit;
-    private javax.swing.JMenuItem jMenuItemInfo;
     private javax.swing.JMenuItem jMenuItemNewQueue;
     private javax.swing.JMenuItem jMenuItemStart;
     private javax.swing.JMenuItem jMenuItemStop;

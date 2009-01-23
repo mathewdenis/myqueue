@@ -69,17 +69,6 @@
         </MenuItem>
         <Component class="javax.swing.JSeparator" name="jSeparator1">
         </Component>
-        <MenuItem class="javax.swing.JMenuItem" name="jMenuItemInfo">
-          <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/Images/Button-Info-16x16.png"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Info"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemInfoActionPerformed"/>
-          </Events>
-        </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="jMenuItemDelete">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
