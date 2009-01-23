@@ -24,6 +24,7 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import myqueue.UI.PropertiesViews.MyQueueServerProperties;
 
 /**
  *
@@ -32,11 +33,11 @@ import javax.swing.JOptionPane;
 public class frmNewListener extends JFrame
 {
 
-    private frmNewQueue fMainForm;
+    private MyQueueServerProperties fMyQueueServerProperties;
 
-    public frmNewListener(frmNewQueue frm)
+    public frmNewListener(MyQueueServerProperties frm)
     {
-        fMainForm = frm;
+        fMyQueueServerProperties = frm;
         initComponents();
         Init();
     }
@@ -206,7 +207,7 @@ public class frmNewListener extends JFrame
             return;
         }
 
-        fMainForm.AddListener(jComboBoxIP.getSelectedItem().toString(), Integer.parseInt(jTextFieldPort.getText()), Integer.parseInt(jTextFieldMaxConnections.getText()));
+        fMyQueueServerProperties.AddListener(jComboBoxIP.getSelectedItem().toString(), Integer.parseInt(jTextFieldPort.getText()), Integer.parseInt(jTextFieldMaxConnections.getText()));
         this.dispose();
 }//GEN-LAST:event_jButtonOKActionPerformed
 

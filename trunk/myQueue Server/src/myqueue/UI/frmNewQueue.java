@@ -361,7 +361,7 @@ public class frmNewQueue extends javax.swing.JFrame
 
     private void jButtonAddListenerActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonAddListenerActionPerformed
     {//GEN-HEADEREND:event_jButtonAddListenerActionPerformed
-        new frmNewListener(this).setVisible(true);
+       
 }//GEN-LAST:event_jButtonAddListenerActionPerformed
 
     private void jButtonRemoveListenerActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonRemoveListenerActionPerformed
