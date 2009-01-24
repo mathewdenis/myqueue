@@ -379,7 +379,6 @@ public class frmMain extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jMenuItemStartActionPerformed
         java.awt.EventQueue.invokeLater(new Runnable()
         {
-
             @Override
             public void run()
             {
@@ -398,7 +397,7 @@ public class frmMain extends javax.swing.JFrame
                 }
                 catch (Exception ex)
                 {
-                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR);
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
