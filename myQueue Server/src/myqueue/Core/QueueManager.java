@@ -75,7 +75,7 @@ public class QueueManager
 
         /*if (listeners != null && listeners.size() == 0)
         {
-            throw new Exception("Please add one or more listeners to this queue.");
+        throw new Exception("Please add one or more listeners to this queue.");
         }*/
 
         try
@@ -114,6 +114,11 @@ public class QueueManager
     {
         if (fQueues.containsKey(name))
         {
+            MyQueue queue = ((MyQueue) fQueues.get(name));
+            if (queue.getEngine().getLocation() == null || queue.getEngine().getLocation().equals(""))
+            {
+                throw new Exception("This queue needs a valid location in disk to save the messages.\nPlease select that location and then start the queue.");
+            }
             ((MyQueue) fQueues.get(name)).Start();
             SaveQueue(name);
         }

@@ -2,6 +2,8 @@ package myqueue.UI;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import myqueue.Core.QueueManager;
 
 /**
@@ -15,6 +17,15 @@ public class frmNewQueue extends javax.swing.JFrame
 
     public frmNewQueue(frmMain frm)
     {
+        try
+        {
+            ImageIcon titleImage = new ImageIcon(getClass().getResource("/Images/data-server-16x16.png"));
+            this.setIconImage(titleImage.getImage());
+        }
+        catch (Exception ex)
+        {
+            System.err.println(ex.getMessage());
+        }
         fMain = frm;
         initComponents();
 
@@ -98,7 +109,15 @@ public class frmNewQueue extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         try
         {
-            QueueManager.CreateNewQueue(jTextField1.getText(), "", null, 20, 40, null, 30000, false);
+            if (!QueueManager.getQueues().containsKey(jTextField1.getText()))
+            {
+                QueueManager.CreateNewQueue(jTextField1.getText(), "", null, 20, 40, null, 30000, false);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "Please choose an other name for this server.", "Name exists", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
         }
         catch (Exception ex)
         {
