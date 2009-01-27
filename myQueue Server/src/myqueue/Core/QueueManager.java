@@ -270,7 +270,13 @@ public class QueueManager
                 try
                 {
                     File dir = new File("MyQueueActiveQueues");
+
                     File[] files = dir.listFiles();
+                    if (files == null)
+                    {
+                        fProgress.LoadFinished();
+                        return;
+                    }
 
                     // This filter only returns files.
                     FileFilter fileFilter = new FileFilter()
@@ -320,7 +326,6 @@ public class QueueManager
                         catch (Exception ex)
                         {
                             System.err.println(ex.getMessage());
-                            JOptionPane.showMessageDialog(null, ex.getMessage());
                         }
 
                         fProgress.ProgressPlus();

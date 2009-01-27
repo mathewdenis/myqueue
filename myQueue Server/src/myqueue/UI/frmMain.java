@@ -58,6 +58,7 @@ public class frmMain extends javax.swing.JFrame
         {
             System.err.println(ex.getMessage());
         }
+
         initComponents();
 
         // Create Root treeNode
@@ -68,7 +69,9 @@ public class frmMain extends javax.swing.JFrame
         jDesktopPane1.add(fMyQueueServerPropertiesView);
         jDesktopPane1.add(fMyQueueServerInfoView);
 
+
         ShowMainView();
+
 
         // Load myQueueUI.properties.
         try
@@ -354,6 +357,7 @@ public class frmMain extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jMenuItemStartActionPerformed
         java.awt.EventQueue.invokeLater(new Runnable()
         {
+
             @Override
             public void run()
             {
@@ -656,45 +660,51 @@ public class frmMain extends javax.swing.JFrame
 
     public void Update()
     {
-        String name, description, location, poolSize;
-        jTree1.repaint();
-        // Add new myQueue server in tree.
-        for (MyQueue queue : QueueManager.getQueues().values())
+        try
         {
-            boolean existsInTree = false;
-            for (int i = 0; i < fMyQueueNode.getChildCount(); i++)
-            {
-                DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) fMyQueueNode.getChildAt(i);
-                if (serverNode.getUserObject().toString().equals(queue.getName()))
-                {
-                    existsInTree = true;
-                    break;
-                }
-            }
-
-            if (!existsInTree)
-            {
-                AddServerTreeNode(queue.getName(), true);
-            }
-        }
-
-        // Remove deleted servers.
-        for (int i = fMyQueueNode.getChildCount() - 1; i >= 0; i--)
-        {
-            boolean serverExists = false;
-            DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) fMyQueueNode.getChildAt(i);
+            String name, description, location, poolSize;
+            jTree1.repaint();
+            // Add new myQueue server in tree.
             for (MyQueue queue : QueueManager.getQueues().values())
             {
-                if (queue.getName().equals(serverNode.getUserObject().toString()))
+                boolean existsInTree = false;
+                for (int i = 0; i < fMyQueueNode.getChildCount(); i++)
                 {
-                    serverExists = true;
-                    break;
+                    DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) fMyQueueNode.getChildAt(i);
+                    if (serverNode.getUserObject().toString().equals(queue.getName()))
+                    {
+                        existsInTree = true;
+                        break;
+                    }
+                }
+
+                if (!existsInTree)
+                {
+                    AddServerTreeNode(queue.getName(), true);
                 }
             }
-            if (!serverExists)
+
+            // Remove deleted servers.
+            for (int i = fMyQueueNode.getChildCount() - 1; i >= 0; i--)
             {
-                RemoveServerNode(serverNode.getUserObject().toString());
+                boolean serverExists = false;
+                DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) fMyQueueNode.getChildAt(i);
+                for (MyQueue queue : QueueManager.getQueues().values())
+                {
+                    if (queue.getName().equals(serverNode.getUserObject().toString()))
+                    {
+                        serverExists = true;
+                        break;
+                    }
+                }
+                if (!serverExists)
+                {
+                    RemoveServerNode(serverNode.getUserObject().toString());
+                }
             }
+        }
+        catch (Exception ex)
+        {
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables

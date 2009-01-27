@@ -134,8 +134,10 @@ public class frmLoading extends javax.swing.JFrame
         }
         catch (Exception ex)
         {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
+            this.setVisible(false);
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
+        LoadFinished();
     }//GEN-LAST:event_formWindowOpened
 
     public void SetMaximumProgressValue(int value)
@@ -162,9 +164,6 @@ public class frmLoading extends javax.swing.JFrame
         this.setVisible(false);
     }
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[])
     {
         try
