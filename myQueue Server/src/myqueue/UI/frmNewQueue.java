@@ -112,6 +112,7 @@ public class frmNewQueue extends javax.swing.JFrame
             if (!QueueManager.getQueues().containsKey(jTextField1.getText()))
             {
                 QueueManager.CreateNewQueue(jTextField1.getText(), "", null, 20, 40, null, 30000, false);
+                fMain.ShowMyQueueServerPropertiesView(jTextField1.getText());
             }
             else
             {

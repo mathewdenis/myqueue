@@ -1,7 +1,7 @@
 <installation version="1.0">
     <info>
         <appname>myQueue Server</appname>
-        <appversion>1.0.0.6</appversion>
+        <appversion>2.0.0.5</appversion>
         <appsubpath>$APP_NAME</appsubpath>
         <javaversion>1.6</javaversion>
         <url>http://www.codeforte.org</url>
