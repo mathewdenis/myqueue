@@ -39,16 +39,33 @@ public class MyQueueServerProperties extends javax.swing.JInternalFrame
 
     private frmMain fMain;
     public String fMyQueueServerName = "";
-    private Icon fStartIcon = new ImageIcon(getClass().getResource("/Images/Button-play-16x16.png"));
-    private Icon fStopIcon = new ImageIcon(getClass().getResource("/Images/Button-stop-16x16.png"));
+    private Icon fStartIcon;
+    private Icon fStopIcon;
     private boolean fChangesMadeToListeners = false;
 
     public MyQueueServerProperties(frmMain frm)
     {
-        fMain = frm;
-        initComponents();
-        javax.swing.plaf.InternalFrameUI myUI = this.getUI();
-        ((javax.swing.plaf.basic.BasicInternalFrameUI) myUI).setNorthPane(null);
+        try
+        {
+            fMain = frm;
+            initComponents();
+            javax.swing.plaf.InternalFrameUI myUI = this.getUI();
+            ((javax.swing.plaf.basic.BasicInternalFrameUI) myUI).setNorthPane(null);
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, "MyQueueServerProperties error");
+        }
+
+        try
+        {
+            fStartIcon = new javax.swing.ImageIcon(getClass().getResource("/Images/Button-Play-16x16.png"));
+            fStopIcon = new javax.swing.ImageIcon(getClass().getResource("/Images/Button-Stop-16x16.png"));
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, "Cannot find Button-Play-16x16.png and Button-Stop-16x16.png");
+        }
     }
 
     public void SetMyQueueServer(String name)

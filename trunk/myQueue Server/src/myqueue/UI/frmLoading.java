@@ -30,7 +30,7 @@ public class frmLoading extends javax.swing.JFrame
 
     public frmLoading()
     {
-        this.setUndecorated(true);
+        //this.setUndecorated(true);
         initComponents();
 
         // Open form in the center of the screen.
@@ -50,8 +50,7 @@ public class frmLoading extends javax.swing.JFrame
         jLabel3 = new javax.swing.JLabel();
         jProgressBar1 = new javax.swing.JProgressBar();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setAlwaysOnTop(true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setResizable(false);
@@ -64,7 +63,7 @@ public class frmLoading extends javax.swing.JFrame
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 153, 204)));
 
-        jLabelLoading.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabelLoading.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabelLoading.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelLoading.setText("Loading ...");
         jLabelLoading.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -74,7 +73,7 @@ public class frmLoading extends javax.swing.JFrame
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/data-server-128x128.png"))); // NOI18N
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 24));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("myQueue");
         jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -134,10 +133,9 @@ public class frmLoading extends javax.swing.JFrame
         }
         catch (Exception ex)
         {
-            this.setVisible(false);
             JOptionPane.showMessageDialog(this, ex.getMessage());
+            this.setVisible(false);
         }
-        LoadFinished();
     }//GEN-LAST:event_formWindowOpened
 
     public void SetMaximumProgressValue(int value)
@@ -159,8 +157,7 @@ public class frmLoading extends javax.swing.JFrame
 
     public void LoadFinished()
     {
-        frmMain frm = new frmMain();
-        frm.setVisible(true);
+        new frmMain().setVisible(true);
         this.setVisible(false);
     }
 

@@ -15,6 +15,7 @@
  */
 package myqueue.UI.PropertiesViews;
 
+import javax.swing.JOptionPane;
 import myqueue.Core.MyQueue;
 import myqueue.Core.QueueManager;
 import myqueue.UI.frmMain;
@@ -32,44 +33,51 @@ public class MainProperties extends javax.swing.JInternalFrame
 
     public MainProperties(frmMain frm)
     {
-        fMain = frm;
-        initComponents();
-        javax.swing.plaf.InternalFrameUI myUI = this.getUI();
-        ((javax.swing.plaf.basic.BasicInternalFrameUI) myUI).setNorthPane(null);
-
-        Thread updateThread = new Thread(new Runnable()
+        try
         {
+            fMain = frm;
+            initComponents();
+            javax.swing.plaf.InternalFrameUI myUI = this.getUI();
+            ((javax.swing.plaf.basic.BasicInternalFrameUI) myUI).setNorthPane(null);
 
-            @Override
-            public void run()
+            Thread updateThread = new Thread(new Runnable()
             {
-                while (fKeepUpdating)
+
+                @Override
+                public void run()
                 {
-                    try
+                    while (fKeepUpdating)
                     {
-                        jLabelActiveServers.setText(String.valueOf(QueueManager.getQueues().size()));
-
-                        long bytesIn = 0, bytesOut = 0;
-
-                        for (MyQueue queue : QueueManager.getQueues().values())
+                        try
                         {
-                            bytesIn += queue.getBytesIn();
-                            bytesOut += queue.getBytesOut();
+                            jLabelActiveServers.setText(String.valueOf(QueueManager.getQueues().size()));
+
+                            long bytesIn = 0, bytesOut = 0;
+
+                            for (MyQueue queue : QueueManager.getQueues().values())
+                            {
+                                bytesIn += queue.getBytesIn();
+                                bytesOut += queue.getBytesOut();
+                            }
+
+                            jLabelTotalBytesInOut.setText(String.valueOf(bytesIn) + "/" + String.valueOf(bytesOut));
+
+                            Thread.sleep(5000);
                         }
-
-                        jLabelTotalBytesInOut.setText(String.valueOf(bytesIn) + "/" + String.valueOf(bytesOut));
-
-                        Thread.sleep(5000);
-                    }
-                    catch (InterruptedException ex)
-                    {
+                        catch (InterruptedException ex)
+                        {
+                        }
                     }
                 }
-            }
-        });
-        updateThread.setPriority(Thread.MIN_PRIORITY);
-        fKeepUpdating = true;
-        updateThread.start();
+            });
+            updateThread.setPriority(Thread.MIN_PRIORITY);
+            fKeepUpdating = true;
+            updateThread.start();
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, "MainProperties error");
+        }
     }
 
     public void Dispose()

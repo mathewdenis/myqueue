@@ -272,12 +272,7 @@ public class QueueManager
                     File dir = new File("MyQueueActiveQueues");
 
                     File[] files = dir.listFiles();
-                    if (files == null)
-                    {
-                        fProgress.LoadFinished();
-                        return;
-                    }
-
+                    
                     // This filter only returns files.
                     FileFilter fileFilter = new FileFilter()
                     {

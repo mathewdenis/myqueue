@@ -4,6 +4,7 @@ import Extasys.Network.TCP.Server.Listener.TCPClientConnection;
 import Extasys.Network.TCP.Server.Listener.TCPListener;
 import java.util.Calendar;
 import java.util.Enumeration;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import myqueue.Core.MyQueue;
 import myqueue.Core.QueueManager;
@@ -22,9 +23,16 @@ public class MyQueueServerInfo extends javax.swing.JInternalFrame
 
     public MyQueueServerInfo(frmMain frm)
     {
-        initComponents();
-        javax.swing.plaf.InternalFrameUI myUI = this.getUI();
-        ((javax.swing.plaf.basic.BasicInternalFrameUI) myUI).setNorthPane(null);
+        try
+        {
+            initComponents();
+            javax.swing.plaf.InternalFrameUI myUI = this.getUI();
+            ((javax.swing.plaf.basic.BasicInternalFrameUI) myUI).setNorthPane(null);
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, "MyQueueServerInfo error");
+        }
     }
 
     public void SetMyQueueServer(String serverName)
