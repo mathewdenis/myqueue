@@ -320,6 +320,7 @@ public class QueueManager
                         catch (Exception ex)
                         {
                             System.err.println(ex.getMessage());
+                            JOptionPane.showMessageDialog(null, ex.getMessage());
                         }
 
                         fProgress.ProgressPlus();

@@ -22,10 +22,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -63,27 +59,6 @@ public class frmMain extends javax.swing.JFrame
             System.err.println(ex.getMessage());
         }
         initComponents();
-
-        //System.getProperties().list(System.out);
-
-        /* OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
-        for (Method method : operatingSystemMXBean.getClass().getDeclaredMethods())
-        {
-        method.setAccessible(true);
-        if (method.getName().startsWith("get") && Modifier.isPublic(method.getModifiers()))
-        {
-        Object value;
-        try
-        {
-        value = method.invoke(operatingSystemMXBean);
-        }
-        catch (Exception e)
-        {
-        value = e;
-        }
-        System.out.println(method.getName() + " = " + value);
-        }
-        } */
 
         // Create Root treeNode
         jTree1.setCellRenderer(fMyJTreeCellRenderer);

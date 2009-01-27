@@ -17,6 +17,7 @@ package myqueue.UI;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import myqueue.Core.QueueManager;
 
@@ -133,6 +134,7 @@ public class frmLoading extends javax.swing.JFrame
         }
         catch (Exception ex)
         {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }//GEN-LAST:event_formWindowOpened
 
