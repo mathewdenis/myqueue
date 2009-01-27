@@ -41,14 +41,29 @@ public class frmMain extends javax.swing.JFrame
 {
 
     private TrayIcon fTrayIcon;
-    private DefaultMutableTreeNode fMyQueueNode = new DefaultMutableTreeNode("myQueue Servers");
-    private MyJTreeCellRenderer fMyJTreeCellRenderer = new MyJTreeCellRenderer(this);
-    private MainProperties fMainPropertiesView = new MainProperties(this);
-    private MyQueueServerProperties fMyQueueServerPropertiesView = new MyQueueServerProperties(this);
-    private MyQueueServerInfo fMyQueueServerInfoView = new MyQueueServerInfo(this);
+    private DefaultMutableTreeNode fMyQueueNode;
+    private MyJTreeCellRenderer fMyJTreeCellRenderer;
+    private MainProperties fMainPropertiesView;
+    private MyQueueServerProperties fMyQueueServerPropertiesView;
+    private MyQueueServerInfo fMyQueueServerInfoView;
 
     public frmMain()
     {
+        try
+        {
+            fMyQueueNode = new DefaultMutableTreeNode("myQueue Servers");
+            fMyJTreeCellRenderer = new MyJTreeCellRenderer(this);
+            fMainPropertiesView = new MainProperties(this);
+            fMyQueueServerPropertiesView = new MyQueueServerProperties(this);
+            fMyQueueServerInfoView = new MyQueueServerInfo(this);
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, "1" + ex.getMessage());
+        }
+
+        initComponents();
+
         try
         {
             ImageIcon titleImage = new ImageIcon(getClass().getResource("/Images/data-server-16x16.png"));
@@ -56,22 +71,47 @@ public class frmMain extends javax.swing.JFrame
         }
         catch (Exception ex)
         {
-            System.err.println(ex.getMessage());
+            JOptionPane.showMessageDialog(null, "/Images/data-server-16x16.png does not exists");
         }
 
-        initComponents();
-
         // Create Root treeNode
-        jTree1.setCellRenderer(fMyJTreeCellRenderer);
-        ((DefaultTreeModel) jTree1.getModel()).insertNodeInto(fMyQueueNode, (DefaultMutableTreeNode) jTree1.getModel().getRoot(), 0);
+        try
+        {
+            jTree1.setCellRenderer(fMyJTreeCellRenderer);
+            ((DefaultTreeModel) jTree1.getModel()).insertNodeInto(fMyQueueNode, (DefaultMutableTreeNode) jTree1.getModel().getRoot(), 0);
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, "Create Root failed!");
+        }
 
-        jDesktopPane1.add(fMainPropertiesView);
-        jDesktopPane1.add(fMyQueueServerPropertiesView);
-        jDesktopPane1.add(fMyQueueServerInfoView);
+        try
+        {
+            jDesktopPane1.add(fMainPropertiesView);
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, "Failed to create Main Properties View!");
+        }
+        try
+        {
+            jDesktopPane1.add(fMyQueueServerPropertiesView);
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, "Failed to create  MyQueue Server Properties View!");
+        }
+        try
+        {
+            jDesktopPane1.add(fMyQueueServerInfoView);
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, "Failed to create MyQueue Server Info View!");
+        }
 
 
         ShowMainView();
-
 
         // Load myQueueUI.properties.
         try
@@ -88,6 +128,7 @@ public class frmMain extends javax.swing.JFrame
         catch (Exception ex)
         {
         }
+
         ShowForm();
 
         Update();
@@ -123,6 +164,7 @@ public class frmMain extends javax.swing.JFrame
         }
         catch (Exception ex)
         {
+            JOptionPane.showMessageDialog(null, "Cannot set tray icon!");
         }
     }
 
@@ -572,6 +614,7 @@ public class frmMain extends javax.swing.JFrame
         }
         catch (Exception ex)
         {
+            JOptionPane.showMessageDialog(null, "Failed to Show Main View!");
         }
         fMyQueueServerPropertiesView.setVisible(false);
         fMyQueueServerInfoView.setVisible(false);

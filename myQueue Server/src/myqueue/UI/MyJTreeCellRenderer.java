@@ -18,6 +18,7 @@ package myqueue.UI;
 import java.awt.Component;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import myqueue.Core.MyQueue;
@@ -30,13 +31,22 @@ import myqueue.Core.QueueManager;
 public class MyJTreeCellRenderer extends DefaultTreeCellRenderer
 {
 
-    private Icon fActiveServerIcon = new ImageIcon(getClass().getResource("/Images/enable-server-16x16.png"));
-    private Icon fDisabledServerIcon = new ImageIcon(getClass().getResource("/Images/desable-server-16x16.png"));
+    private Icon fActiveServerIcon;
+    private Icon fDisabledServerIcon;
     private frmMain fMain;
 
     public MyJTreeCellRenderer(frmMain frm)
     {
         fMain = frm;
+        try
+        {
+            fActiveServerIcon = new ImageIcon(getClass().getResource("/Images/enable-server-16x16.png"));
+            fDisabledServerIcon = new ImageIcon(getClass().getResource("/Images/desable-server-16x16.png"));
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, "Cannot find enable-server-16x16.png and desable-server-16x16.png");
+        }
     }
 
     @Override
@@ -49,22 +59,28 @@ public class MyJTreeCellRenderer extends DefaultTreeCellRenderer
             int row,
             boolean hasFocus)
     {
-
-        super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-
-        if (leaf && !value.toString().equals("myQueue Servers"))
+        try
         {
-            if (IsServerActive(value))
+            super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+
+            if (leaf && !value.toString().equals("myQueue Servers"))
             {
-                setIcon(fActiveServerIcon);
+                if (IsServerActive(value))
+                {
+                    setIcon(fActiveServerIcon);
+                }
+                else
+                {
+                    setIcon(fDisabledServerIcon);
+                }
             }
             else
             {
-                setIcon(fDisabledServerIcon);
             }
         }
-        else
+        catch (Exception ex)
         {
+            JOptionPane.showMessageDialog(null, "getTreeCellRendererComponent: " + ex.getMessage());
         }
 
         return this;
@@ -72,14 +88,20 @@ public class MyJTreeCellRenderer extends DefaultTreeCellRenderer
 
     private boolean IsServerActive(Object value)
     {
-        String serverName = value.toString();
-        if (QueueManager.getQueues().containsKey(serverName))
+        try
         {
-            MyQueue queue = QueueManager.getQueues().get(serverName);
-            if (queue.isRunning())
+            String serverName = value.toString();
+            if (QueueManager.getQueues().containsKey(serverName))
             {
-                return true;
+                MyQueue queue = QueueManager.getQueues().get(serverName);
+                if (queue.isRunning())
+                {
+                    return true;
+                }
             }
+        }
+        catch (Exception ex)
+        {
         }
         return false;
     }
