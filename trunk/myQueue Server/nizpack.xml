@@ -6,7 +6,7 @@
         <javaversion>1.6</javaversion>
         <url>http://www.codeforte.org</url>
         <authors>
-            <author email="nsi@codeforte.org" name="Nikos Siatras"/>
+            <author name="Nikos Siatras" email="nsi@codeforte.org"/>
         </authors>
     </info>
     <guiprefs height="450" resizable="yes" width="600">
@@ -22,7 +22,7 @@
     <native name="ShellLink.dll" type="izpack">
         <os family="windows"/>
     </native>
-    <native name="COIOSHelper.dll" stage="both" type="3rdparty">
+    <native stage="both" name="COIOSHelper.dll" type="3rdparty">
         <os family="windows"/>
     </native>
     <listeners>
