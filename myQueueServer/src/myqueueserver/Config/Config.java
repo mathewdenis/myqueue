@@ -1,0 +1,59 @@
+package myqueueserver.Config;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Properties;
+
+/**
+ *
+ * @author Nikos Siatras
+ */
+public class Config
+{
+
+    public static int fServerPort, fMaxConnection;
+    public static int fReadBufferSize;
+    public static ArrayList<String> fBindAddresses;
+
+    public Config()
+    {
+    }
+
+    public static void ReadConfigFile() throws Exception
+    {
+        java.io.File currentDir = new java.io.File("");
+        String applicationPath = currentDir.getAbsolutePath();
+
+        String configPath = applicationPath + "\\myqueue.cnf";
+        File confFile = new File(configPath);
+
+        if (!confFile.exists())
+        {
+            throw new Exception("File 'myqueue.cnf' does not exist!");
+        }
+        else if (!confFile.canRead())
+        {
+            throw new Exception("File 'myqueue.cnf' exists but has no required read permissions!");
+        }
+
+        FileInputStream fstream = new FileInputStream(confFile);
+
+        Properties properties = new Properties();
+        properties.load(fstream);
+
+        fServerPort = Integer.parseInt(properties.get("port").toString());
+        fMaxConnection = Integer.parseInt(properties.get("max_connections").toString());
+        fReadBufferSize = Integer.parseInt(properties.get("read_buffer_size").toString());
+
+        fBindAddresses = new ArrayList<String>();
+        String bindAddresses = properties.getProperty("bind-address");
+        String[] addresses = bindAddresses.split(",");
+        for (String address : addresses)
+        {
+            fBindAddresses.add(address);
+        }
+
+
+    }
+}
