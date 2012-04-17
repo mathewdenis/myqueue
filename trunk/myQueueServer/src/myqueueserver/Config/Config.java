@@ -12,8 +12,9 @@ import java.util.Properties;
 public class Config
 {
 
-    public static int fServerPort, fMaxConnection;
+    public static int fServerPort, fMaxConnections;
     public static int fReadBufferSize;
+    public static int fCorePoolSize, fMaxPoolSize;
     public static ArrayList<String> fBindAddresses;
 
     public Config()
@@ -43,7 +44,7 @@ public class Config
         properties.load(fstream);
 
         fServerPort = Integer.parseInt(properties.get("port").toString());
-        fMaxConnection = Integer.parseInt(properties.get("max_connections").toString());
+        fMaxConnections = Integer.parseInt(properties.get("max_connections").toString());
         fReadBufferSize = Integer.parseInt(properties.get("read_buffer_size").toString());
 
         fBindAddresses = new ArrayList<String>();
@@ -53,6 +54,9 @@ public class Config
         {
             fBindAddresses.add(address);
         }
+
+        fCorePoolSize = Integer.parseInt(properties.get("core_pool_size").toString());
+        fMaxPoolSize = Integer.parseInt(properties.get("max_pool_size").toString());
 
 
     }
