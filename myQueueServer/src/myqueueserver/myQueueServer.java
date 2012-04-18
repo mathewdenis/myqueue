@@ -3,7 +3,9 @@ package myqueueserver;
 import myqueueserver.Config.Config;
 import myqueueserver.Log.LogMessageType;
 import myqueueserver.Log.ServerLog;
-import myqueueserver.Network.Server.MyQueueServer;
+import myqueueserver.Network.Server.MyQueueTCPServer;
+import myqueueserver.Queue.QueueManager;
+import myqueueserver.Users.UsersManager;
 
 /**
  *
@@ -12,7 +14,7 @@ import myqueueserver.Network.Server.MyQueueServer;
 public class myQueueServer
 {
 
-    private static MyQueueServer fServer;
+    private static MyQueueTCPServer fServer;
 
     public static void main(String[] args)
     {
@@ -21,8 +23,14 @@ public class myQueueServer
             // Read the config file
             Config.ReadConfigFile();
 
+            UsersManager.Initialize();
+            UsersManager.Save();
+
+            QueueManager.Initialize();
+            QueueManager.Save();
+
             // Create Server with readed config settings (listeners, security etc...)
-            fServer = new MyQueueServer();
+            fServer = new MyQueueTCPServer();
             fServer.Start();
 
             ServerLog.WriteToLog("Server started", LogMessageType.Information);

@@ -1,10 +1,12 @@
-package myqueueserver.Network.Users;
+package myqueueserver.Users;
+
+import java.io.Serializable;
 
 /**
  *
  * @author Nikos Siatras
  */
-public class User
+public class User implements Serializable
 {
 
     private String fName, fPassword;

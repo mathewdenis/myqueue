@@ -53,7 +53,5 @@ public class Config
 
         fCorePoolSize = Integer.parseInt(properties.get("core_pool_size").toString());
         fMaxPoolSize = Integer.parseInt(properties.get("max_pool_size").toString());
-
-
     }
 }

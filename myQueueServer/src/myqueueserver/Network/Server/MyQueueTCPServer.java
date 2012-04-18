@@ -11,10 +11,10 @@ import myqueueserver.Config.Config;
  *
  * @author Nikos Siatras
  */
-public class MyQueueServer extends ExtasysTCPServer
+public class MyQueueTCPServer extends ExtasysTCPServer
 {
 
-    public MyQueueServer() throws UnknownHostException
+    public MyQueueTCPServer() throws UnknownHostException
     {
         super("MyQueue Server", "MyQueue Server", Config.fCorePoolSize, Config.fMaxConnections);
 
