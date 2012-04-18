@@ -27,6 +27,7 @@ public class ServerLog
                 event = "[Error]\t" + event;
                 System.err.println(event);
                 break;
+                
             case Warning:
                 event = "[Warning]\t" + event;
                 System.out.println(event);
