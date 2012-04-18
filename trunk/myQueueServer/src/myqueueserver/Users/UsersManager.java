@@ -15,6 +15,7 @@ public class UsersManager implements Serializable
 {
 
     private static ArrayList<User> fUsers;
+    private static final Object fUsersLock = new Object();
 
     public UsersManager()
     {
@@ -22,30 +23,92 @@ public class UsersManager implements Serializable
 
     public static void Initialize() throws FileNotFoundException, IOException, ClassNotFoundException
     {
-        byte[] bytes = FileManager.ReadFile("UsersManager.dat");
-        if (bytes != null)
+        synchronized (fUsersLock)
         {
-            fUsers = (ArrayList<User>) Serializer.Deserialize(bytes);
-        }
-        else
-        {
-            fUsers = new ArrayList<>();
-        }
+            byte[] bytes = FileManager.ReadFile("UsersManager.dat");
+            if (bytes != null)
+            {
+                fUsers = (ArrayList<User>) Serializer.Deserialize(bytes);
+            }
+            else
+            {
+                fUsers = new ArrayList<>();
+            }
 
-        // Add a default root account
-        if (fUsers.isEmpty())
-        {
-            fUsers = new ArrayList<>();
-            User root = new User("root", "pass");
-            fUsers.add(root);
+            // Add a default root account
+            if (fUsers.isEmpty())
+            {
+                fUsers = new ArrayList<>();
+                User root = new User("root", "pass");
+                fUsers.add(root);
 
+                Save();
+            }
+        }
+    }
+
+    /**
+     * Add a new user to the server
+     * @param username is the user's name
+     * @param password is the user's password
+     * @throws IOException 
+     */
+    public static void AddUser(String username, String password) throws IOException
+    {
+        synchronized (fUsersLock)
+        {
+            boolean userExists = false;
+            for (User u : fUsers)
+            {
+                if (u.getName().equals(username))
+                {
+                    userExists = true;
+                    break;
+                }
+            }
+
+            if (!userExists)
+            {
+                User newUser = new User(username, password);
+                fUsers.add(newUser);
+            }
             Save();
+        }
+    }
+
+    /**
+     * Remove a user
+     * @param username is the user;s name to remove
+     * @throws IOException 
+     */
+    public static void RemoveUser(String username) throws IOException
+    {
+        synchronized (fUsersLock)
+        {
+            int indexToRemove = -1;
+            for (int i = 0; i < fUsers.size(); i++)
+            {
+                if (fUsers.get(i).getName().equals(username))
+                {
+                    indexToRemove = i;
+                    break;
+                }
+            }
+
+            if (indexToRemove > -1)
+            {
+                fUsers.remove(indexToRemove);
+                Save();
+            }
         }
     }
 
     public static void Save() throws IOException
     {
-        byte[] bytes = Serializer.Serialize(fUsers);
-        FileManager.WriteFile(bytes, "UsersManager.dat");
+        synchronized (fUsersLock)
+        {
+            byte[] bytes = Serializer.Serialize(fUsers);
+            FileManager.WriteFile(bytes, "UsersManager.dat");
+        }
     }
 }

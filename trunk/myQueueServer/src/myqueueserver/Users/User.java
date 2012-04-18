@@ -11,6 +11,11 @@ public class User implements Serializable
 
     private String fName, fPassword;
 
+    /**
+     * Initialize a new user instance
+     * @param name is the user's name
+     * @param password is the user's password
+     */
     public User(String name, String password)
     {
         fName = name;

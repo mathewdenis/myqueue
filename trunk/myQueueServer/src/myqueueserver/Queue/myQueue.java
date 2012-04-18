@@ -1,9 +1,7 @@
 package myqueueserver.Queue;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import myqueueserver.Queue.Engines.QueueEngine;
-import myqueueserver.Users.User;
 
 /**
  *
@@ -14,11 +12,9 @@ public class myQueue implements Serializable
 
     private String fName, fSaveLocation;
     private QueueEngine fEngine;
-    private ArrayList<User> fUsers;
 
     private myQueue(String name, String saveLocation, QueueEngine engine)
     {
-        fUsers = new ArrayList<>();
         fName = name;
         fSaveLocation = saveLocation;
         fEngine = engine;
@@ -52,10 +48,5 @@ public class myQueue implements Serializable
     public QueueEngine getEngine()
     {
         return fEngine;
-    }
-
-    public ArrayList<User> getUsers()
-    {
-        return fUsers;
     }
 }
