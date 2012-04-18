@@ -1,14 +1,15 @@
 package myqueueserver.Queue;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import myqueueserver.Queue.Engines.QueueEngine;
-import myqueueserver.Network.Users.User;
+import myqueueserver.Users.User;
 
 /**
  *
  * @author Nikos Siatras
  */
-public class myQueue
+public class myQueue implements Serializable
 {
 
     private String fName, fSaveLocation;
