@@ -1,6 +1,8 @@
 package myqueueserver.Queue;
 
+import java.util.ArrayList;
 import myqueueserver.Queue.Engines.QueueEngine;
+import myqueueserver.Network.Users.User;
 
 /**
  *
@@ -11,9 +13,11 @@ public class myQueue
 
     private String fName, fSaveLocation;
     private QueueEngine fEngine;
+    private ArrayList<User> fUsers;
 
     private myQueue(String name, String saveLocation, QueueEngine engine)
     {
+        fUsers = new ArrayList<>();
         fName = name;
         fSaveLocation = saveLocation;
         fEngine = engine;
@@ -47,5 +51,10 @@ public class myQueue
     public QueueEngine getEngine()
     {
         return fEngine;
+    }
+
+    public ArrayList<User> getUsers()
+    {
+        return fUsers;
     }
 }
