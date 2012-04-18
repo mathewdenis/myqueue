@@ -15,6 +15,7 @@ public class QueueManager
 {
 
     private static ArrayList<Queue> fQueues;
+    private static final Object fQueueManagerLock = new Object();
 
     public QueueManager()
     {
@@ -22,20 +23,34 @@ public class QueueManager
 
     public static void Initialize() throws FileNotFoundException, IOException, ClassNotFoundException
     {
-        byte[] bytes = FileManager.ReadFile("Queues.dat");
-        if (bytes != null)
+        synchronized (fQueueManagerLock)
         {
-            fQueues = (ArrayList<Queue>) Serializer.Deserialize(bytes);
-        }
-        else
-        {
-            fQueues = new ArrayList<>();
+            byte[] bytes = FileManager.ReadFile("Queues.dat");
+            if (bytes != null)
+            {
+                fQueues = (ArrayList<Queue>) Serializer.Deserialize(bytes);
+            }
+            else
+            {
+                fQueues = new ArrayList<>();
+            }
         }
     }
 
     public static void Save() throws IOException
     {
-        byte[] bytes = Serializer.Serialize(fQueues);
-        FileManager.WriteFile(bytes, "Queues.dat");
+        synchronized (fQueueManagerLock)
+        {
+            byte[] bytes = Serializer.Serialize(fQueues);
+            FileManager.WriteFile(bytes, "Queues.dat");
+        }
+    }
+
+    public static ArrayList<Queue> getQueues()
+    {
+        synchronized (fQueueManagerLock)
+        {
+            return fQueues;
+        }
     }
 }
