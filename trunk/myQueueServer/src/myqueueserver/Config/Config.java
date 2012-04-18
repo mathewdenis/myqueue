@@ -3,6 +3,7 @@ package myqueueserver.Config;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -15,7 +16,7 @@ public class Config
     public static int fServerPort, fMaxConnections;
     public static int fReadBufferSize;
     public static int fCorePoolSize, fMaxPoolSize;
-    public static ArrayList<String> fBindAddresses;
+    public static ArrayList<String> fBindAddresses = new ArrayList<>();
 
     public Config()
     {
@@ -47,13 +48,8 @@ public class Config
         fMaxConnections = Integer.parseInt(properties.get("max_connections").toString());
         fReadBufferSize = Integer.parseInt(properties.get("read_buffer_size").toString());
 
-        fBindAddresses = new ArrayList<String>();
         String bindAddresses = properties.getProperty("bind-address");
-        String[] addresses = bindAddresses.split(",");
-        for (String address : addresses)
-        {
-            fBindAddresses.add(address);
-        }
+        fBindAddresses.addAll(Arrays.asList(bindAddresses.split(",")));
 
         fCorePoolSize = Integer.parseInt(properties.get("core_pool_size").toString());
         fMaxPoolSize = Integer.parseInt(properties.get("max_pool_size").toString());

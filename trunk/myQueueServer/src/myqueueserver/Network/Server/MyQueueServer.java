@@ -16,7 +16,7 @@ public class MyQueueServer extends ExtasysTCPServer
 
     public MyQueueServer() throws UnknownHostException
     {
-        super("MyQueue Server", "Primary MyQueue Server", Config.fCorePoolSize, Config.fMaxConnections);
+        super("MyQueue Server", "MyQueue Server", Config.fCorePoolSize, Config.fMaxConnections);
 
         // Add listeners
         for (String ip : Config.fBindAddresses)
