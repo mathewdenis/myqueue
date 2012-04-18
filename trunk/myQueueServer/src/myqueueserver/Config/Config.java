@@ -13,9 +13,11 @@ import java.util.Properties;
 public class Config
 {
 
+    public static String fApplicationStartUpPath;
     public static int fServerPort, fMaxConnections;
     public static int fReadBufferSize;
     public static int fCorePoolSize, fMaxPoolSize;
+    public static int fConnectionsTimeOut;
     public static ArrayList<String> fBindAddresses = new ArrayList<>();
 
     public Config()
@@ -25,9 +27,9 @@ public class Config
     public static void ReadConfigFile() throws Exception
     {
         java.io.File currentDir = new java.io.File("");
-        String applicationPath = currentDir.getAbsolutePath();
+        fApplicationStartUpPath = currentDir.getAbsolutePath();
 
-        String configPath = applicationPath + "\\myqueue.cnf";
+        String configPath = fApplicationStartUpPath + "\\myqueue.cnf";
         File confFile = new File(configPath);
 
         if (!confFile.exists())
@@ -44,14 +46,15 @@ public class Config
         Properties properties = new Properties();
         properties.load(fstream);
 
-        fServerPort = Integer.parseInt(properties.get("port").toString());
-        fMaxConnections = Integer.parseInt(properties.get("max_connections").toString());
-        fReadBufferSize = Integer.parseInt(properties.get("read_buffer_size").toString());
+        fServerPort = Integer.parseInt(properties.get("port").toString().trim());
+        fBindAddresses.addAll(Arrays.asList(properties.getProperty("bind-address").toString().trim().split(",")));
+        fReadBufferSize = Integer.parseInt(properties.get("read_buffer_size").toString().trim());
+        fConnectionsTimeOut = Integer.parseInt(properties.get("connection_timeout").toString().trim());
+        fMaxConnections = Integer.parseInt(properties.get("max_connections").toString().trim());
 
-        String bindAddresses = properties.getProperty("bind-address");
-        fBindAddresses.addAll(Arrays.asList(bindAddresses.split(",")));
+        fCorePoolSize = Integer.parseInt(properties.get("core_pool_size").toString().trim());
+        fMaxPoolSize = Integer.parseInt(properties.get("max_pool_size").toString().trim());
 
-        fCorePoolSize = Integer.parseInt(properties.get("core_pool_size").toString());
-        fMaxPoolSize = Integer.parseInt(properties.get("max_pool_size").toString());
+
     }
 }

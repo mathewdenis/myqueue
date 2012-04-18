@@ -1,7 +1,18 @@
 # MyQueue Server properties
-max_connections 	= 	500
-read_buffer_size 	= 	32768
+
+# TCP server's port and Listener's IP Address
 port 				= 	2572
 bind-address 		= 	127.0.0.1
-core_pool_size		=	10
-max_pool_size		=	30
+
+# Connections time-out in milliseconds
+connection_timeout  =   2000   
+
+# The server's read buffer size of each connection in bytes	
+read_buffer_size 	= 	32768			
+
+# Maximum connections 		
+max_connections 	= 	500				
+
+# Server's thread pool worker threads
+core_pool_size		=	20
+max_pool_size		=	40
