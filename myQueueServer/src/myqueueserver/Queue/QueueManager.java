@@ -13,6 +13,7 @@ import myqueueserver.Serializations.Serializer;
 public class QueueManager
 {
 
+    private static String fQueueManagerSaveLocation = "Queues.dat";
     private static ArrayList<myQueue> fQueues;
     private static final Object fQueueManagerLock = new Object();
 
@@ -24,7 +25,7 @@ public class QueueManager
     {
         synchronized (fQueueManagerLock)
         {
-            byte[] bytes = FileManager.ReadFile("Queues.dat");
+            byte[] bytes = FileManager.ReadFile(fQueueManagerSaveLocation);
             if (bytes != null)
             {
                 fQueues = (ArrayList<myQueue>) Serializer.Deserialize(bytes);
@@ -96,7 +97,7 @@ public class QueueManager
         synchronized (fQueueManagerLock)
         {
             byte[] bytes = Serializer.Serialize(fQueues);
-            FileManager.WriteFile(bytes, "Queues.dat");
+            FileManager.WriteFile(bytes, fQueueManagerSaveLocation);
         }
     }
 

@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import myqueueserver.Config.Config;
 import myqueueserver.Queue.QueueManager;
+import myqueueserver.Users.UsersManager;
 
 /**
  *
@@ -27,6 +28,53 @@ public class MyQueueTCPServer extends ExtasysTCPServer
     }
 
     @Override
+    public void OnDataReceive(TCPClientConnection sender, DataFrame data)
+    {
+        try
+        {
+            String strData = new String(data.getBytes());
+            String[] splittedStr = strData.split(" ");
+
+
+            switch (splittedStr[0].toUpperCase())
+            {
+                case "CREATE":
+                    // TODO 
+                    // Check if sender has permission to CREATE
+                    switch (splittedStr[1])
+                    {
+                        case "QUEUE":   // CREATE QUEUE <QUEUE_NAME> <QUEUE_SAVE_LOCATION>
+                            QueueManager.CreateQueue(splittedStr[2], splittedStr[3]);
+                            break;
+
+                        case "USER":    // CREATE USER <USERNAME> <PASSWORD>
+                            UsersManager.AddUser(splittedStr[2], splittedStr[3]);
+                            break;
+                    }
+                    break;
+
+                case "DROP":
+                    // TODO
+                    // Check if sender has permission to DROP
+                    switch (splittedStr[1])
+                    {
+                        case "QUEUE":   // DROP QUEUE <QUEUE_NAME>
+                            QueueManager.DropQueue(splittedStr[2]);
+                            break;
+
+                        case "USER":    // DROP USER <USERNAME> 
+                            UsersManager.RemoveUser(splittedStr[2]);
+                            break;
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+
+    @Override
     public void OnClientConnect(TCPClientConnection client)
     {
         System.out.println("Client " + client.getIPAddress() + " connected");
@@ -36,28 +84,5 @@ public class MyQueueTCPServer extends ExtasysTCPServer
     public void OnClientDisconnect(TCPClientConnection client)
     {
         System.out.println("Client " + client.getIPAddress() + " disconnected");
-    }
-
-    @Override
-    public void OnDataReceive(TCPClientConnection sender, DataFrame data)
-    {
-        String strData = new String(data.getBytes());
-        String[] splittedStr = strData.split(" ");
-        
-        
-        switch (splittedStr[0].toUpperCase())
-        {
-            case "CREATE":
-                switch (splittedStr[1])
-                {
-                    case "QUEUE":   // CREATE QUEUE <QUEUE_NAME> <QUEUE_SAVE_LOCATION>
-                        
-                        break;
-
-                    case "USER":    // CREATE USER <USERNAME> <PASSWORD>
-                        break;
-                }
-                break;
-        }
     }
 }
