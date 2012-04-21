@@ -72,8 +72,8 @@ public class UsersManager implements Serializable
             {
                 User newUser = new User(username, password);
                 fUsers.add(newUser);
+                Save();
             }
-            Save();
         }
     }
 
@@ -82,7 +82,7 @@ public class UsersManager implements Serializable
      * @param username is the user;s name to remove
      * @throws IOException 
      */
-    public static void RemoveUser(String username) throws IOException
+    public static void DropUser(String username) throws IOException
     {
         synchronized (fUsersLock)
         {

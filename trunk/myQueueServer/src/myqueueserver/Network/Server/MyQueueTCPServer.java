@@ -35,35 +35,38 @@ public class MyQueueTCPServer extends ExtasysTCPServer
             String strData = new String(data.getBytes());
             String[] splittedStr = strData.split(" ");
 
-
             switch (splittedStr[0].toUpperCase())
             {
                 case "CREATE":
-                    // TODO 
-                    // Check if sender has permission to CREATE
                     switch (splittedStr[1])
                     {
                         case "QUEUE":   // CREATE QUEUE <QUEUE_NAME> <QUEUE_SAVE_LOCATION>
+                            // TODO 
+                            // Check if sender has permission to CREATE QUEUE
                             QueueManager.CreateQueue(splittedStr[2], splittedStr[3]);
                             break;
 
                         case "USER":    // CREATE USER <USERNAME> <PASSWORD>
+                            // TODO 
+                            // Check if sender has permission to CREATE USER
                             UsersManager.AddUser(splittedStr[2], splittedStr[3]);
                             break;
                     }
                     break;
 
                 case "DROP":
-                    // TODO
-                    // Check if sender has permission to DROP
                     switch (splittedStr[1])
                     {
                         case "QUEUE":   // DROP QUEUE <QUEUE_NAME>
+                            // TODO
+                            // Check if sender has permission to DROP QUEUE
                             QueueManager.DropQueue(splittedStr[2]);
                             break;
 
                         case "USER":    // DROP USER <USERNAME> 
-                            UsersManager.RemoveUser(splittedStr[2]);
+                            // TODO
+                            // Check if sender has permission to DROP USER
+                            UsersManager.DropUser(splittedStr[2]);
                             break;
                     }
                     break;
