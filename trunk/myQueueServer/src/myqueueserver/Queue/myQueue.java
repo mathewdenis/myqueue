@@ -1,7 +1,6 @@
 package myqueueserver.Queue;
 
 import java.io.Serializable;
-import myqueueserver.Queue.Engines.QueueEngine;
 
 /**
  *
@@ -11,13 +10,11 @@ public class myQueue implements Serializable
 {
 
     private String fName, fSaveLocation;
-    private QueueEngine fEngine;
 
-    private myQueue(String name, String saveLocation, QueueEngine engine)
+    public myQueue(String name, String saveLocation)
     {
         fName = name;
         fSaveLocation = saveLocation;
-        fEngine = engine;
     }
 
     public void setName(String name)
@@ -38,15 +35,5 @@ public class myQueue implements Serializable
     public String getSaveLocation()
     {
         return fSaveLocation;
-    }
-
-    public void setEngine(QueueEngine engine)
-    {
-        fEngine = engine;
-    }
-
-    public QueueEngine getEngine()
-    {
-        return fEngine;
     }
 }

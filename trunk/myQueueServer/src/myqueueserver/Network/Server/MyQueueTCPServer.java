@@ -6,6 +6,7 @@ import Extasys.Network.TCP.Server.Listener.TCPClientConnection;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import myqueueserver.Config.Config;
+import myqueueserver.Queue.QueueManager;
 
 /**
  *
@@ -40,5 +41,23 @@ public class MyQueueTCPServer extends ExtasysTCPServer
     @Override
     public void OnDataReceive(TCPClientConnection sender, DataFrame data)
     {
+        String strData = new String(data.getBytes());
+        String[] splittedStr = strData.split(" ");
+        
+        
+        switch (splittedStr[0].toUpperCase())
+        {
+            case "CREATE":
+                switch (splittedStr[1])
+                {
+                    case "QUEUE":   // CREATE QUEUE <QUEUE_NAME> <QUEUE_SAVE_LOCATION>
+                        
+                        break;
+
+                    case "USER":    // CREATE USER <USERNAME> <PASSWORD>
+                        break;
+                }
+                break;
+        }
     }
 }
