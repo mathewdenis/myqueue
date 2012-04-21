@@ -14,6 +14,7 @@ import myqueueserver.Serializations.Serializer;
 public class UsersManager implements Serializable
 {
 
+    private static String fUsersManagerSaveLocation = "UsersManager.dat";
     private static ArrayList<User> fUsers;
     private static final Object fUsersLock = new Object();
 
@@ -25,7 +26,7 @@ public class UsersManager implements Serializable
     {
         synchronized (fUsersLock)
         {
-            byte[] bytes = FileManager.ReadFile("UsersManager.dat");
+            byte[] bytes = FileManager.ReadFile(fUsersManagerSaveLocation);
             if (bytes != null)
             {
                 fUsers = (ArrayList<User>) Serializer.Deserialize(bytes);
@@ -108,7 +109,7 @@ public class UsersManager implements Serializable
         synchronized (fUsersLock)
         {
             byte[] bytes = Serializer.Serialize(fUsers);
-            FileManager.WriteFile(bytes, "UsersManager.dat");
+            FileManager.WriteFile(bytes, fUsersManagerSaveLocation);
         }
     }
 }
