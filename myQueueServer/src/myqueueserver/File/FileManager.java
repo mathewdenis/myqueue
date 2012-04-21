@@ -15,7 +15,6 @@ public class FileManager
 
     public static void WriteFile(byte[] bytes, String filepath) throws FileNotFoundException, IOException
     {
-        File file = new File(filepath);
         try (FileOutputStream stream = new FileOutputStream(filepath))
         {
             stream.write(bytes);
