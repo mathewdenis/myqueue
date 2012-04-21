@@ -3,7 +3,6 @@ package myqueueserver.Queue;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Queue;
 import myqueueserver.File.FileManager;
 import myqueueserver.Serializations.Serializer;
 
@@ -14,7 +13,7 @@ import myqueueserver.Serializations.Serializer;
 public class QueueManager
 {
 
-    private static ArrayList<Queue> fQueues;
+    private static ArrayList<myQueue> fQueues;
     private static final Object fQueueManagerLock = new Object();
 
     public QueueManager()
@@ -28,12 +27,67 @@ public class QueueManager
             byte[] bytes = FileManager.ReadFile("Queues.dat");
             if (bytes != null)
             {
-                fQueues = (ArrayList<Queue>) Serializer.Deserialize(bytes);
+                fQueues = (ArrayList<myQueue>) Serializer.Deserialize(bytes);
             }
             else
             {
                 fQueues = new ArrayList<>();
             }
+        }
+    }
+
+    /**
+     * Create a new myQueue
+     * @param name is the Queue's name
+     * @param saveLocation is the Queues save location 
+     */
+    public static void CreateQueue(String name, String saveLocation) throws IOException
+    {
+        synchronized (fQueueManagerLock)
+        {
+            boolean queueExists = false;
+            for (myQueue q : fQueues)
+            {
+                if (q.getName().equals(name))
+                {
+                    queueExists = true;
+                    break;
+                }
+            }
+
+            if (!queueExists)
+            {
+                myQueue q = new myQueue(name, saveLocation);
+                fQueues.add(q);
+                Save();
+            }
+        }
+    }
+
+    /**
+     * Drop myQueue
+     * @param name is the name of the queue to drop
+     */
+    public static void DropQueue(String name) throws IOException
+    {
+        synchronized (fQueueManagerLock)
+        {
+            int indexToRemove = -1;
+            for (int i = 0; i < fQueues.size(); i++)
+            {
+                if (fQueues.get(i).getName().equals(name))
+                {
+                    indexToRemove = i;
+                    break;
+                }
+            }
+
+            if (indexToRemove > -1)
+            {
+                fQueues.remove(indexToRemove);
+                Save();
+            }
+
         }
     }
 
@@ -46,7 +100,7 @@ public class QueueManager
         }
     }
 
-    public static ArrayList<Queue> getQueues()
+    public static ArrayList<myQueue> getQueues()
     {
         synchronized (fQueueManagerLock)
         {
