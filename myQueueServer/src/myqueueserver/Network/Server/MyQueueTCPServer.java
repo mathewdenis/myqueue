@@ -15,9 +15,9 @@ import myqueueserver.Users.UsersManager;
  */
 public class MyQueueTCPServer extends ExtasysTCPServer
 {
-    
+
     private String fETX = "<3m{X34l*Uψ7q.!]'Cξ51g47Ω],g3;7=8@2:λHB4&4_lπ#>NM{-3ς3#7k\"mΠpX%(";
-    
+
     public MyQueueTCPServer() throws UnknownHostException
     {
         super("MyQueue Server", "MyQueue Server", Config.fCorePoolSize, Config.fMaxPoolSize);
@@ -28,7 +28,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
             this.AddListener(ip, InetAddress.getByName(ip), Config.fServerPort, Config.fMaxConnections, Config.fReadBufferSize, 2000, Config.fMaxConnections, fETX);
         }
     }
-    
+
     @Override
     public void OnDataReceive(TCPClientConnection sender, DataFrame data)
     {
@@ -36,14 +36,14 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         {
             String strData = new String(data.getBytes());
             String[] splittedStr = strData.split(" ");
-            
+
             switch (splittedStr[0].toUpperCase())
             {
-                
+
                 case "LOGIN": // LOGIN <USERNAME> <PASSWORD>
                     sender.SendData("OK" + fETX);
                     break;
-                
+
                 case "CREATE":
                     switch (splittedStr[1])
                     {
@@ -52,7 +52,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                             // Check if sender has permission to CREATE QUEUE
                             QueueManager.CreateQueue(splittedStr[2], splittedStr[3]);
                             break;
-                        
+
                         case "USER":    // CREATE USER <USERNAME> <PASSWORD>
                             // TODO 
                             // Check if sender has permission to CREATE USER
@@ -60,7 +60,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                             break;
                     }
                     break;
-                
+
                 case "DROP":
                     switch (splittedStr[1])
                     {
@@ -69,7 +69,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                             // Check if sender has permission to DROP QUEUE
                             QueueManager.DropQueue(splittedStr[2]);
                             break;
-                        
+
                         case "USER":    // DROP USER <USERNAME> 
                             // TODO
                             // Check if sender has permission to DROP USER
@@ -83,13 +83,13 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         {
         }
     }
-    
+
     @Override
     public void OnClientConnect(TCPClientConnection client)
     {
         System.out.println("Client " + client.getIPAddress() + " connected");
     }
-    
+
     @Override
     public void OnClientDisconnect(TCPClientConnection client)
     {
