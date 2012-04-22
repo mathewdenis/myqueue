@@ -1,4 +1,4 @@
-
+package myQueueConnector;
 /**
  *
  * @author Nikos Siatras

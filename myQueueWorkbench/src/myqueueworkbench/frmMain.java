@@ -1,10 +1,13 @@
 package myqueueworkbench;
 
-import javax.swing.JTree;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.io.IOException;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
+import myqueueworkbench.Connections.ConnectionsManager;
 
 /**
  *
@@ -18,6 +21,23 @@ public class frmMain extends javax.swing.JFrame
     public frmMain()
     {
         initComponents();
+
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        int w = this.getSize().width;
+        int h = this.getSize().height;
+        int x = (dim.width - w) / 2;
+        int y = (dim.height - h) / 2;
+        this.setLocation(x, y);
+
+        try
+        {
+            ConnectionsManager.Initialize();
+        }
+        catch (IOException | ClassNotFoundException ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
 
         jTreeConnections.setModel(new DefaultTreeModel(fMyQueueConnectionsParentNode));
         ((DefaultTreeModel) jTreeConnections.getModel()).reload();
@@ -44,9 +64,19 @@ public class frmMain extends javax.swing.JFrame
         jMenu1.setText("File");
 
         jMenuItem1.setText("New Connection");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem1);
 
         jMenuItem2.setText("Exit");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem2);
 
         jMenuBar1.add(jMenu1);
@@ -72,6 +102,27 @@ public class frmMain extends javax.swing.JFrame
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    // Exit
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem2ActionPerformed
+    {//GEN-HEADEREND:event_jMenuItem2ActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    // New connection
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem1ActionPerformed
+    {//GEN-HEADEREND:event_jMenuItem1ActionPerformed
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        frmNewConnection frm = new frmNewConnection(this);
+
+        int w = frm.getSize().width;
+        int h = frm.getSize().height;
+        int x = (dim.width - w) / 2;
+        int y = (dim.height - h) / 2;
+
+        frm.setLocation(x, y);
+        frm.setVisible(true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     public static void main(String args[])
     {
