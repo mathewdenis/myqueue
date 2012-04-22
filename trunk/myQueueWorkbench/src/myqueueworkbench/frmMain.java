@@ -19,12 +19,8 @@ public class frmMain extends javax.swing.JFrame
     {
         initComponents();
 
-
-        DefaultTreeModel model = new DefaultTreeModel(fMyQueueConnectionsParentNode);
-        fMyQueueConnectionsParentNode.
-        jTreeConnections.setModel(model);
-
-
+        jTreeConnections.setModel(new DefaultTreeModel(fMyQueueConnectionsParentNode));
+        ((DefaultTreeModel) jTreeConnections.getModel()).reload();
     }
 
     @SuppressWarnings("unchecked")
