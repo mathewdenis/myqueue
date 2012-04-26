@@ -41,6 +41,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
             {
 
                 case "LOGIN": // LOGIN <USERNAME> <PASSWORD>
+                    // TODO Validation
                     sender.SendData("OK" + fETX);
                     break;
 
@@ -78,8 +79,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                     }
                     break;
             }
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
         }
     }

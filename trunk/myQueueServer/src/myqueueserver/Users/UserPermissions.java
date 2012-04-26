@@ -9,5 +9,5 @@ import java.io.Serializable;
 public enum UserPermissions implements Serializable
 {
 
-    Read, Write, CreateUsers, DropUsers, CreateQueues, DropQueues
+    Root,Read, Write, CreateUsers, DropUsers, CreateQueues, DropQueues
 }

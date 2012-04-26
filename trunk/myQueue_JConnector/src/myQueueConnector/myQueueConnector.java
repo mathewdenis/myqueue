@@ -13,7 +13,7 @@ import myQueueConnector.Exceptions.CommandTimeOutException;
  *
  * @author Nikos Siatras
  */
-public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClient
+public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClient implements AutoCloseable
 {
 
     // Methods Lock
@@ -26,7 +26,7 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
     private boolean fIsConnected = false;
     private String fServerIP, fUsername, fPassword;
     private int fServerPort;
-    private int fResponseTimeOut = 3000;
+    private int fResponseTimeOut = 4000;
     private String fETX = "<3m{X34l*Uψ7q.!]'Cξ51g47Ω],g3;7=8@2:λHB4&4_lπ#>NM{-3ς3#7k\"mΠpX%(";
 
     public myQueueConnector(String serverIP, int serverPort, String username, String password) throws UnknownHostException
@@ -52,7 +52,6 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
         super.Start();
         String logIn = "LOGIN " + fUsername + " " + fPassword;
         DataFrame response = SendToServer(logIn);
-        
     }
 
     private DataFrame SendToServer(String data) throws ConnectorDisconnectedException, ConnectorCannotSendPacketException, CommandTimeOutException
@@ -106,5 +105,11 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
     public int getResponseTimeOut()
     {
         return fResponseTimeOut;
+    }
+
+    @Override
+    public void close() throws Exception
+    {
+        Disconnect();
     }
 }
