@@ -41,7 +41,7 @@ public class UsersManager implements Serializable
             {
                 fUsers = new ArrayList<>();
                 User root = new User("root", "pass");
-                root.getPermissions().add(UserPermissions.All);
+                root.getPermissions().add(EUserPermissions.All);
                 fUsers.add(root);
 
                 Save();
