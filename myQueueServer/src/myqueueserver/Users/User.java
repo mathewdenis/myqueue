@@ -34,7 +34,7 @@ public class User implements Serializable
         return fPermissions.contains(permission);
     }
 
-    public boolean HasPermissionForQueue(String queueName, EUserPermissions permission)
+    public boolean HasPermissionForQueue(String queueName, EUserQueuePermissions permission)
     {
         if (fQueuePermissions.containsKey(queueName))
         {
