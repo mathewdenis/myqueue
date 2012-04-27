@@ -9,7 +9,7 @@ import myqueueserver.Authentication.UserAuthenticationManager;
 import myqueueserver.Config.Config;
 import myqueueserver.Queue.QueueManager;
 import myqueueserver.Users.User;
-import myqueueserver.Users.UserPermissions;
+import myqueueserver.Users.EUserPermissions;
 import myqueueserver.Users.UsersManager;
 
 /**
@@ -73,7 +73,6 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                     switch (splittedStr[1])
                     {
                         case "QUEUE":   // CREATE QUEUE <QUEUE_NAME> <QUEUE_SAVE_LOCATION>
-
                             if (((User) sender.getTag()).CanCreateNewQueues())
                             {
                                 QueueManager.CreateQueue(splittedStr[2], splittedStr[3]);

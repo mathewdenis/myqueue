@@ -12,8 +12,8 @@ public class User implements Serializable
 {
 
     private String fName, fPassword;
-    private ArrayList<UserPermissions> fPermissions;
-    private HashMap<String, ArrayList<UserPermissions>> fQueuePermissions;
+    private ArrayList<EUserPermissions> fPermissions;
+    private HashMap<String, ArrayList<EUserQueuePermissions>> fQueuePermissions;
 
     /**
      * Initialize a new user instance
@@ -29,12 +29,12 @@ public class User implements Serializable
         fQueuePermissions = new HashMap<>();
     }
 
-    public boolean HasPermission(UserPermissions permission)
+    public boolean HasPermission(EUserPermissions permission)
     {
         return fPermissions.contains(permission);
     }
 
-    public boolean HasPermissionForQueue(String queueName, UserPermissions permission)
+    public boolean HasPermissionForQueue(String queueName, EUserPermissions permission)
     {
         if (fQueuePermissions.containsKey(queueName))
         {
@@ -50,7 +50,7 @@ public class User implements Serializable
      */
     public boolean CanCreateNewQueues()
     {
-        return fPermissions.contains(UserPermissions.CreateQueues) || fPermissions.contains(UserPermissions.All);
+        return fPermissions.contains(EUserPermissions.CreateQueues) || fPermissions.contains(EUserPermissions.All);
     }
 
     /**
@@ -60,7 +60,7 @@ public class User implements Serializable
      */
     public boolean CanCreateNewUsers()
     {
-        return fPermissions.contains(UserPermissions.CreateQueues) || fPermissions.contains(UserPermissions.All);
+        return fPermissions.contains(EUserPermissions.CreateQueues) || fPermissions.contains(EUserPermissions.All);
     }
 
     public void setName(String name)
@@ -83,22 +83,22 @@ public class User implements Serializable
         return fPassword;
     }
 
-    public ArrayList<UserPermissions> getPermissions()
+    public ArrayList<EUserPermissions> getPermissions()
     {
         return fPermissions;
     }
 
-    public void setPermissions(ArrayList<UserPermissions> permissions)
+    public void setPermissions(ArrayList<EUserPermissions> permissions)
     {
         fPermissions = permissions;
     }
 
-    public HashMap<String, ArrayList<UserPermissions>> getQueuePermissions()
+    public HashMap<String, ArrayList<EUserQueuePermissions>> getQueuePermissions()
     {
         return fQueuePermissions;
     }
 
-    public void setQueuePermissions(HashMap<String, ArrayList<UserPermissions>> permissions)
+    public void setQueuePermissions(HashMap<String, ArrayList<EUserQueuePermissions>> permissions)
     {
         fQueuePermissions = permissions;
     }
