@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import myqueueserver.File.FileManager;
-import myqueueserver.Serializations.Serializer;
+import myqueueserver.Serialization.Serializer;
 
 /**
  *
@@ -15,7 +15,7 @@ public class UsersManager implements Serializable
 {
 
     private static String fUsersManagerSaveLocation = "UsersManager.dat";
-    private static ArrayList<User> fUsers;
+    public static ArrayList<User> fUsers;
     private static final Object fUsersLock = new Object();
 
     public UsersManager()
@@ -41,6 +41,7 @@ public class UsersManager implements Serializable
             {
                 fUsers = new ArrayList<>();
                 User root = new User("root", "pass");
+                root.getPermissions().add(UserPermissions.All);
                 fUsers.add(root);
 
                 Save();
@@ -50,9 +51,10 @@ public class UsersManager implements Serializable
 
     /**
      * Add a new user to the server
+     *
      * @param username is the user's name
      * @param password is the user's password
-     * @throws IOException 
+     * @throws IOException
      */
     public static void AddUser(String username, String password) throws IOException
     {
@@ -79,14 +81,16 @@ public class UsersManager implements Serializable
 
     /**
      * Remove a user
-     * @param username is the user;s name to remove
-     * @throws IOException 
+     *
+     * @param username is the user's name to remove
+     * @throws IOException
      */
     public static void DropUser(String username) throws IOException
     {
         synchronized (fUsersLock)
         {
             int indexToRemove = -1;
+
             for (int i = 0; i < fUsers.size(); i++)
             {
                 if (fUsers.get(i).getName().equals(username))
@@ -100,6 +104,36 @@ public class UsersManager implements Serializable
             {
                 fUsers.remove(indexToRemove);
                 Save();
+            }
+        }
+    }
+
+    /**
+     * Get a users from his username
+     *
+     * @param username
+     * @return
+     */
+    public static User getUser(String username)
+    {
+        for (User u : UsersManager.fUsers)
+        {
+            if (u.getName().equals(username))
+            {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    public static void UpdateUser(User user)
+    {
+        for (User u : fUsers)
+        {
+            if (u.getName().equals(user.getName()))
+            {
+                u.setPassword(user.getPassword());
+                u.setPermissions(user.getPermissions());
             }
         }
     }
