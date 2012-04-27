@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import myqueueserver.File.FileManager;
-import myqueueserver.Serializations.Serializer;
+import myqueueserver.Serialization.Serializer;
 
 /**
  *

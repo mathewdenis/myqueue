@@ -5,8 +5,11 @@ import Extasys.Network.TCP.Server.ExtasysTCPServer;
 import Extasys.Network.TCP.Server.Listener.TCPClientConnection;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import myqueueserver.Authentication.UserAuthenticationManager;
 import myqueueserver.Config.Config;
 import myqueueserver.Queue.QueueManager;
+import myqueueserver.Users.User;
+import myqueueserver.Users.UserPermissions;
 import myqueueserver.Users.UsersManager;
 
 /**
@@ -37,32 +40,68 @@ public class MyQueueTCPServer extends ExtasysTCPServer
             String strData = new String(data.getBytes());
             String[] splittedStr = strData.split(" ");
 
+            // Sender is not yet loged in
+            if (sender.getTag() == null)
+            {
+                switch (splittedStr[0].toUpperCase())
+                {
+                    case "LOGIN": // LOGIN <USERNAME> <PASSWORD>
+                        if (UserAuthenticationManager.AuthenticateUser(splittedStr[1], splittedStr[2]))
+                        {
+                            sender.setTag(UsersManager.getUser(splittedStr[1]));
+                            sender.SendData("OK" + fETX);
+                        }
+                        else
+                        {
+                            sender.SendData("NOT OK" + fETX);
+                        }
+                        break;
+                }
+                sender.DisconnectMe();
+                return;
+            }
+
+
             switch (splittedStr[0].toUpperCase())
             {
-
-                case "LOGIN": // LOGIN <USERNAME> <PASSWORD>
-                    // TODO Validation
-                    sender.SendData("OK" + fETX);
-                    break;
-
                 case "CREATE":
+                    if (sender.getTag() == null)
+                    {
+                        sender.DisconnectMe();
+                    }
+
                     switch (splittedStr[1])
                     {
                         case "QUEUE":   // CREATE QUEUE <QUEUE_NAME> <QUEUE_SAVE_LOCATION>
-                            // TODO 
-                            // Check if sender has permission to CREATE QUEUE
-                            QueueManager.CreateQueue(splittedStr[2], splittedStr[3]);
+
+                            if (((User) sender.getTag()).CanCreateNewQueues())
+                            {
+                                QueueManager.CreateQueue(splittedStr[2], splittedStr[3]);
+                            }
+                            else
+                            {
+                                sender.SendData("ERROR You dont have permission to create Queues" + fETX);
+                            }
                             break;
 
-                        case "USER":    // CREATE USER <USERNAME> <PASSWORD>
-                            // TODO 
-                            // Check if sender has permission to CREATE USER
-                            UsersManager.AddUser(splittedStr[2], splittedStr[3]);
+                        case "USER":   // CREATE USER <USERNAME> <PASSWORD>
+                            if (((User) sender.getTag()).CanCreateNewUsers())
+                            {
+                                UsersManager.AddUser(splittedStr[2], splittedStr[3]);
+                            }
+                            else
+                            {
+                                sender.SendData("ERROR You dont have permission to create Users" + fETX);
+                            }
                             break;
                     }
                     break;
 
                 case "DROP":
+                    if (sender.getTag() == null)
+                    {
+                        sender.DisconnectMe();
+                    }
                     switch (splittedStr[1])
                     {
                         case "QUEUE":   // DROP QUEUE <QUEUE_NAME>
@@ -78,8 +117,13 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                             break;
                     }
                     break;
+
+                default:
+                    sender.DisconnectMe();
+                    break;
             }
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
         }
     }

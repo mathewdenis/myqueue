@@ -1,4 +1,4 @@
-package myqueueserver.Serializations;
+package myqueueserver.Serialization;
 
 import java.io.*;
 
