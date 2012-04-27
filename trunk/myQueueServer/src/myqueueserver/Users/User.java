@@ -2,6 +2,7 @@ package myqueueserver.Users;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -12,6 +13,7 @@ public class User implements Serializable
 
     private String fName, fPassword;
     private ArrayList<UserPermissions> fPermissions;
+    private HashMap<String, ArrayList<UserPermissions>> fQueuePermissions;
 
     /**
      * Initialize a new user instance
@@ -24,11 +26,21 @@ public class User implements Serializable
         fName = name;
         fPassword = password;
         fPermissions = new ArrayList<>();
+        fQueuePermissions = new HashMap<>();
     }
 
     public boolean HasPermission(UserPermissions permission)
     {
         return fPermissions.contains(permission);
+    }
+
+    public boolean HasPermissionForQueue(String queueName, UserPermissions permission)
+    {
+        if (fQueuePermissions.containsKey(queueName))
+        {
+            return fQueuePermissions.get(queueName).contains(permission);
+        }
+        return false;
     }
 
     /**
@@ -79,5 +91,15 @@ public class User implements Serializable
     public void setPermissions(ArrayList<UserPermissions> permissions)
     {
         fPermissions = permissions;
+    }
+
+    public HashMap<String, ArrayList<UserPermissions>> getQueuePermissions()
+    {
+        return fQueuePermissions;
+    }
+
+    public void setQueuePermissions(HashMap<String, ArrayList<UserPermissions>> permissions)
+    {
+        fQueuePermissions = permissions;
     }
 }
