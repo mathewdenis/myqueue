@@ -48,22 +48,13 @@ public class QueueManager
     {
         synchronized (fQueueManagerLock)
         {
-            boolean queueExists = false;
-            for (myQueue q : fQueues)
-            {
-                if (q.getName().equals(name))
-                {
-                    queueExists = true;
-                    break;
-                }
-            }
+            name = name.trim();
 
-            if (!queueExists)
+            if (!QueueExists(name))
             {
-                myQueue q = new myQueue(name);
-                fQueues.add(q);
+                fQueues.add(new myQueue(name.trim()));
                 Save();
-                ServerLog.WriteToLog("Queue " + name + " created", LogMessageType.Information);
+                ServerLog.WriteToLog("Queue " + name.trim() + " created", LogMessageType.Information);
                 return true;
             }
 
@@ -83,7 +74,7 @@ public class QueueManager
             int indexToRemove = -1;
             for (int i = 0; i < fQueues.size(); i++)
             {
-                if (fQueues.get(i).getName().equals(name))
+                if (fQueues.get(i).getName().equalsIgnoreCase(name))
                 {
                     indexToRemove = i;
                     break;
@@ -94,6 +85,7 @@ public class QueueManager
             {
                 fQueues.remove(indexToRemove);
                 Save();
+                ServerLog.WriteToLog("Queue " + name + " dropped", LogMessageType.Information);
             }
 
         }
@@ -107,9 +99,11 @@ public class QueueManager
      */
     public static boolean QueueExists(String name)
     {
+        name = name.trim();
+
         for (myQueue q : fQueues)
         {
-            if (q.getName().equals(name))
+            if (q.getName().equalsIgnoreCase(name))
             {
                 return true;
             }

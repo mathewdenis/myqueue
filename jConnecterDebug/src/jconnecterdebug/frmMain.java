@@ -65,6 +65,9 @@ public class frmMain extends javax.swing.JFrame
                 {
                 }
 
+                con.SendToServer("CREATE USER NSi 1234");
+                con.SendToServer("GRANT Read,Write ON Test_Queue to NSi");
+
                 con.DropQueue("Test_Queue");
             }
         }

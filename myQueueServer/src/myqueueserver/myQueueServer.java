@@ -1,5 +1,6 @@
 package myqueueserver;
 
+import myqueueserver.Authentication.UserAuthenticationManager;
 import myqueueserver.Config.Config;
 import myqueueserver.Log.LogMessageType;
 import myqueueserver.Log.ServerLog;
@@ -28,6 +29,8 @@ public class myQueueServer
 
             QueueManager.Initialize();
             QueueManager.Save();
+
+            UserAuthenticationManager.Initialize();
 
             // Create Server with readed config settings (listeners, security etc...)
             fServer = new MyQueueTCPServer();

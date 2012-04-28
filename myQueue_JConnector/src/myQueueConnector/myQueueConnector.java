@@ -135,7 +135,7 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
         }
     }
 
-    private DataFrame SendToServer(String data) throws ConnectorDisconnectedException, ConnectorCannotSendPacketException, CommandTimeOutException
+    public DataFrame SendToServer(String data) throws ConnectorDisconnectedException, ConnectorCannotSendPacketException, CommandTimeOutException
     {
         synchronized (fLock)
         {
