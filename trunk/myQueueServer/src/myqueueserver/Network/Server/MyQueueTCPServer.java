@@ -9,7 +9,6 @@ import myqueueserver.Authentication.UserAuthenticationManager;
 import myqueueserver.Config.Config;
 import myqueueserver.Queue.QueueManager;
 import myqueueserver.Users.User;
-import myqueueserver.Users.EUserPermissions;
 import myqueueserver.Users.UsersManager;
 
 /**
@@ -124,6 +123,13 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         }
         catch (Exception ex)
         {
+            try
+            {
+                sender.SendData("ERROR " + ex.getMessage() + fETX);
+            }
+            catch (Exception e)
+            {
+            }
         }
     }
 
