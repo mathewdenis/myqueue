@@ -36,16 +36,41 @@ public class User implements Serializable
 
     public boolean HasPermissionForQueue(String queueName, EUserQueuePermissions permission)
     {
-        if (fQueuePermissions.containsKey(queueName))
+        for (String s : fQueuePermissions.keySet())
         {
-            return fQueuePermissions.get(queueName).contains(permission);
+            if (s.equalsIgnoreCase(queueName))
+            {
+                return fQueuePermissions.get(s).contains(permission);
+            }
         }
         return false;
     }
 
     public boolean CanConnectToQueue(String queueName)
     {
-        return fPermissions.contains(EUserPermissions.All) || fQueuePermissions.containsKey(queueName);
+        boolean hasPermissionsForQueue = false;
+        for (String s : fQueuePermissions.keySet())
+        {
+            if (s.equalsIgnoreCase(queueName))
+            {
+                hasPermissionsForQueue = true;
+                break;
+            }
+        }
+        return fPermissions.contains(EUserPermissions.All) || hasPermissionsForQueue;
+    }
+
+    public void DropQueue(String queueName)
+    {
+        HashMap<String, ArrayList<EUserQueuePermissions>> newPermissions = new HashMap<>();
+        for (String s : fQueuePermissions.keySet())
+        {
+            if (!s.equalsIgnoreCase(queueName))
+            {
+                newPermissions.put(s, fQueuePermissions.get(s));
+            }
+        }
+        fQueuePermissions = newPermissions;
     }
 
     /**
