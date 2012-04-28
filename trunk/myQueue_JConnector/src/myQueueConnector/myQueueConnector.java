@@ -28,7 +28,7 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
     private boolean fIsConnected = false;
     private String fServerIP, fUsername, fPassword;
     private int fServerPort;
-    private int fResponseTimeOut = 4000;
+    private int fResponseTimeOut = 15000;
     private String fETX = "<3m{X34l*Uψ7q.!]'Cξ51g47Ω],g3;7=8@2:λHB4&4_lπ#>NM{-3ς3#7k;mΠpX%(";
 
     public myQueueConnector(String serverIP, int serverPort, String username, String password) throws UnknownHostException
@@ -45,9 +45,9 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
     {
         synchronized (fLock)
         {
-            fServerResponse = null;
             fGotResponseFromServer = false;
-            fWaitCommandEvent.Reset();
+            fWaitCommandEvent = new ManualResetEvent(false);
+            fServerResponse = null;
             super.SendData(data + fETX);
             fWaitCommandEvent.WaitOne(fResponseTimeOut);
             if (!fGotResponseFromServer)
@@ -61,36 +61,43 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
     @Override
     public void OnDataReceive(TCPConnector connector, DataFrame data)
     {
-        fGotResponseFromServer = true;
-        fWaitCommandEvent.Set();
-        fServerResponse = data;
+        synchronized (fLock)
+        {
+            System.out.println(new String(data.getBytes()));
+            fServerResponse = data;
+            fGotResponseFromServer = true;
+            fWaitCommandEvent.Set();
+        }
     }
 
     @Override
     public void OnConnect(TCPConnector connector)
     {
         fIsConnected = true;
+        fWaitCommandEvent = new ManualResetEvent(false);
     }
 
     @Override
     public void OnDisconnect(TCPConnector connector)
     {
         fIsConnected = false;
+        fWaitCommandEvent = new ManualResetEvent(false);
     }
 
-    public void Connect() throws Exception
+    public synchronized void Open() throws Exception
     {
         super.Start();
         String logIn = "LOGIN " + fUsername + " " + fPassword;
         DataFrame response = SendToServer(logIn);
         String responseStr = new String(response.getBytes());
+
         if (responseStr.startsWith("ERROR"))
         {
             throw new Exception(responseStr);
         }
     }
 
-    public void Disconnect()
+    public synchronized void Close()
     {
         super.Stop();
         fIsConnected = false;
@@ -102,7 +109,7 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
      * @param name is the queue's name
      * @return myQueue
      */
-    public myQueue SelectQueue(String name) throws Exception
+    public synchronized myQueue SelectQueue(String name) throws Exception
     {
         DataFrame response = SendToServer("SELECT " + name);
         String responseStr = new String(response.getBytes());
@@ -121,7 +128,7 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
         return new myQueue(this, name);
     }
 
-    public void CreateQueue(String name) throws QueueAlreadyExistsException, Exception, CommandTimeOutException
+    public synchronized void CreateQueue(String name) throws QueueAlreadyExistsException, Exception, CommandTimeOutException
     {
         DataFrame response = SendToServer("CREATE QUEUE " + name);
         String responseStr = new String(response.getBytes());
@@ -135,7 +142,7 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
         }
     }
 
-    public void DropQueue(String name) throws ConnectorDisconnectedException, ConnectorCannotSendPacketException, CommandTimeOutException, Exception
+    public synchronized void DropQueue(String name) throws ConnectorDisconnectedException, ConnectorCannotSendPacketException, CommandTimeOutException, Exception
     {
         DataFrame response = SendToServer("DROP QUEUE " + name);
         String responseStr = new String(response.getBytes());
@@ -175,6 +182,6 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
     @Override
     public void close() throws Exception
     {
-        Disconnect();
+        Close();
     }
 }

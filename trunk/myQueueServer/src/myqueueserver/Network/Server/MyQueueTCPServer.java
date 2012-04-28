@@ -41,7 +41,9 @@ public class MyQueueTCPServer extends ExtasysTCPServer
     {
         try
         {
+
             String strData = new String(data.getBytes());
+            System.out.println("Data received: " + strData);
             String[] splittedStr = strData.split(" ");
 
             // Sender is not yet logged in
@@ -330,12 +332,12 @@ public class MyQueueTCPServer extends ExtasysTCPServer
     @Override
     public void OnClientConnect(TCPClientConnection client)
     {
-        System.out.println("Client " + client.getIPAddress() + " connected");
+        //System.out.println("Client " + client.getIPAddress() + " connected");
     }
 
     @Override
     public void OnClientDisconnect(TCPClientConnection client)
     {
-        System.out.println("Client " + client.getIPAddress() + " disconnected");
+        //System.out.println("Client " + client.getIPAddress() + " disconnected");
     }
 }
