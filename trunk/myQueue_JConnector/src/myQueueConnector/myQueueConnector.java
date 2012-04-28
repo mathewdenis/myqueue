@@ -8,6 +8,7 @@ import Extasys.Network.TCP.Client.Exceptions.ConnectorDisconnectedException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import myQueueConnector.Exceptions.CommandTimeOutException;
+import myQueueConnector.Exceptions.QueueAlreadyExistsException;
 
 /**
  *
@@ -92,11 +93,15 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
         }
     }
 
-    public void CreateQueue(String name) throws Exception
+    public void CreateQueue(String name) throws QueueAlreadyExistsException, Exception
     {
         DataFrame response = SendToServer("CREATE QUEUE " + name);
         String responseStr = new String(response.getBytes());
-        if (responseStr.startsWith("ERROR"))
+        if (responseStr.equals("ERROR 1"))
+        {
+            throw new QueueAlreadyExistsException();
+        }
+        else if (responseStr.startsWith("ERROR"))
         {
             throw new Exception(responseStr);
         }

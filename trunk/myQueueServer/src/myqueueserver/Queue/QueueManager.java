@@ -99,6 +99,24 @@ public class QueueManager
         }
     }
 
+    /**
+     * Check if a Queue with the given name exists
+     *
+     * @param name
+     * @return
+     */
+    public static boolean QueueExists(String name)
+    {
+        for (myQueue q : fQueues)
+        {
+            if (q.getName().equals(name))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void Save() throws IOException
     {
         synchronized (fQueueManagerLock)
