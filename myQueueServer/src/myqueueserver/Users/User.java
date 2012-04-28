@@ -43,6 +43,11 @@ public class User implements Serializable
         return false;
     }
 
+    public boolean CanConnectToQueue(String queueName)
+    {
+        return fPermissions.contains(EUserPermissions.All) || fQueuePermissions.containsKey(queueName);
+    }
+
     /**
      * Check if the user has the required permission to create a new Queue
      *

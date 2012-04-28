@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import myqueueserver.File.FileManager;
+import myqueueserver.Log.LogMessageType;
+import myqueueserver.Log.ServerLog;
 import myqueueserver.Serialization.Serializer;
 
 /**
@@ -39,10 +41,10 @@ public class QueueManager
 
     /**
      * Create a new myQueue
+     *
      * @param name is the Queue's name
-     * @param saveLocation is the Queues save location 
      */
-    public static void CreateQueue(String name, String saveLocation) throws IOException
+    public static boolean CreateQueue(String name) throws IOException
     {
         synchronized (fQueueManagerLock)
         {
@@ -58,15 +60,20 @@ public class QueueManager
 
             if (!queueExists)
             {
-                myQueue q = new myQueue(name, saveLocation);
+                myQueue q = new myQueue(name);
                 fQueues.add(q);
                 Save();
+                ServerLog.WriteToLog("Queue " + name + " created", LogMessageType.Information);
+                return true;
             }
+
+            return false;
         }
     }
 
     /**
      * Drop myQueue
+     *
      * @param name is the name of the queue to drop
      */
     public static void DropQueue(String name) throws IOException
