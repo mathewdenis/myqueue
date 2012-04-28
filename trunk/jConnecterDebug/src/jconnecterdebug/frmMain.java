@@ -65,8 +65,17 @@ public class frmMain extends javax.swing.JFrame
                 {
                 }
 
-                con.SendToServer("CREATE USER NSi 1234");
+                try
+                {
+                    con.CreateQueue("AAAAA");
+                }
+                catch (QueueAlreadyExistsException qex)
+                {
+                }
+
+                //con.SendToServer("CREATE USER NSi 1234");
                 con.SendToServer("GRANT Read,Write ON Test_Queue to NSi");
+                con.SendToServer("GRANT Read,Write ON AAAAA to NSi");
 
                 con.DropQueue("Test_Queue");
             }

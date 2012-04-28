@@ -7,6 +7,7 @@ import myqueueserver.File.FileManager;
 import myqueueserver.Log.LogMessageType;
 import myqueueserver.Log.ServerLog;
 import myqueueserver.Serialization.Serializer;
+import myqueueserver.Users.UsersManager;
 
 /**
  *
@@ -84,6 +85,7 @@ public class QueueManager
             if (indexToRemove > -1)
             {
                 fQueues.remove(indexToRemove);
+                UsersManager.DropQueueFromAllUsers(name);
                 Save();
                 ServerLog.WriteToLog("Queue " + name + " dropped", LogMessageType.Information);
             }

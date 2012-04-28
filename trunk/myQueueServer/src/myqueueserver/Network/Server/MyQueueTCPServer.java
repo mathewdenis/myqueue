@@ -66,7 +66,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
 
             switch (splittedStr[0].toUpperCase())
             {
-                case "SELECT":          // SELECT <QUEUE NAME>
+                case "SELECT":          // SELECT <QUEUE_NAME>
                     SelectQueue(sender, strData);
                     break;
 
@@ -198,6 +198,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
 
     private void SelectQueue(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
     {
+        strData = strData.toUpperCase();
         String queueName = strData.replace("SELECT", "").trim();
         User senderUser = (User) sender.getTag();
 
@@ -228,7 +229,6 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         if (!senderUser.CanCreateNewQueues())
         {
             sender.SendData("ERROR You dont have the required permissions to create Queues" + fETX);
-
         }
         else
         {

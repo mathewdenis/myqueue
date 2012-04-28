@@ -13,10 +13,9 @@ public class UserAuthenticationManager
     public UserAuthenticationManager()
     {
     }
-    
+
     public static void Initialize()
     {
-        
     }
 
     /**
@@ -49,7 +48,7 @@ public class UserAuthenticationManager
     {
         for (User u : UsersManager.fUsers)
         {
-            if (u.getName().equals("username"))
+            if (u.getName().equalsIgnoreCase(username))
             {
                 if (u.CanConnectToQueue(queueName))
                 {

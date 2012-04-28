@@ -126,6 +126,14 @@ public class UsersManager implements Serializable
         return null;
     }
     
+    public static void DropQueueFromAllUsers(String queueName)
+    {
+        for (User u : UsersManager.fUsers)
+        {
+            u.DropQueue(queueName);
+        }
+    }
+    
     public static void UpdateUser(User user) throws IOException
     {
         for (User u : fUsers)
