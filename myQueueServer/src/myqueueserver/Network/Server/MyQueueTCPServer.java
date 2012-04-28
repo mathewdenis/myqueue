@@ -190,6 +190,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         catch (IOException ex)
         {
             sender.SendData("ERROR " + ex.getMessage());
+            return;
         }
 
         sender.SendData("OK" + fETX);
