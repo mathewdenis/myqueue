@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import myQueueConnector.Exceptions.CommandTimeOutException;
 import myQueueConnector.Exceptions.QueueAlreadyExistsException;
+import myQueueConnector.Exceptions.QueueDoesNotExistException;
 
 /**
  *
@@ -65,6 +66,11 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
         super.Start();
         String logIn = "LOGIN " + fUsername + " " + fPassword;
         DataFrame response = SendToServer(logIn);
+        String responseStr = new String(response.getBytes());
+        if (responseStr.startsWith("ERROR"))
+        {
+            throw new Exception(responseStr);
+        }
     }
 
     public void Disconnect()
@@ -83,17 +89,22 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
     {
         DataFrame response = SendToServer("SELECT " + name);
         String responseStr = new String(response.getBytes());
-        if (responseStr.equals("OK"))
+        if (responseStr.startsWith("ERROR"))
         {
-            return new myQueue(this, name);
+            if (responseStr.equals("ERROR 1"))
+            {
+                throw new QueueDoesNotExistException();
+            }
+            else
+            {
+                throw new Exception(responseStr);
+            }
         }
-        else
-        {
-            throw new Exception(responseStr);
-        }
+
+        return new myQueue(this, name);
     }
 
-    public void CreateQueue(String name) throws QueueAlreadyExistsException, Exception
+    public void CreateQueue(String name) throws QueueAlreadyExistsException, Exception, CommandTimeOutException
     {
         DataFrame response = SendToServer("CREATE QUEUE " + name);
         String responseStr = new String(response.getBytes());
@@ -104,6 +115,23 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
         else if (responseStr.startsWith("ERROR"))
         {
             throw new Exception(responseStr);
+        }
+    }
+
+    public void DropQueue(String name) throws ConnectorDisconnectedException, ConnectorCannotSendPacketException, CommandTimeOutException, Exception
+    {
+        DataFrame response = SendToServer("DROP QUEUE " + name);
+        String responseStr = new String(response.getBytes());
+        if (responseStr.startsWith("ERROR"))
+        {
+            if (responseStr.equals("ERROR 1"))
+            {
+                throw new QueueDoesNotExistException();
+            }
+            else
+            {
+                throw new Exception(responseStr);
+            }
         }
     }
 
