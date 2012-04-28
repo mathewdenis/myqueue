@@ -41,6 +41,23 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
         this.AddConnector("", InetAddress.getByName(serverIP), serverPort, 32768, fETX);
     }
 
+    public DataFrame SendToServer(String data) throws ConnectorDisconnectedException, ConnectorCannotSendPacketException, CommandTimeOutException
+    {
+        synchronized (fLock)
+        {
+            fServerResponse = null;
+            fGotResponseFromServer = false;
+            fWaitCommandEvent.Reset();
+            super.SendData(data + fETX);
+            fWaitCommandEvent.WaitOne(fResponseTimeOut);
+            if (!fGotResponseFromServer)
+            {
+                throw new CommandTimeOutException();
+            }
+            return fServerResponse;
+        }
+    }
+
     @Override
     public void OnDataReceive(TCPConnector connector, DataFrame data)
     {
@@ -132,23 +149,6 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
             {
                 throw new Exception(responseStr);
             }
-        }
-    }
-
-    public DataFrame SendToServer(String data) throws ConnectorDisconnectedException, ConnectorCannotSendPacketException, CommandTimeOutException
-    {
-        synchronized (fLock)
-        {
-            fServerResponse = null;
-            fWaitCommandEvent.Reset();
-            fGotResponseFromServer = false;
-            super.SendData(data + fETX);
-            fWaitCommandEvent.WaitOne(fResponseTimeOut);
-            if (!fGotResponseFromServer)
-            {
-                throw new CommandTimeOutException();
-            }
-            return fServerResponse;
         }
     }
 
