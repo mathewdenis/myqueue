@@ -8,9 +8,11 @@ import Extasys.Network.TCP.Server.Listener.TCPClientConnection;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import myqueueserver.Authentication.UserAuthenticationManager;
 import myqueueserver.Config.Config;
 import myqueueserver.Queue.QueueManager;
+import myqueueserver.Users.EUserQueuePermissions;
 import myqueueserver.Users.User;
 import myqueueserver.Users.UsersManager;
 
@@ -64,7 +66,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
 
             switch (splittedStr[0].toUpperCase())
             {
-                case "SELECT": // SELECT <QUEUE NAME>
+                case "SELECT":          // SELECT <QUEUE NAME>
                     SelectQueue(sender, strData);
                     break;
 
@@ -75,7 +77,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                             CreateQueue(sender, strData);
                             break;
 
-                        case "USER":   // CREATE USER <USERNAME> <PASSWORD>
+                        case "USER":    // CREATE USER <USERNAME> <PASSWORD>
                             CreateUser(sender, strData);
                             break;
                     }
@@ -90,6 +92,18 @@ public class MyQueueTCPServer extends ExtasysTCPServer
 
                         case "USER":    // DROP USER <USERNAME> 
                             DropUser(sender, strData);
+                            break;
+                    }
+                    break;
+
+                case "GRANT":           // GRANT Read,Write ON <Queue_Name> to <Username>
+                    Grant(sender, strData);
+                    break;
+
+                case "SHOW":
+                    switch (splittedStr[1])
+                    {
+                        case "GRANTS":  // SHOW GRANTS FOR <USERNAME>
                             break;
                     }
                     break;
@@ -109,6 +123,76 @@ public class MyQueueTCPServer extends ExtasysTCPServer
             {
             }
         }
+    }
+
+    private void Grant(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
+    {
+        String originalStrData = strData;
+
+        // GRANT Read,Write ON Queue TO User
+        strData = strData.toUpperCase();
+        int onIndex = strData.indexOf("ON");
+        int toIndex = strData.indexOf("TO");
+
+        String permissionsStr = strData.substring(0, onIndex).replace("GRANT", "");
+        String[] permissions = permissionsStr.split(",");
+
+        String user = originalStrData.substring(toIndex + 2).trim();
+        String queueName = originalStrData.substring(onIndex + 2, toIndex).trim();
+
+        User senderUser = (User) sender.getTag();
+
+        // Check if Queue exists
+        if (!QueueManager.QueueExists(queueName))
+        {
+            sender.SendData("ERROR 1" + fETX); // Queue does not exist
+            return;
+        }
+
+        // Check if user has the required permissions
+        if (!senderUser.CanCreateNewUsers())
+        {
+            sender.SendData("ERROR You dont have the required permissions to Grant permissions to users" + fETX);
+            return;
+        }
+
+        // Give permissions to user
+        User u = UsersManager.getUser(user);
+
+        ArrayList<EUserQueuePermissions> grantedPermissions = new ArrayList<>();
+        for (String s : permissions)
+        {
+            String permission = s.trim().toUpperCase();
+            switch (permission)
+            {
+                case "READ":
+                    grantedPermissions.add(EUserQueuePermissions.Read);
+                    break;
+                case "WRITE":
+                    grantedPermissions.add(EUserQueuePermissions.Write);
+                    break;
+            }
+        }
+
+        // Remove old permissions
+        if (u.getQueuePermissions().containsKey(queueName))
+        {
+            u.getQueuePermissions().remove(queueName);
+        }
+
+        // Add new permissions
+        u.getQueuePermissions().put(queueName, grantedPermissions);
+
+        try
+        {
+            UsersManager.UpdateUser(senderUser);
+        }
+        catch (IOException ex)
+        {
+            sender.SendData("ERROR " + ex.getMessage());
+        }
+
+        sender.SendData("OK" + fETX);
     }
 
     private void SelectQueue(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
@@ -143,6 +227,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         if (!senderUser.CanCreateNewQueues())
         {
             sender.SendData("ERROR You dont have the required permissions to create Queues" + fETX);
+
         }
         else
         {

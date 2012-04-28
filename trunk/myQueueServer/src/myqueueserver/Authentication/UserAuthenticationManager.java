@@ -13,6 +13,11 @@ public class UserAuthenticationManager
     public UserAuthenticationManager()
     {
     }
+    
+    public static void Initialize()
+    {
+        
+    }
 
     /**
      * Check if user with the given username and password exists.
