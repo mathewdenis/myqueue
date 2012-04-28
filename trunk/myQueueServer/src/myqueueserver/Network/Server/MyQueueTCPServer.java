@@ -8,8 +8,6 @@ import Extasys.Network.TCP.Server.Listener.TCPClientConnection;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import myqueueserver.Authentication.UserAuthenticationManager;
 import myqueueserver.Config.Config;
 import myqueueserver.Queue.QueueManager;
@@ -32,7 +30,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         // Add listeners
         for (String ip : Config.fBindAddresses)
         {
-            this.AddListener(ip, InetAddress.getByName(ip), Config.fServerPort, Config.fMaxConnections, Config.fReadBufferSize, 2000, Config.fMaxConnections, fETX);
+            this.AddListener(ip, InetAddress.getByName(ip), Config.fServerPort, Config.fMaxConnections, Config.fReadBufferSize, Config.fConnectionsTimeOut, Config.fMaxConnections, fETX);
         }
     }
 
@@ -120,7 +118,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
 
         if (!QueueManager.QueueExists(queueName)) // Check if queue exists
         {
-            sender.SendData("ERROR Queue '" + queueName + "' does not exist" + fETX);
+            sender.SendData("ERROR 1" + fETX);
         }
         else
         {
@@ -201,14 +199,21 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         }
         else
         {
-            try
+            if (!QueueManager.QueueExists(queueName))
             {
-                QueueManager.DropQueue(queueName);
-                sender.SendData("OK" + fETX);
+                sender.SendData("ERROR 1" + fETX); // Queue does not exist
             }
-            catch (Exception ex)
+            else
             {
-                sender.SendData("ERROR " + ex.getMessage() + fETX);
+                try
+                {
+                    QueueManager.DropQueue(queueName);
+                    sender.SendData("OK" + fETX);
+                }
+                catch (Exception ex)
+                {
+                    sender.SendData("ERROR " + ex.getMessage() + fETX);
+                }
             }
         }
     }

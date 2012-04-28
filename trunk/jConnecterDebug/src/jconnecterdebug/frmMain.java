@@ -1,5 +1,6 @@
 package jconnecterdebug;
 
+import myQueueConnector.Exceptions.QueueAlreadyExistsException;
 import myQueueConnector.myQueueConnector;
 
 public class frmMain extends javax.swing.JFrame
@@ -56,7 +57,15 @@ public class frmMain extends javax.swing.JFrame
             {
                 con.Connect();
 
-                con.CreateQueue("Test_Queue");
+                try
+                {
+                    con.CreateQueue("Test_Queue");
+                }
+                catch (QueueAlreadyExistsException qex)
+                {
+                }
+
+                con.DropQueue("Test_Queue");
             }
         }
         catch (Exception ex)
