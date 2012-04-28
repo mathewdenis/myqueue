@@ -18,7 +18,7 @@ import myqueueserver.Users.UsersManager;
 public class MyQueueTCPServer extends ExtasysTCPServer
 {
 
-    private String fETX = "<3m{X34l*Uψ7q.!]'Cξ51g47Ω],g3;7=8@2:λHB4&4_lπ#>NM{-3ς3#7k\"mΠpX%(";
+    private String fETX = "<3m{X34l*Uψ7q.!]'Cξ51g47Ω],g3;7=8@2:λHB4&4_lπ#>NM{-3ς3#7k;mΠpX%(";
 
     public MyQueueTCPServer() throws UnknownHostException
     {
@@ -39,12 +39,12 @@ public class MyQueueTCPServer extends ExtasysTCPServer
             String strData = new String(data.getBytes());
             String[] splittedStr = strData.split(" ");
 
-            // Sender is not yet loged in
+            // Sender is not yet logged in
             if (sender.getTag() == null)
             {
                 switch (splittedStr[0].toUpperCase())
                 {
-                    case "LOGIN": // LOGIN <USERNAME> <PASSWORD>
+                    case "LOGIN": // LOGIN <USERNAME> <PASSWORD> <QUEUE NAME>
                         if (UserAuthenticationManager.AuthenticateUser(splittedStr[1], splittedStr[2]))
                         {
                             sender.setTag(UsersManager.getUser(splittedStr[1]));
@@ -52,29 +52,42 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                         }
                         else
                         {
-                            sender.SendData("NOT OK" + fETX);
+                            sender.SendData("ERROR Wrong username or password" + fETX);
                         }
                         break;
                 }
-                sender.DisconnectMe();
                 return;
             }
 
 
+            User senderUser = (User) sender.getTag();
             switch (splittedStr[0].toUpperCase())
             {
-                case "CREATE":
-                    if (sender.getTag() == null)
+                case "SELECT": // SELECT <QUEUE NAME>
+                    if (UserAuthenticationManager.UserHasPermissionsForQueue(senderUser.getName(), splittedStr[1]))
                     {
-                        sender.DisconnectMe();
+                        sender.SendData("OK" + fETX);
                     }
+                    else
+                    {
+                        sender.SendData("ERROR You dont have any active permissions on Queue '" + splittedStr[1] + "'" + fETX);
+                    }
+                    break;
 
+                case "CREATE":
                     switch (splittedStr[1])
                     {
-                        case "QUEUE":   // CREATE QUEUE <QUEUE_NAME> <QUEUE_SAVE_LOCATION>
+                        case "QUEUE":   // CREATE QUEUE <QUEUE_NAME>
                             if (((User) sender.getTag()).CanCreateNewQueues())
                             {
-                                QueueManager.CreateQueue(splittedStr[2], splittedStr[3]);
+                                if (QueueManager.CreateQueue(splittedStr[2]))
+                                {
+                                    sender.SendData("OK" + fETX);
+                                }
+                                else
+                                {
+                                    sender.SendData("ERROR Cannot create Queue. Check if Queue already exists" + fETX);
+                                }
                             }
                             else
                             {
@@ -86,6 +99,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                             if (((User) sender.getTag()).CanCreateNewUsers())
                             {
                                 UsersManager.AddUser(splittedStr[2], splittedStr[3]);
+                                sender.SendData("OK" + fETX);
                             }
                             else
                             {
@@ -96,10 +110,6 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                     break;
 
                 case "DROP":
-                    if (sender.getTag() == null)
-                    {
-                        sender.DisconnectMe();
-                    }
                     switch (splittedStr[1])
                     {
                         case "QUEUE":   // DROP QUEUE <QUEUE_NAME>
