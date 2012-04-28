@@ -83,7 +83,7 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
      * Select a Queue
      *
      * @param name is the queue's name
-     * @return
+     * @return myQueue
      */
     public myQueue SelectQueue(String name) throws Exception
     {
