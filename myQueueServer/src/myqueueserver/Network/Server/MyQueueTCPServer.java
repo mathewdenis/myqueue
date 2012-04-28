@@ -41,7 +41,6 @@ public class MyQueueTCPServer extends ExtasysTCPServer
     {
         try
         {
-
             String strData = new String(data.getBytes());
             System.out.println("Data received: " + strData);
             String[] splittedStr = strData.split(" ");
