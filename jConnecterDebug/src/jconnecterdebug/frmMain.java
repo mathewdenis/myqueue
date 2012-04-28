@@ -53,32 +53,19 @@ public class frmMain extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         try
         {
-            try (myQueueConnector con = new myQueueConnector("127.0.0.1", 2572, "root", "pass"))
+            myQueueConnector con = new myQueueConnector("127.0.0.1", 2572, "root", "pass");
+            con.Open();
+
+            try
             {
-                con.Connect();
-
-                try
-                {
-                    con.CreateQueue("Test_Queue");
-                }
-                catch (QueueAlreadyExistsException qex)
-                {
-                }
-
-                try
-                {
-                    con.CreateQueue("AAAAA");
-                }
-                catch (QueueAlreadyExistsException qex)
-                {
-                }
-
-                //con.SendToServer("CREATE USER NSi 1234");
-                con.SendToServer("GRANT Read,Write ON Test_Queue to NSi");
-                con.SendToServer("GRANT Read,Write ON AAAAA to NSi");
-
-                con.DropQueue("Test_Queue");
+                con.CreateQueue("Test_Queue");
             }
+            catch (QueueAlreadyExistsException ex)
+            {
+            }
+
+            con.DropQueue("Test_Queue");
+            con.Close();
         }
         catch (Exception ex)
         {
