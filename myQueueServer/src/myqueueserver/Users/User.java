@@ -68,6 +68,26 @@ public class User implements Serializable
         return fPermissions.contains(EUserPermissions.CreateQueues) || fPermissions.contains(EUserPermissions.All);
     }
 
+    /**
+     * Check if the user has the required permission to drop a Queue
+     *
+     * @return true or false
+     */
+    public boolean CanDropQueues()
+    {
+        return fPermissions.contains(EUserPermissions.DropQueues) || fPermissions.contains(EUserPermissions.All);
+    }
+
+    /**
+     * Check if the user has the required permission to drop a user
+     *
+     * @return true or false
+     */
+    public boolean CanDropUsers()
+    {
+        return fPermissions.contains(EUserPermissions.DropUsers) || fPermissions.contains(EUserPermissions.All);
+    }
+
     public void setName(String name)
     {
         fName = name;
