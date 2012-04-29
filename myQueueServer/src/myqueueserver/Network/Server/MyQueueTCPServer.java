@@ -50,7 +50,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
             {
                 switch (splittedStr[0].toUpperCase())
                 {
-                    case "LOGIN": // LOGIN <USERNAME> <PASSWORD>
+                    case "LOGIN":       // LOGIN <USERNAME> <PASSWORD>
                         if (UserAuthenticationManager.AuthenticateUser(splittedStr[1], splittedStr[2]))
                         {
                             sender.setTag(UsersManager.getUser(splittedStr[1]));
