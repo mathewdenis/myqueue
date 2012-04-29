@@ -61,12 +61,10 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
     @Override
     public void OnDataReceive(TCPConnector connector, DataFrame data)
     {
-
-        System.out.println(new String(data.getBytes()));
+        //System.out.println(new String(data.getBytes()));
         fServerResponse = data;
         fGotResponseFromServer = true;
         fWaitCommandEvent.Set();
-
     }
 
     @Override
