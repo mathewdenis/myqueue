@@ -4,6 +4,7 @@ import myqueueserver.Authentication.UserAuthenticationManager;
 import myqueueserver.Config.Config;
 import myqueueserver.Log.LogMessageType;
 import myqueueserver.Log.ServerLog;
+import myqueueserver.MachineStatus.MachineStatus;
 import myqueueserver.Network.Server.MyQueueTCPServer;
 import myqueueserver.Queue.QueueManager;
 import myqueueserver.Users.UsersManager;
@@ -23,6 +24,8 @@ public class myQueueServer
         {
             // Read the config file
             Config.ReadConfigFile();
+
+            MachineStatus.Initialize();
 
             UsersManager.Initialize();
             UsersManager.Save();
