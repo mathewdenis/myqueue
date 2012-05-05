@@ -29,7 +29,7 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
     private InetAddress fServerIP;
     private String fUsername, fPassword;
     private int fServerPort;
-    private int fResponseTimeOut = 15000;
+    private int fResponseTimeOut = 8000;
     private String fETX = "<3m{X34l*Uψ7q.!]'Cξ51g47Ω],g3;7=8@2:λHB4&4_lπ#>NM{-3ς3#7k;mΠpX%(";
 
     public myQueueConnector(InetAddress serverIP, int serverPort, String username, String password) throws UnknownHostException
@@ -101,7 +101,6 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
         fIsConnected = false;
     }
 
-   
     public synchronized void CreateQueue(String name) throws QueueAlreadyExistsException, Exception, CommandTimeOutException
     {
         DataFrame response = SendToServer("CREATE QUEUE " + name);
