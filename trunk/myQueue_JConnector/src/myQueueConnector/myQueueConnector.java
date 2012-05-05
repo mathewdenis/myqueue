@@ -25,20 +25,21 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
     private DataFrame fServerResponse = null;
     private ManualResetEvent fWaitCommandEvent = new ManualResetEvent(false);
     // Connection Properties
-    private boolean fIsConnected = false;
-    private String fServerIP, fUsername, fPassword;
+    public boolean fIsConnected = false;
+    private InetAddress fServerIP;
+    private String fUsername, fPassword;
     private int fServerPort;
     private int fResponseTimeOut = 15000;
     private String fETX = "<3m{X34l*Uψ7q.!]'Cξ51g47Ω],g3;7=8@2:λHB4&4_lπ#>NM{-3ς3#7k;mΠpX%(";
 
-    public myQueueConnector(String serverIP, int serverPort, String username, String password) throws UnknownHostException
+    public myQueueConnector(InetAddress serverIP, int serverPort, String username, String password) throws UnknownHostException
     {
         super("", "", 8, 24);
         fServerIP = serverIP;
         fServerPort = serverPort;
         fUsername = username;
         fPassword = password;
-        this.AddConnector("", InetAddress.getByName(serverIP), serverPort, 32768, fETX);
+        this.AddConnector("", serverIP, serverPort, 32768, fETX);
     }
 
     public DataFrame SendToServer(String data) throws ConnectorDisconnectedException, ConnectorCannotSendPacketException, CommandTimeOutException
@@ -100,31 +101,7 @@ public class myQueueConnector extends Extasys.Network.TCP.Client.ExtasysTCPClien
         fIsConnected = false;
     }
 
-    /**
-     * Select a Queue
-     *
-     * @param name is the queue's name
-     * @return myQueue
-     */
-    public synchronized myQueue SelectQueue(String name) throws Exception
-    {
-        DataFrame response = SendToServer("SELECT " + name);
-        String responseStr = new String(response.getBytes());
-        if (responseStr.startsWith("ERROR"))
-        {
-            if (responseStr.equals("ERROR 1"))
-            {
-                throw new QueueDoesNotExistException();
-            }
-            else
-            {
-                throw new Exception(responseStr);
-            }
-        }
-
-        return new myQueue(this, name);
-    }
-
+   
     public synchronized void CreateQueue(String name) throws QueueAlreadyExistsException, Exception, CommandTimeOutException
     {
         DataFrame response = SendToServer("CREATE QUEUE " + name);
