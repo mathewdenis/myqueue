@@ -1,8 +1,7 @@
 package jconnecterdebug;
 
-import myQueueConnector.Exceptions.QueueAlreadyExistsException;
-import myQueueConnector.myQueue;
-import myQueueConnector.myQueueConnector;
+import java.net.InetAddress;
+import myQueueConnector.myQueueConnection;
 
 public class frmMain extends javax.swing.JFrame
 {
@@ -54,20 +53,9 @@ public class frmMain extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         try
         {
-            myQueueConnector con = new myQueueConnector("127.0.0.1", 2572, "root", "pass");
+            myQueueConnection con = new myQueueConnection(InetAddress.getByName("127.0.0.1"), 2572, "root", "pass");
             con.Open();
 
-            try
-            {
-                con.CreateQueue("Test_Queue");
-            }
-            catch (QueueAlreadyExistsException ex)
-            {
-            }
-
-            myQueue queue = con.SelectQueue("Test_Queue");
-
-            con.DropQueue("Test_Queue");
             con.Close();
         }
         catch (Exception ex)
