@@ -67,7 +67,7 @@ public class myQueueConnection extends Extasys.Network.TCP.Client.ExtasysTCPClie
     public synchronized void Open() throws Exception
     {
         super.RemoveConnector("C1");
-        super.AddConnector("C1", fServerIP, fServerPort, fServerPort);
+        super.AddConnector("C1", fServerIP, fServerPort, fServerPort, fETX);
         super.Start();
 
         String logIn = "LOGIN " + fUsername + " " + fPassword;
