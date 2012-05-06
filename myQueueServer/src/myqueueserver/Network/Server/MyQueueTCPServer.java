@@ -59,7 +59,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                         }
                         else
                         {
-                            sender.SendData("ERROR Wrong username or password" + fETX);
+                            sender.SendData("Error Wrong username or password" + fETX);
                         }
                         break;
                 }

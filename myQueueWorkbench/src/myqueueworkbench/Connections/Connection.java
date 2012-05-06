@@ -1,6 +1,7 @@
 package myqueueworkbench.Connections;
 
 import java.io.Serializable;
+import java.net.InetAddress;
 
 /**
  *
@@ -9,11 +10,14 @@ import java.io.Serializable;
 public class Connection implements Serializable
 {
 
-    public String fServerIP, fUsername, fPassword;
+    public String fName;
+    public InetAddress fServerIP;
+    public String fUsername, fPassword;
     public int fServerPort;
 
-    public Connection(String serverIP, int serverPort, String username, String password)
+    public Connection(String name, InetAddress serverIP, int serverPort, String username, String password)
     {
+        fName = name;
         fServerIP = serverIP;
         fServerPort = serverPort;
         fUsername = username;
