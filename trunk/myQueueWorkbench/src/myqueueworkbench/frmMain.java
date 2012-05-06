@@ -44,6 +44,7 @@ public class frmMain extends javax.swing.JFrame
 
         UpdateConnectionsList();
         jTreeConnections.expandRow(0);
+
     }
 
     public void UpdateConnectionsList()
@@ -59,6 +60,8 @@ public class frmMain extends javax.swing.JFrame
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenuConnections = new javax.swing.JPopupMenu();
+        jMenuItem4 = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTreeConnections = new javax.swing.JTree();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -66,11 +69,18 @@ public class frmMain extends javax.swing.JFrame
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
 
+        jPopupMenuConnections.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        jMenuItem4.setLabel("Open Connection");
+        jPopupMenuConnections.add(jMenuItem4);
+        jMenuItem4.getAccessibleContext().setAccessibleName("jMenuItemOpenClose");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("myQueue Workbench");
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
         jTreeConnections.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jTreeConnections.setAutoscrolls(true);
         jScrollPane1.setViewportView(jTreeConnections);
 
         jMenu1.setText("File");
@@ -162,6 +172,8 @@ public class frmMain extends javax.swing.JFrame
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JPopupMenu jPopupMenuConnections;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTree jTreeConnections;
     // End of variables declaration//GEN-END:variables

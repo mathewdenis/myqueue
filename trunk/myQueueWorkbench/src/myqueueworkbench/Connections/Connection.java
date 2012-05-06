@@ -14,6 +14,7 @@ public class Connection implements Serializable
     public InetAddress fServerIP;
     public String fUsername, fPassword;
     public int fServerPort;
+    public boolean fConnected = false;
 
     public Connection(String name, InetAddress serverIP, int serverPort, String username, String password)
     {

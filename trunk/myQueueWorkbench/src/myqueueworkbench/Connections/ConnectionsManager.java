@@ -41,6 +41,10 @@ public class ConnectionsManager
             }
 
             fConnections = (ArrayList<Connection>) Serializer.Deserialize(bytes);
+            for (Connection con : fConnections)
+            {
+                con.fConnected = false;
+            }
         }
     }
 
