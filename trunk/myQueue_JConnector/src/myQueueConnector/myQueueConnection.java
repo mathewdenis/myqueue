@@ -75,6 +75,11 @@ public class myQueueConnection extends Extasys.Network.TCP.Client.ExtasysTCPClie
         try
         {
             response = SendToServer(logIn);
+            String responseStr = new String(response.getBytes());
+            if (responseStr.startsWith("Error"))
+            {
+                throw new Exception(responseStr.substring(5).trim());
+            }
         }
         catch (ConnectorDisconnectedException | ConnectorCannotSendPacketException | CommandTimeOutException ex)
         {

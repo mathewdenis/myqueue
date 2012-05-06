@@ -26,6 +26,7 @@ public class ConnectionsManager
 
     public static void Initialize() throws FileNotFoundException, IOException, ClassNotFoundException
     {
+        fConnections = new ArrayList<>();
         if (!fInitialized)
         {
             File file = new File(fSaveFilename);
@@ -62,7 +63,20 @@ public class ConnectionsManager
         }
     }
 
-    public ArrayList<Connection> getConnections()
+    public static void AddConnection(Connection con) throws IOException, Exception
+    {
+        for (Connection connection : fConnections)
+        {
+            if (connection.fName.equals(con.fName))
+            {
+                throw new Exception("This connection name already exists!");
+            }
+        }
+        fConnections.add(con);
+        Save();
+    }
+
+    public static ArrayList<Connection> getConnections()
     {
         return fConnections;
     }

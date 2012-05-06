@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import myqueueworkbench.Connections.Connection;
 import myqueueworkbench.Connections.ConnectionsManager;
 
 /**
@@ -38,9 +39,20 @@ public class frmMain extends javax.swing.JFrame
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
 
-
         jTreeConnections.setModel(new DefaultTreeModel(fMyQueueConnectionsParentNode));
         ((DefaultTreeModel) jTreeConnections.getModel()).reload();
+
+        UpdateConnectionsList();
+        jTreeConnections.expandRow(0);
+    }
+
+    public void UpdateConnectionsList()
+    {
+        // Update connections in tree
+        for (Connection con : ConnectionsManager.getConnections())
+        {
+            fMyQueueConnectionsParentNode.add(new DefaultMutableTreeNode(con.fName));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -127,12 +139,14 @@ public class frmMain extends javax.swing.JFrame
     public static void main(String args[])
     {
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+        /*
+         * If Nimbus (introduced in Java SE 6) is not available, stay with the
+         * default look and feel. For details see
+         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try
         {
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         catch (ClassNotFoundException ex)
         {
