@@ -3,6 +3,7 @@ package myqueueworkbench;
 import java.net.InetAddress;
 import javax.swing.JOptionPane;
 import myQueueConnector.myQueueConnection;
+import myqueueworkbench.Connections.Connection;
 import myqueueworkbench.Connections.ConnectionsManager;
 
 /**
@@ -13,11 +14,25 @@ public class frmNewConnection extends javax.swing.JFrame
 {
 
     private frmMain fMain;
+    private Connection fConnectionToEdit;
 
     public frmNewConnection(frmMain mainForm)
     {
         fMain = mainForm;
         initComponents();
+    }
+
+    public frmNewConnection(frmMain mainForm, Connection connectionToEdit)
+    {
+        fMain = mainForm;
+        fConnectionToEdit = connectionToEdit;
+        initComponents();
+
+        jTextFieldName.setText(fConnectionToEdit.fName);
+        jTextFieldIP.setText(fConnectionToEdit.fServerIP.toString());
+        jTextFieldPort.setText(String.valueOf(fConnectionToEdit.fServerPort));
+        jTextFieldUsername.setText(fConnectionToEdit.fUsername);
+        jTextFieldPassword.setText(fConnectionToEdit.fPassword);
     }
 
     @SuppressWarnings("unchecked")
@@ -171,8 +186,22 @@ public class frmNewConnection extends javax.swing.JFrame
         String pass = new String(jTextFieldPassword.getPassword());
         try
         {
-            myqueueworkbench.Connections.Connection con = new myqueueworkbench.Connections.Connection(jTextFieldName.getText(), InetAddress.getByName(jTextFieldIP.getText()), Integer.parseInt(jTextFieldPort.getText()), jTextFieldUsername.getText(), pass);
-            ConnectionsManager.AddConnection(con);
+            if (fConnectionToEdit == null)
+            {
+                myqueueworkbench.Connections.Connection con = new myqueueworkbench.Connections.Connection(jTextFieldName.getText(), InetAddress.getByName(jTextFieldIP.getText()), Integer.parseInt(jTextFieldPort.getText()), jTextFieldUsername.getText(), pass);
+                ConnectionsManager.AddConnection(con);
+            }
+            else
+            {
+                fConnectionToEdit.fName = jTextFieldName.getText();
+                fConnectionToEdit.fServerIP = InetAddress.getByName(jTextFieldIP.getText());
+                fConnectionToEdit.fServerPort = Integer.parseInt(jTextFieldPort.getText());
+                fConnectionToEdit.fUsername = jTextFieldUsername.getText();
+                fConnectionToEdit.fPassword = pass;
+                fConnectionToEdit.fConnected = false;
+                ConnectionsManager.Save();
+            }
+
             fMain.UpdateConnectionsList();
             this.dispose();
         }
