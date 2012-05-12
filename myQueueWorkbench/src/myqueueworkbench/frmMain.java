@@ -2,8 +2,11 @@ package myqueueworkbench;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionListener;
 import java.io.IOException;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -18,6 +21,7 @@ public class frmMain extends javax.swing.JFrame
 {
 
     private DefaultMutableTreeNode fMyQueueConnectionsParentNode = new DefaultMutableTreeNode("myQueue Connections");
+    private JPopupMenu fConnectionsPopUpMenu;
 
     public frmMain()
     {
@@ -45,6 +49,23 @@ public class frmMain extends javax.swing.JFrame
         UpdateConnectionsList();
         jTreeConnections.expandRow(0);
 
+
+        fConnectionsPopUpMenu = new JPopupMenu();
+        fConnectionsPopUpMenu.setInvoker(jTreeConnections);
+        PopupHandler handler = new PopupHandler(jTreeConnections, fConnectionsPopUpMenu);
+        fConnectionsPopUpMenu.add(getMenuItem("Open Connection", handler));
+        fConnectionsPopUpMenu.add(getMenuItem("Close Connection", handler));
+        fConnectionsPopUpMenu.addSeparator();
+        fConnectionsPopUpMenu.add(getMenuItem("New Connection", handler));
+        fConnectionsPopUpMenu.add(getMenuItem("Delete Connection", handler));
+    }
+
+    private JMenuItem getMenuItem(String s, ActionListener al)
+    {
+        JMenuItem menuItem = new JMenuItem(s);
+        menuItem.setActionCommand(s.toUpperCase());
+        menuItem.addActionListener(al);
+        return menuItem;
     }
 
     public void UpdateConnectionsList()
@@ -60,20 +81,12 @@ public class frmMain extends javax.swing.JFrame
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPopupMenuConnections = new javax.swing.JPopupMenu();
-        jMenuItem4 = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTreeConnections = new javax.swing.JTree();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
-
-        jPopupMenuConnections.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-        jMenuItem4.setLabel("Open Connection");
-        jPopupMenuConnections.add(jMenuItem4);
-        jMenuItem4.getAccessibleContext().setAccessibleName("jMenuItemOpenClose");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("myQueue Workbench");
@@ -111,8 +124,8 @@ public class frmMain extends javax.swing.JFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(536, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(495, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -172,8 +185,6 @@ public class frmMain extends javax.swing.JFrame
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JPopupMenu jPopupMenuConnections;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTree jTreeConnections;
     // End of variables declaration//GEN-END:variables
