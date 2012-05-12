@@ -23,6 +23,7 @@ public class frmMain extends javax.swing.JFrame
 
     private DefaultMutableTreeNode fMyQueueConnectionsParentNode = new DefaultMutableTreeNode("myQueue Connections");
     private JPopupMenu fConnectionsPopUpMenu = null;
+    private Connection fSelectedConnection;
 
     public frmMain()
     {
@@ -68,6 +69,7 @@ public class frmMain extends javax.swing.JFrame
         jScrollPane1 = new javax.swing.JScrollPane();
         jTreeConnections = new javax.swing.JTree();
         jPanel1 = new javax.swing.JPanel();
+        jLabelSelectedConnectionName = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -86,15 +88,24 @@ public class frmMain extends javax.swing.JFrame
         });
         jScrollPane1.setViewportView(jTreeConnections);
 
+        jLabelSelectedConnectionName.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabelSelectedConnectionName.setText("....");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 514, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabelSelectedConnectionName)
+                .addContainerGap(488, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabelSelectedConnectionName)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jMenu1.setText("File");
@@ -176,13 +187,17 @@ public class frmMain extends javax.swing.JFrame
     {
         if (selectedNode instanceof ConnectionTreeNode)
         {
+
+            // Get connection
             final ConnectionTreeNode selectedConnectionNode = (ConnectionTreeNode) selectedNode;
+            fSelectedConnection = selectedConnectionNode.getConnection();
+
+            // Update the JPopUpMenu items
             fConnectionsPopUpMenu = new JPopupMenu();
             fConnectionsPopUpMenu.removeAll();
 
-            PopUpHandler handler = new PopUpHandler(jTreeConnections, fConnectionsPopUpMenu);
             fConnectionsPopUpMenu.setInvoker(jTreeConnections);
-
+            PopUpHandler hander = new PopUpHandler(jTreeConnections, fConnectionsPopUpMenu);
             if (selectedConnectionNode.getConnection().fConnected)
             {
                 JMenuItem menuItem = new JMenuItem("Close Connection");
@@ -221,11 +236,32 @@ public class frmMain extends javax.swing.JFrame
             fConnectionsPopUpMenu.setInvoker(null);
             fConnectionsPopUpMenu = null;
         }
+
+        UpdateUIForSelectedConnection();
+    }
+
+    private void UpdateUIForSelectedConnection()
+    {
+        if (fSelectedConnection != null)
+        {
+            jLabelSelectedConnectionName.setText(fSelectedConnection.fName);
+            if (fSelectedConnection.fConnected)
+            {
+                jLabelSelectedConnectionName.setText(jLabelSelectedConnectionName.getText() + " (Connected)");
+            }
+            else
+            {
+                jLabelSelectedConnectionName.setText(jLabelSelectedConnectionName.getText() + " (Disconnected)");
+            }
+        }
+        else
+        {
+            
+        }
     }
 
     public static void main(String args[])
     {
-
         try
         {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -245,6 +281,7 @@ public class frmMain extends javax.swing.JFrame
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabelSelectedConnectionName;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
