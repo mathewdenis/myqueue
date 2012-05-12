@@ -80,6 +80,18 @@ public class ConnectionsManager
         Save();
     }
 
+    public static Connection getConnection(String name)
+    {
+        for (Connection con : fConnections)
+        {
+            if (con.fName.equals(name))
+            {
+                return con;
+            }
+        }
+        return null;
+    }
+
     public static ArrayList<Connection> getConnections()
     {
         return fConnections;
