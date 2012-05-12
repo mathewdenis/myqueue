@@ -9,13 +9,7 @@ import java.lang.management.OperatingSystemMXBean;
 public class MachineStatus
 {
 
-    // Status
-    public static int fAvailableProcessors = 0;
-    public static long fCPULoad = 0;                // The system's CPU Load %
-    public static long fFreeMemory = 0;             // The systems's Free Memory in Megabytes
-    public static long fTotalMemory = 0;            // The system's Total Memory in Megabytes
-    /////////////////
-    private static Thread fUpdateStatusThread;
+    private static com.sun.management.OperatingSystemMXBean fBean = (com.sun.management.OperatingSystemMXBean) java.lang.management.ManagementFactory.getOperatingSystemMXBean();
 
     public MachineStatus()
     {
@@ -23,31 +17,35 @@ public class MachineStatus
 
     public static void Initialize()
     {
-        fUpdateStatusThread = new Thread(new Runnable()
-        {
+    }
 
-            @Override
-            public void run()
-            {
-                while (true)
-                {
-                    com.sun.management.OperatingSystemMXBean bean = (com.sun.management.OperatingSystemMXBean) java.lang.management.ManagementFactory.getOperatingSystemMXBean();
-                    fTotalMemory = (long) (bean.getTotalPhysicalMemorySize() * 0.000976562 * 0.0009765625);
-                    fFreeMemory = (long) (bean.getFreePhysicalMemorySize() * 0.000976562 * 0.0009765625);
-                    fCPULoad = Math.round(bean.getSystemCpuLoad() * 100);
+    /**
+     * The system's CPU Load %
+     *
+     * @return
+     */
+    public static long getCPULoad()
+    {
+        return Math.round(fBean.getSystemCpuLoad() * 100);
+    }
 
-                    try
-                    {
-                        Thread.sleep(5000);
-                    }
-                    catch (InterruptedException ex)
-                    {
-                    }
-                }
-            }
-        });
+    /**
+     * The system's Free Memory in Megabytes
+     *
+     * @return
+     */
+    public static long getFreeMemory()
+    {
+        return (long) (fBean.getFreePhysicalMemorySize() * 0.000976562 * 0.0009765625);
+    }
 
-
-        fUpdateStatusThread.start();
+    /**
+     * The system's Total Memory in Megabytes
+     *
+     * @return
+     */
+    public static long getTotalMemory()
+    {
+        return (long) (fBean.getTotalPhysicalMemorySize() * 0.000976562 * 0.0009765625);
     }
 }

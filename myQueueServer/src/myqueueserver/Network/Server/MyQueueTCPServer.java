@@ -11,6 +11,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import myqueueserver.Authentication.UserAuthenticationManager;
 import myqueueserver.Config.Config;
+import myqueueserver.MachineStatus.MachineStatus;
 import myqueueserver.Queue.QueueManager;
 import myqueueserver.Users.EUserQueuePermissions;
 import myqueueserver.Users.User;
@@ -107,8 +108,19 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                     {
                         case "GRANTS":  // SHOW GRANTS FOR <USERNAME>
                             break;
-    
+
+                        case "MACHINE":
+                            switch (splittedStr[2])
+                            {
+                                case "STATUS": // SHOW MACHINE STATUS
+                                    ShowMachineStatus(sender, strData);
+                                    break;
+                            }
+                            break;
+
                     }
+
+
                     break;
 
                 default:
@@ -126,6 +138,11 @@ public class MyQueueTCPServer extends ExtasysTCPServer
             {
             }
         }
+    }
+
+    private void ShowMachineStatus(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
+    {
+        sender.SendData("FREE MEMORY " + MachineStatus.getFreeMemory() + "\nTOTAL MEMORY " + MachineStatus.getTotalMemory() + "\nCPU LOAD " + MachineStatus.getCPULoad() + fETX);
     }
 
     private void Grant(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
