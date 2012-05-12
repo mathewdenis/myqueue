@@ -2,16 +2,17 @@ package myqueueworkbench;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import myqueueworkbench.Connections.Connection;
 import myqueueworkbench.Connections.ConnectionsManager;
+import myqueueworkbench.UI.ConnectionTreeNode;
+import myqueueworkbench.UI.PopUpHandler;
 
 /**
  *
@@ -21,7 +22,7 @@ public class frmMain extends javax.swing.JFrame
 {
 
     private DefaultMutableTreeNode fMyQueueConnectionsParentNode = new DefaultMutableTreeNode("myQueue Connections");
-    private JPopupMenu fConnectionsPopUpMenu;
+    private JPopupMenu fConnectionsPopUpMenu = null;
 
     public frmMain()
     {
@@ -48,24 +49,6 @@ public class frmMain extends javax.swing.JFrame
 
         UpdateConnectionsList();
         jTreeConnections.expandRow(0);
-
-
-        fConnectionsPopUpMenu = new JPopupMenu();
-        fConnectionsPopUpMenu.setInvoker(jTreeConnections);
-        PopupHandler handler = new PopupHandler(jTreeConnections, fConnectionsPopUpMenu);
-        fConnectionsPopUpMenu.add(getMenuItem("Open Connection", handler));
-        fConnectionsPopUpMenu.add(getMenuItem("Close Connection", handler));
-        fConnectionsPopUpMenu.addSeparator();
-        fConnectionsPopUpMenu.add(getMenuItem("New Connection", handler));
-        fConnectionsPopUpMenu.add(getMenuItem("Delete Connection", handler));
-    }
-
-    private JMenuItem getMenuItem(String s, ActionListener al)
-    {
-        JMenuItem menuItem = new JMenuItem(s);
-        menuItem.setActionCommand(s.toUpperCase());
-        menuItem.addActionListener(al);
-        return menuItem;
     }
 
     public void UpdateConnectionsList()
@@ -73,7 +56,8 @@ public class frmMain extends javax.swing.JFrame
         // Update connections in tree
         for (Connection con : ConnectionsManager.getConnections())
         {
-            fMyQueueConnectionsParentNode.add(new DefaultMutableTreeNode(con.fName));
+            ConnectionTreeNode node = new ConnectionTreeNode(con.fName, con);
+            fMyQueueConnectionsParentNode.add(node);
         }
     }
 
@@ -83,6 +67,7 @@ public class frmMain extends javax.swing.JFrame
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTreeConnections = new javax.swing.JTree();
+        jPanel1 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -94,7 +79,23 @@ public class frmMain extends javax.swing.JFrame
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
         jTreeConnections.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jTreeConnections.setAutoscrolls(true);
+        jTreeConnections.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                jTreeConnectionsValueChanged(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTreeConnections);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 514, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
 
         jMenu1.setText("File");
 
@@ -125,13 +126,17 @@ public class frmMain extends javax.swing.JFrame
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(495, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 477, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 477, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -159,6 +164,65 @@ public class frmMain extends javax.swing.JFrame
         frm.setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
+    // JTree Connections selecteion changed
+    private void jTreeConnectionsValueChanged(javax.swing.event.TreeSelectionEvent evt)//GEN-FIRST:event_jTreeConnectionsValueChanged
+    {//GEN-HEADEREND:event_jTreeConnectionsValueChanged
+        TreePath selectedPath = jTreeConnections.getSelectionPath();
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
+        RebuildConnectionsPopUp(selectedNode);
+    }//GEN-LAST:event_jTreeConnectionsValueChanged
+
+    private void RebuildConnectionsPopUp(DefaultMutableTreeNode selectedNode)
+    {
+        if (selectedNode instanceof ConnectionTreeNode)
+        {
+            final ConnectionTreeNode selectedConnectionNode = (ConnectionTreeNode) selectedNode;
+            fConnectionsPopUpMenu = new JPopupMenu();
+            fConnectionsPopUpMenu.removeAll();
+
+            PopUpHandler handler = new PopUpHandler(jTreeConnections, fConnectionsPopUpMenu);
+            fConnectionsPopUpMenu.setInvoker(jTreeConnections);
+
+            if (selectedConnectionNode.getConnection().fConnected)
+            {
+                JMenuItem menuItem = new JMenuItem("Close Connection");
+                menuItem.addActionListener(new ActionListener()
+                {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        selectedConnectionNode.getConnection().fConnected = false;
+                        RebuildConnectionsPopUp(selectedConnectionNode);
+                    }
+                });
+
+                fConnectionsPopUpMenu.add(menuItem);
+            }
+            else
+            {
+                JMenuItem menuItem = new JMenuItem("Open Connection");
+                menuItem.addActionListener(new ActionListener()
+                {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        selectedConnectionNode.getConnection().fConnected = true;
+                        RebuildConnectionsPopUp(selectedConnectionNode);
+                    }
+                });
+                fConnectionsPopUpMenu.add(menuItem);
+            }
+        }
+        else
+        {
+            fConnectionsPopUpMenu.removeAll();
+            fConnectionsPopUpMenu.setInvoker(null);
+            fConnectionsPopUpMenu = null;
+        }
+    }
+
     public static void main(String args[])
     {
 
@@ -185,6 +249,7 @@ public class frmMain extends javax.swing.JFrame
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTree jTreeConnections;
     // End of variables declaration//GEN-END:variables
