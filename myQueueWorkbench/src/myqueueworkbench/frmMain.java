@@ -2,8 +2,6 @@ package myqueueworkbench;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -12,6 +10,7 @@ import javax.swing.tree.TreePath;
 import myqueueworkbench.Connections.Connection;
 import myqueueworkbench.Connections.ConnectionsManager;
 import myqueueworkbench.UI.ConnectionTreeNode;
+import myqueueworkbench.UI.ConnectionsPopUpActionListeners.*;
 import myqueueworkbench.UI.PopUpHandler;
 
 /**
@@ -183,11 +182,10 @@ public class frmMain extends javax.swing.JFrame
         RebuildConnectionsPopUp(selectedNode);
     }//GEN-LAST:event_jTreeConnectionsValueChanged
 
-    private void RebuildConnectionsPopUp(DefaultMutableTreeNode selectedNode)
+    public void RebuildConnectionsPopUp(DefaultMutableTreeNode selectedNode)
     {
         if (selectedNode instanceof ConnectionTreeNode)
         {
-
             // Get connection
             final ConnectionTreeNode selectedConnectionNode = (ConnectionTreeNode) selectedNode;
             fSelectedConnection = selectedConnectionNode.getConnection();
@@ -197,38 +195,39 @@ public class frmMain extends javax.swing.JFrame
             fConnectionsPopUpMenu.removeAll();
 
             fConnectionsPopUpMenu.setInvoker(jTreeConnections);
-            PopUpHandler hander = new PopUpHandler(jTreeConnections, fConnectionsPopUpMenu);
-            if (selectedConnectionNode.getConnection().fConnected)
+            PopUpHandler handler = new PopUpHandler(jTreeConnections, fConnectionsPopUpMenu); // Set up a handler for the PopUp menu
+
+            // Open Connection
+            JMenuItem menuItemOpen = new JMenuItem("Open Connection");
+            menuItemOpen.addActionListener(new OpenConnectionActionListener(this, selectedConnectionNode));
+            fConnectionsPopUpMenu.add(menuItemOpen);
+
+            // Close Connection
+            JMenuItem menuItemClose = new JMenuItem("Close Connection");
+            menuItemClose.addActionListener(new CloseConnectionActionListener(this, selectedConnectionNode));
+            fConnectionsPopUpMenu.add(menuItemClose);
+
+            // Separator
+            fConnectionsPopUpMenu.addSeparator();
+
+            // Edit
+            JMenuItem menuItemEdit = new JMenuItem("Edit Connection");
+            menuItemEdit.addActionListener(new EditConnectionActionListener(this, selectedConnectionNode));
+            fConnectionsPopUpMenu.add(menuItemEdit);
+
+
+            switch (selectedConnectionNode.getConnection().fConnected ? 1 : 0)
             {
-                JMenuItem menuItem = new JMenuItem("Close Connection");
-                menuItem.addActionListener(new ActionListener()
-                {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e)
-                    {
-                        selectedConnectionNode.getConnection().fConnected = false;
-                        RebuildConnectionsPopUp(selectedConnectionNode);
-                    }
-                });
-
-                fConnectionsPopUpMenu.add(menuItem);
+                case 1:
+                    menuItemClose.setEnabled(true);
+                    menuItemOpen.setEnabled(false);
+                    break;
+                case 0:
+                    menuItemClose.setEnabled(false);
+                    menuItemOpen.setEnabled(true);
+                    break;
             }
-            else
-            {
-                JMenuItem menuItem = new JMenuItem("Open Connection");
-                menuItem.addActionListener(new ActionListener()
-                {
 
-                    @Override
-                    public void actionPerformed(ActionEvent e)
-                    {
-                        selectedConnectionNode.getConnection().fConnected = true;
-                        RebuildConnectionsPopUp(selectedConnectionNode);
-                    }
-                });
-                fConnectionsPopUpMenu.add(menuItem);
-            }
         }
         else
         {
@@ -256,7 +255,6 @@ public class frmMain extends javax.swing.JFrame
         }
         else
         {
-            
         }
     }
 

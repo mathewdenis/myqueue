@@ -18,6 +18,11 @@ public class ConnectionTreeNode extends DefaultMutableTreeNode
         super(title);
         fTitle = title;
         fConnection = connection;
+        
+        if(fConnection.fConnected)
+        {
+            
+        }
     }
     
     public Connection getConnection()
