@@ -2,14 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package myqueueworkbench;
+package myqueueworkbench.UI;
 
 import java.awt.Point;
 import java.awt.event.*;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import myqueueworkbench.Connections.Connection;
 import myqueueworkbench.Connections.ConnectionsManager;
@@ -18,14 +16,14 @@ import myqueueworkbench.Connections.ConnectionsManager;
  *
  * @author Nikos Siatras
  */
-class PopupHandler implements ActionListener
+public class PopUpHandler implements ActionListener
 {
 
     private JTree fMyTree;
     private JPopupMenu fPopUpMenu;
     private Point fPoint;
 
-    public PopupHandler(JTree tree, JPopupMenu popup)
+    public PopUpHandler(JTree tree, JPopupMenu popup)
     {
         fMyTree = tree;
         fPopUpMenu = popup;
