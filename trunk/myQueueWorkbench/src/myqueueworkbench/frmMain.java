@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -322,7 +324,14 @@ public class frmMain extends javax.swing.JFrame
 
     private void jButtonRefreshQueuesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonRefreshQueuesActionPerformed
     {//GEN-HEADEREND:event_jButtonRefreshQueuesActionPerformed
-        UpdateQueuesList();
+        try
+        {
+            UpdateQueuesList();
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_jButtonRefreshQueuesActionPerformed
 
     public void RebuildConnectionsPopUp(DefaultMutableTreeNode selectedNode)
