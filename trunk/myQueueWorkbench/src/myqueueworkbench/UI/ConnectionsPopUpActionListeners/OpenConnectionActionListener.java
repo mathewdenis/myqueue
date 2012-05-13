@@ -38,12 +38,10 @@ public class OpenConnectionActionListener implements ActionListener
 
             // Get user authorized Queues
             String userPermissions = new String(con.SendToServer("SHOW PERMISSIONS FOR CURRENT_USER").getBytes());
-
-            fMainForm.UpdateQueuesList();
-
             fConnectionNode.getConnection().fConnected = true;
-
             con.Close();
+            
+            fMainForm.SelectedConnectionChanged();
         }
         catch (Exception ex)
         {

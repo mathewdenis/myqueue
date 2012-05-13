@@ -41,19 +41,7 @@ public class UpdateUIForSelectedConnectionThread extends Thread
             {
                 if (fMainForm.fSelectedConnection != null && fMainForm.fSelectedConnection.fConnected)
                 {
-                    fMyQueueConnection = new myQueueConnection(fMainForm.fSelectedConnection.fServerIP, fMainForm.fSelectedConnection.fServerPort, fMainForm.fSelectedConnection.fUsername, fMainForm.fSelectedConnection.fPassword);
-                    fMyQueueConnection.Open();
-                    byte[] bytes = fMyQueueConnection.SendToServer("SHOW MACHINE STATUS").getBytes();
-                    String str = new String(bytes);
-                    fMyQueueConnection.Close();
-
-                    if (!str.isEmpty())
-                    {
-                        String[] data = str.split("\n");
-                        fMainForm.jLabelCPUUsage.setText(data[2].replace("CPU LOAD", "") + "%");
-                        fMainForm.jLabelFreeMemory.setText(data[0].replace("FREE MEMORY", ""));
-                        fMainForm.jLabelTotalMemory.setText(data[1].replace("TOTAL MEMORY", ""));
-                    }
+                    fMainForm.UpdateRemoteMachineStatus();
                 }
                 else
                 {
@@ -69,7 +57,7 @@ public class UpdateUIForSelectedConnectionThread extends Thread
 
             try
             {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
             }
             catch (Exception ex)
             {
