@@ -55,12 +55,18 @@ public class UpdateUIForSelectedConnectionThread extends Thread
                         fMainForm.jLabelTotalMemory.setText(data[1].replace("TOTAL MEMORY", ""));
                     }
                 }
+                else
+                {
+                    fMainForm.jLabelCPUUsage.setText("N/A");
+                    fMainForm.jLabelFreeMemory.setText("N/A");
+                    fMainForm.jLabelTotalMemory.setText("N/A");
+                }
             }
             catch (Exception ex)
             {
             }
 
-            System.out.println("Updating UI...");
+
             try
             {
                 Thread.sleep(1000);

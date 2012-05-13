@@ -3,6 +3,8 @@ package myqueueserver.Users;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import myqueueserver.Queue.QueueManager;
+import myqueueserver.Queue.myQueue;
 
 /**
  *
@@ -60,6 +62,11 @@ public class User implements Serializable
         return fPermissions.contains(EUserPermissions.All) || hasPermissionsForQueue;
     }
 
+    /**
+     * This method must be called every time a Queue is dropped
+     *
+     * @param queueName
+     */
     public void DropQueue(String queueName)
     {
         HashMap<String, ArrayList<EUserQueuePermissions>> newPermissions = new HashMap<>();
@@ -71,6 +78,60 @@ public class User implements Serializable
             }
         }
         fQueuePermissions = newPermissions;
+    }
+
+    /**
+     * Return a string contains all User permissions Example:
+     * CreateUsers|DropUsers|CreateQueues|
+     *
+     * @return
+     */
+    public String getPermissionsToString()
+    {
+        String reply = "";
+        for (EUserPermissions permission : fPermissions)
+        {
+            reply = reply + permission.toString() + "|";
+        }
+        return reply;
+    }
+
+    /**
+     * Return a string representation of the user Queue permissions. Example:
+     * Queue#1 Read,Write
+     *
+     * @return
+     */
+    public String getQueuePermissionsToString()
+    {
+        String reply = "";
+        if (HasPermission(EUserPermissions.All))
+        {
+            for (myQueue queue : QueueManager.getQueues())
+            {
+                reply = reply + queue.getName() + " Read,Write\n";
+            }
+        }
+        else
+        {
+            for (String queueName : fQueuePermissions.keySet())
+            {
+                reply = reply + queueName + " ";
+                for (EUserQueuePermissions permission : fQueuePermissions.get(queueName))
+                {
+                    reply = reply + permission.toString() + ",";
+                }
+
+                if (reply.length() > 0)
+                {
+                    reply = reply.substring(0, reply.length() - 1);
+                }
+
+                reply = reply + "\n";
+            }
+        }
+
+        return reply;
     }
 
     /**

@@ -2,6 +2,8 @@ package myqueueworkbench.Connections;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
+import myQueueConnector.myQueueConnection;
 
 /**
  *
@@ -15,6 +17,7 @@ public class Connection implements Serializable
     public String fUsername, fPassword;
     public int fServerPort;
     public boolean fConnected = false;
+    
 
     public Connection(String name, InetAddress serverIP, int serverPort, String username, String password)
     {
@@ -23,5 +26,11 @@ public class Connection implements Serializable
         fServerPort = serverPort;
         fUsername = username;
         fPassword = password;
+    }
+    
+    public myQueueConnection getQueueConnection() throws UnknownHostException
+    {
+        myQueueConnection con = new myQueueConnection(fServerIP, fServerPort, fUsername, fPassword);
+        return con;
     }
 }

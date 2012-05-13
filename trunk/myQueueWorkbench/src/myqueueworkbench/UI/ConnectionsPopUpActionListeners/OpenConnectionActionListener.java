@@ -33,10 +33,27 @@ public class OpenConnectionActionListener implements ActionListener
         fConnectionNode.getConnection().fConnected = false;
         try
         {
-            myQueueConnection con = new myQueueConnection(fConnectionNode.getConnection().fServerIP, fConnectionNode.getConnection().fServerPort, fConnectionNode.getConnection().fUsername, fConnectionNode.getConnection().fPassword);
+            myQueueConnection con = fConnectionNode.getConnection().getQueueConnection();
             con.Open();
-            con.Close();
+
+            // Get user authorized Queues
+            String userPermissions = new String(con.SendToServer("SHOW PERMISSIONS FOR CURRENT_USER").getBytes());
+            
+            fMainForm.UpdateQueuesList();
+            
+            /*String userGrants = new String(con.SendToServer("SHOW GRANTS FOR CURRENT_USER").getBytes());
+
+            fMainForm.jListQueues.removeAll();
+            String[] tmp = userGrants.split("\n");
+            DefaultListModel model = new DefaultListModel();
+            for (String str : tmp)
+            {
+                fMainForm.jListQueues.
+            }*/
+
             fConnectionNode.getConnection().fConnected = true;
+
+            con.Close();
         }
         catch (Exception ex)
         {

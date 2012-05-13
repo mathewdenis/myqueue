@@ -13,6 +13,8 @@ import myqueueserver.Authentication.UserAuthenticationManager;
 import myqueueserver.Config.Config;
 import myqueueserver.MachineStatus.MachineStatus;
 import myqueueserver.Queue.QueueManager;
+import myqueueserver.Queue.myQueue;
+import myqueueserver.Users.EUserPermissions;
 import myqueueserver.Users.EUserQueuePermissions;
 import myqueueserver.Users.User;
 import myqueueserver.Users.UsersManager;
@@ -87,7 +89,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                     break;
 
                 case "DROP":
-                    switch (splittedStr[1])
+                    switch (splittedStr[1].toUpperCase())
                     {
                         case "QUEUE":   // DROP QUEUE <QUEUE_NAME>
                             DropQueue(sender, strData);
@@ -104,22 +106,25 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                     break;
 
                 case "SHOW":
-                    switch (splittedStr[1])
+                    switch (splittedStr[1].toUpperCase())
                     {
+                        case "PERMISSIONS": // SHOW PERMISSIONS FOR <USERNAME>
+                            ShowPermissions(sender, strData);
+                            break;
+
                         case "GRANTS":  // SHOW GRANTS FOR <USERNAME>
+                            ShowGrants(sender, strData);
                             break;
 
                         case "MACHINE":
-                            switch (splittedStr[2])
+                            switch (splittedStr[2].toUpperCase())
                             {
                                 case "STATUS": // SHOW MACHINE STATUS
                                     ShowMachineStatus(sender, strData);
                                     break;
                             }
                             break;
-
                     }
-
 
                     break;
 
@@ -140,9 +145,68 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         }
     }
 
-    private void ShowMachineStatus(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
+    private void ShowPermissions(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
     {
-        sender.SendData("FREE MEMORY " + MachineStatus.getFreeMemory() + "\nTOTAL MEMORY " + MachineStatus.getTotalMemory() + "\nCPU LOAD " + MachineStatus.getCPULoad() + fETX);
+        // SHOW PERMISSIONS FOR <USERNAME>
+        User senderUser = (User) sender.getTag();
+
+        String[] splittedData = strData.split(" ");
+        String givenUsername = splittedData[3];
+
+        // CURRENT_USER
+        if (givenUsername.equalsIgnoreCase("CURRENT_USER"))
+        {
+            givenUsername = senderUser.getName();
+        }
+
+        if (senderUser.getName().equalsIgnoreCase(givenUsername) || senderUser.CanCreateNewUsers())
+        {
+            User u = UsersManager.getUser(givenUsername);
+            if (u != null)
+            {
+                sender.SendData(u.getPermissionsToString() + fETX);
+            }
+            else
+            {
+                sender.SendData("ERROR User '" + givenUsername + "' does not exist");
+            }
+        }
+        else
+        {
+            sender.SendData("ERROR You dont have permissions to execute SHOW PERMISSIONS command for the given user" + fETX);
+        }
+    }
+
+    private void ShowGrants(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
+    {
+        // SHOW GRANTS FOR <USERNAME>
+        User senderUser = (User) sender.getTag();
+
+        String[] splittedData = strData.split(" ");
+        String givenUsername = splittedData[3];
+
+        // CURRENT_USER
+        if (givenUsername.equalsIgnoreCase("CURRENT_USER"))
+        {
+            givenUsername = senderUser.getName();
+        }
+
+        if (senderUser.getName().equalsIgnoreCase(givenUsername) || senderUser.CanCreateNewUsers())
+        {
+            User u = UsersManager.getUser(givenUsername);
+            if (u != null)
+            {
+                sender.SendData(u.getQueuePermissionsToString() + fETX);
+            }
+            else
+            {
+                sender.SendData("ERROR User '" + givenUsername + "' does not exist");
+            }
+        }
+        else
+        {
+            sender.SendData("ERROR You dont have permissions to execute SHOW GRANTS command for the given user" + fETX);
+        }
     }
 
     private void Grant(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
@@ -162,13 +226,6 @@ public class MyQueueTCPServer extends ExtasysTCPServer
 
         User senderUser = (User) sender.getTag();
 
-        // Check if Queue exists
-        if (!QueueManager.QueueExists(queueName))
-        {
-            sender.SendData("ERROR 1" + fETX); // Queue does not exist
-            return;
-        }
-
         // Check if user has the required permissions
         if (!senderUser.CanCreateNewUsers())
         {
@@ -176,9 +233,17 @@ public class MyQueueTCPServer extends ExtasysTCPServer
             return;
         }
 
+        // Check if Queue exists
+        if (!QueueManager.QueueExists(queueName))
+        {
+            sender.SendData("ERROR 1" + fETX); // Queue does not exist
+            return;
+        }
+
         // Give permissions to user
         User u = UsersManager.getUser(user);
 
+        // Create a new ArrayList with the permissions
         ArrayList<EUserQueuePermissions> grantedPermissions = new ArrayList<>();
         for (String s : permissions)
         {
@@ -345,6 +410,11 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                 sender.SendData("ERROR " + ex.getMessage() + fETX);
             }
         }
+    }
+
+    private void ShowMachineStatus(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
+    {
+        sender.SendData("FREE MEMORY " + MachineStatus.getFreeMemory() + "\nTOTAL MEMORY " + MachineStatus.getTotalMemory() + "\nCPU LOAD " + MachineStatus.getCPULoad() + fETX);
     }
 
     @Override
