@@ -34,6 +34,8 @@ public class frmMain extends javax.swing.JFrame
     {
         initComponents();
 
+        jPanelMainPanel.setVisible(false);
+
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         int w = this.getSize().width;
         int h = this.getSize().height;
@@ -56,7 +58,6 @@ public class frmMain extends javax.swing.JFrame
         UpdateConnectionsList();
         jTreeConnections.expandRow(0);
 
-
         fUpdateUIForSelectedConnectionThread = new UpdateUIForSelectedConnectionThread(this);
         fUpdateUIForSelectedConnectionThread.start();
     }
@@ -68,6 +69,31 @@ public class frmMain extends javax.swing.JFrame
         {
             ConnectionTreeNode node = new ConnectionTreeNode(con.fName, con);
             fMyQueueConnectionsParentNode.add(node);
+        }
+    }
+
+    /**
+     * This method should be called every time the user clicks to a connection
+     * inside the jTreeConnections
+     */
+    public void SelectedConnectionChanged() throws UnknownHostException, Exception
+    {
+        jPanelMainPanel.setVisible(true);
+        if (fSelectedConnection.fConnected)
+        {
+            UpdateQueuesList();
+            UpdateRemoteMachineStatus();
+        }
+        else
+        {
+            // Clear jListQueues
+            DefaultListModel model = new DefaultListModel();
+            jListQueues.setModel(model);
+
+            // Clear machine status
+            jLabelCPUUsage.setText("N/A");
+            jLabelFreeMemory.setText("N/A");
+            jLabelTotalMemory.setText("N/A");
         }
     }
 
@@ -88,13 +114,31 @@ public class frmMain extends javax.swing.JFrame
         con.Close();
     }
 
+    public void UpdateRemoteMachineStatus() throws UnknownHostException, Exception
+    {
+        myQueueConnection con = fSelectedConnection.getQueueConnection();
+        con.Open();
+        byte[] bytes = con.SendToServer("SHOW MACHINE STATUS").getBytes();
+        String str = new String(bytes);
+        con.Close();
+
+        if (!str.isEmpty())
+        {
+            String[] data = str.split("\n");
+            jLabelCPUUsage.setText(data[2].replace("CPU LOAD", "") + "%");
+            jLabelFreeMemory.setText(data[0].replace("FREE MEMORY", ""));
+            jLabelTotalMemory.setText(data[1].replace("TOTAL MEMORY", ""));
+        }
+
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTreeConnections = new javax.swing.JTree();
-        jPanel1 = new javax.swing.JPanel();
+        jPanelMainPanel = new javax.swing.JPanel();
         jLabelSelectedConnectionName = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -130,7 +174,7 @@ public class frmMain extends javax.swing.JFrame
         jLabelSelectedConnectionName.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabelSelectedConnectionName.setText("....");
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Machine Status"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Remote Machine Status"));
         jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jLabel1.setText("CPU Load:");
@@ -202,15 +246,15 @@ public class frmMain extends javax.swing.JFrame
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jButtonRefreshQueues, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton3)))
-                .addContainerGap())
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -225,20 +269,20 @@ public class frmMain extends javax.swing.JFrame
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+        javax.swing.GroupLayout jPanelMainPanelLayout = new javax.swing.GroupLayout(jPanelMainPanel);
+        jPanelMainPanel.setLayout(jPanelMainPanelLayout);
+        jPanelMainPanelLayout.setHorizontalGroup(
+            jPanelMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelMainPanelLayout.createSequentialGroup()
+                .addGroup(jPanelMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabelSelectedConnectionName)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 433, Short.MAX_VALUE))
+                .addGap(0, 428, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        jPanelMainPanelLayout.setVerticalGroup(
+            jPanelMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelMainPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabelSelectedConnectionName)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -277,7 +321,7 @@ public class frmMain extends javax.swing.JFrame
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanelMainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -286,7 +330,7 @@ public class frmMain extends javax.swing.JFrame
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanelMainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -320,6 +364,13 @@ public class frmMain extends javax.swing.JFrame
         TreePath selectedPath = jTreeConnections.getSelectionPath();
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
         RebuildConnectionsPopUp(selectedNode);
+        try
+        {
+            SelectedConnectionChanged();
+        }
+        catch (Exception ex)
+        {
+        }
     }//GEN-LAST:event_jTreeConnectionsValueChanged
 
     private void jButtonRefreshQueuesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonRefreshQueuesActionPerformed
@@ -446,9 +497,9 @@ public class frmMain extends javax.swing.JFrame
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanelMainPanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTree jTreeConnections;
