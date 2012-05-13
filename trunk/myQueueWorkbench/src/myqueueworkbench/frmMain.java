@@ -358,7 +358,7 @@ public class frmMain extends javax.swing.JFrame
         frm.setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
-    // JTree Connections selecteion changed
+    // JTree Connections selection changed
     private void jTreeConnectionsValueChanged(javax.swing.event.TreeSelectionEvent evt)//GEN-FIRST:event_jTreeConnectionsValueChanged
     {//GEN-HEADEREND:event_jTreeConnectionsValueChanged
         TreePath selectedPath = jTreeConnections.getSelectionPath();
