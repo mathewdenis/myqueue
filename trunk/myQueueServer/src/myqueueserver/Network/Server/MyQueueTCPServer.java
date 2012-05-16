@@ -108,11 +108,11 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                 case "SHOW":
                     switch (splittedStr[1].toUpperCase())
                     {
-                        case "PERMISSIONS": // SHOW PERMISSIONS FOR <USERNAME>
+                        case "PERMISSIONS": // SHOW PERMISSIONS FOR <USERNAME> or CURRENT_USER
                             ShowPermissions(sender, strData);
                             break;
 
-                        case "GRANTS":  // SHOW GRANTS FOR <USERNAME>
+                        case "GRANTS":  // SHOW GRANTS FOR <USERNAME> or CURRENT_USER
                             ShowGrants(sender, strData);
                             break;
 
@@ -319,7 +319,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         {
             if (QueueManager.QueueExists(queueName)) // Check if Queue exists
             {
-                sender.SendData("ERROR 1" + fETX);
+                sender.SendData("ERROR Queue with the given name already exists" + fETX);
             }
             else // Create Queue
             {

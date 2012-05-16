@@ -172,7 +172,7 @@ public class frmNewConnection extends javax.swing.JFrame
             myQueueConnection con = new myQueueConnection(InetAddress.getByName(jTextFieldIP.getText()), Integer.parseInt(jTextFieldPort.getText()), jTextFieldUsername.getText(), pass);
             con.Open();
 
-            con.Close();
+            con.close();
             JOptionPane.showMessageDialog(null, "Connection OK!", "Test", JOptionPane.INFORMATION_MESSAGE);
         }
         catch (Exception ex)
