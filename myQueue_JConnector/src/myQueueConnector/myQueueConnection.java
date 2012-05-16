@@ -97,7 +97,7 @@ public class myQueueConnection extends Extasys.Network.TCP.Client.ExtasysTCPClie
     /**
      * Close the connection
      */
-    public synchronized void Close()
+    private synchronized void Close()
     {
         super.Stop();
         fIsConnected = false;

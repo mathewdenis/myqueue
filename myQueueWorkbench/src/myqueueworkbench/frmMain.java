@@ -111,7 +111,7 @@ public class frmMain extends javax.swing.JFrame
             model.addElement(str);
         }
         jListQueues.setModel(model);
-        con.Close();
+        con.close();
     }
 
     public void UpdateRemoteMachineStatus() throws UnknownHostException, Exception
@@ -120,7 +120,7 @@ public class frmMain extends javax.swing.JFrame
         con.Open();
         byte[] bytes = con.SendToServer("SHOW MACHINE STATUS").getBytes();
         String str = new String(bytes);
-        con.Close();
+        con.close();
 
         if (!str.isEmpty())
         {
@@ -151,8 +151,8 @@ public class frmMain extends javax.swing.JFrame
         jScrollPane2 = new javax.swing.JScrollPane();
         jListQueues = new javax.swing.JList();
         jButtonRefreshQueues = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        jButtonCreateQueue = new javax.swing.JButton();
+        jButtonDropQueue = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -236,9 +236,19 @@ public class frmMain extends javax.swing.JFrame
             }
         });
 
-        jButton2.setText("Create");
+        jButtonCreateQueue.setText("Create");
+        jButtonCreateQueue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCreateQueueActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Drop");
+        jButtonDropQueue.setText("Drop");
+        jButtonDropQueue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDropQueueActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -250,9 +260,9 @@ public class frmMain extends javax.swing.JFrame
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jButtonRefreshQueues, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButtonCreateQueue, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButtonDropQueue, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -264,8 +274,8 @@ public class frmMain extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonRefreshQueues)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(jButtonCreateQueue)
+                    .addComponent(jButtonDropQueue))
                 .addContainerGap())
         );
 
@@ -384,6 +394,62 @@ public class frmMain extends javax.swing.JFrame
         }
     }//GEN-LAST:event_jButtonRefreshQueuesActionPerformed
 
+    private void jButtonCreateQueueActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonCreateQueueActionPerformed
+    {//GEN-HEADEREND:event_jButtonCreateQueueActionPerformed
+        String queueName = JOptionPane.showInputDialog(null, "Name for the new queue:");
+        try
+        {
+            queueName = queueName.trim();
+            queueName = queueName.replace(" ", "_");
+            myQueueConnection con = fSelectedConnection.getQueueConnection();
+            con.Open();
+
+            String reply = new String(con.SendToServer("CREATE QUEUE " + queueName).getBytes());
+            if (reply.startsWith("ERROR"))
+            {
+                con.close();
+                throw new Exception(reply);
+            }
+            con.close();
+            UpdateQueuesList();
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonCreateQueueActionPerformed
+
+    private void jButtonDropQueueActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonDropQueueActionPerformed
+    {//GEN-HEADEREND:event_jButtonDropQueueActionPerformed
+        try
+        {
+            String selectedQueue = jListQueues.getSelectedValue().toString().split(" ")[0];
+
+            int answer = JOptionPane.showConfirmDialog(null, "Do you want to drop queue '" + selectedQueue + "' ?", "Drop Queue", JOptionPane.WARNING_MESSAGE);
+            if (answer != JOptionPane.YES_OPTION)
+            {
+                return;
+            }
+
+            myQueueConnection con = fSelectedConnection.getQueueConnection();
+            con.Open();
+
+            String reply = new String(con.SendToServer("DROP QUEUE " + selectedQueue).getBytes());
+            if (reply.startsWith("ERROR"))
+            {
+                con.close();
+                throw new Exception(reply);
+            }
+
+            con.close();
+            UpdateQueuesList();
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonDropQueueActionPerformed
+
     public void RebuildConnectionsPopUp(DefaultMutableTreeNode selectedNode)
     {
         if (selectedNode instanceof ConnectionTreeNode)
@@ -481,8 +547,8 @@ public class frmMain extends javax.swing.JFrame
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButtonCreateQueue;
+    private javax.swing.JButton jButtonDropQueue;
     private javax.swing.JButton jButtonRefreshQueues;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
