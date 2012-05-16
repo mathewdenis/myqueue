@@ -13,15 +13,15 @@ import myqueueserver.Serialization.Serializer;
  */
 public class UsersManager implements Serializable
 {
-    
+
     private static String fUsersManagerSaveLocation = "UsersManager.dat";
     public static ArrayList<User> fUsers;
     private static final Object fUsersLock = new Object();
-    
+
     public UsersManager()
     {
     }
-    
+
     public static void Initialize() throws FileNotFoundException, IOException, ClassNotFoundException
     {
         synchronized (fUsersLock)
@@ -43,7 +43,7 @@ public class UsersManager implements Serializable
                 User root = new User("root", "pass");
                 root.getPermissions().add(EUserPermissions.All);
                 fUsers.add(root);
-                
+
                 Save();
             }
         }
@@ -63,13 +63,13 @@ public class UsersManager implements Serializable
             boolean userExists = false;
             for (User u : fUsers)
             {
-                if (u.getName().equals(username))
+                if (u.getName().equalsIgnoreCase(username))
                 {
                     userExists = true;
                     break;
                 }
             }
-            
+
             if (!userExists)
             {
                 User newUser = new User(username, password);
@@ -90,7 +90,7 @@ public class UsersManager implements Serializable
         synchronized (fUsersLock)
         {
             int indexToRemove = -1;
-            
+
             for (int i = 0; i < fUsers.size(); i++)
             {
                 if (fUsers.get(i).getName().equals(username))
@@ -99,7 +99,7 @@ public class UsersManager implements Serializable
                     break;
                 }
             }
-            
+
             if (indexToRemove > -1)
             {
                 fUsers.remove(indexToRemove);
@@ -118,14 +118,19 @@ public class UsersManager implements Serializable
     {
         for (User u : UsersManager.fUsers)
         {
-            if (u.getName().equals(username))
+            if (u.getName().equalsIgnoreCase(username))
             {
                 return u;
             }
         }
         return null;
     }
-    
+
+    public static ArrayList<User> getUsers()
+    {
+        return fUsers;
+    }
+
     public static void DropQueueFromAllUsers(String queueName)
     {
         for (User u : UsersManager.fUsers)
@@ -133,7 +138,7 @@ public class UsersManager implements Serializable
             u.DropQueue(queueName);
         }
     }
-    
+
     public static void UpdateUser(User user) throws IOException
     {
         for (User u : fUsers)
@@ -145,10 +150,10 @@ public class UsersManager implements Serializable
                 u.setQueuePermissions(user.getQueuePermissions());
             }
         }
-        
+
         Save();
     }
-    
+
     public static void Save() throws IOException
     {
         synchronized (fUsersLock)

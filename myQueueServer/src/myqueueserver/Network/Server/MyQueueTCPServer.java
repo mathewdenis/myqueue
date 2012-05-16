@@ -108,11 +108,15 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                 case "SHOW":
                     switch (splittedStr[1].toUpperCase())
                     {
+                        case "USERS": // SHOW USERS
+                            ShowUsers(sender, strData);
+                            break;
+
                         case "PERMISSIONS": // SHOW PERMISSIONS FOR <USERNAME> or CURRENT_USER
                             ShowPermissions(sender, strData);
                             break;
 
-                        case "GRANTS":  // SHOW GRANTS FOR <USERNAME> or CURRENT_USER
+                        case "GRANTS":      // SHOW GRANTS FOR <USERNAME> or CURRENT_USER
                             ShowGrants(sender, strData);
                             break;
 
@@ -142,6 +146,25 @@ public class MyQueueTCPServer extends ExtasysTCPServer
             catch (Exception e)
             {
             }
+        }
+    }
+
+    private void ShowUsers(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
+    {
+        // SHOW USERS
+        User senderUser = (User) sender.getTag();
+        String reply = "";
+        if (senderUser.CanCreateNewUsers())
+        {
+            for (User u : UsersManager.getUsers())
+            {
+                reply = reply + u.getName() + "\n";
+            }
+            sender.SendData(reply.substring(0, reply.length() - 1) + fETX);
+        }
+        else
+        {
+            sender.SendData("ERROR You dont have permissions to execute SHOW USERS command" + fETX);
         }
     }
 
@@ -289,7 +312,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
 
         if (!QueueManager.QueueExists(queueName)) // Check if queue exists
         {
-            sender.SendData("ERROR 1" + fETX);
+            sender.SendData("ERROR Queue does not exist" + fETX);
         }
         else
         {
@@ -349,6 +372,12 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         {
             try
             {
+                if (UsersManager.getUser(splittedStr[2]) != null)
+                {
+                    sender.SendData("ERROR User " + splittedStr[2] + " already exists" + fETX);
+                    return;
+                }
+
                 UsersManager.AddUser(splittedStr[2], splittedStr[3]);
                 sender.SendData("OK" + fETX);
             }
@@ -372,7 +401,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         {
             if (!QueueManager.QueueExists(queueName))
             {
-                sender.SendData("ERROR 1" + fETX); // Queue does not exist
+                sender.SendData("ERROR Queue does not exist" + fETX); // Queue does not exist
             }
             else
             {
@@ -397,6 +426,10 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         if (!senderUser.CanDropUsers())
         {
             sender.SendData("ERROR You dont have the required permissions to drop users" + fETX);
+        }
+        else if (username.equalsIgnoreCase("root"))
+        {
+            sender.SendData("ERROR User root cannot be droped" + fETX);
         }
         else
         {
