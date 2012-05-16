@@ -153,6 +153,8 @@ public class frmMain extends javax.swing.JFrame
         jButtonRefreshQueues = new javax.swing.JButton();
         jButtonCreateQueue = new javax.swing.JButton();
         jButtonDropQueue = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        jButtonEditUsers = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -279,6 +281,34 @@ public class frmMain extends javax.swing.JFrame
                 .addContainerGap())
         );
 
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
+        jPanel4.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jPanel4.setName("");
+
+        jButtonEditUsers.setText("Edit Users");
+        jButtonEditUsers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEditUsersActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButtonEditUsers)
+                .addContainerGap(315, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(jButtonEditUsers)
+                .addContainerGap(30, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jPanelMainPanelLayout = new javax.swing.GroupLayout(jPanelMainPanel);
         jPanelMainPanel.setLayout(jPanelMainPanelLayout);
         jPanelMainPanelLayout.setHorizontalGroup(
@@ -288,7 +318,8 @@ public class frmMain extends javax.swing.JFrame
                     .addComponent(jLabelSelectedConnectionName)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 428, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelMainPanelLayout.setVerticalGroup(
             jPanelMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -298,6 +329,9 @@ public class frmMain extends javax.swing.JFrame
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanelMainPanelLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jMenu1.setText("File");
@@ -450,6 +484,21 @@ public class frmMain extends javax.swing.JFrame
         }
     }//GEN-LAST:event_jButtonDropQueueActionPerformed
 
+    // Edit users
+    private void jButtonEditUsersActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonEditUsersActionPerformed
+    {//GEN-HEADEREND:event_jButtonEditUsersActionPerformed
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        frmEditUsers frm = new frmEditUsers(fSelectedConnection);
+
+        int w = frm.getSize().width;
+        int h = frm.getSize().height;
+        int x = (dim.width - w) / 2;
+        int y = (dim.height - h) / 2;
+
+        frm.setLocation(x, y);
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButtonEditUsersActionPerformed
+
     public void RebuildConnectionsPopUp(DefaultMutableTreeNode selectedNode)
     {
         if (selectedNode instanceof ConnectionTreeNode)
@@ -549,6 +598,7 @@ public class frmMain extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCreateQueue;
     private javax.swing.JButton jButtonDropQueue;
+    private javax.swing.JButton jButtonEditUsers;
     private javax.swing.JButton jButtonRefreshQueues;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -564,6 +614,7 @@ public class frmMain extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanelMainPanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
