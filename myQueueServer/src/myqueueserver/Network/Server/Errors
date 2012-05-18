@@ -1,1 +1,8 @@
 1 Wrong username or password
+2 Queue does not exist
+3 User does not exist
+4 You don't have the required permission to do this action
+5 Queue already exists
+6 User already exists
+
+100 Other error
