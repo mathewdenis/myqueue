@@ -109,6 +109,48 @@ public class UsersManager implements Serializable
     }
 
     /**
+     * Give a permission to user
+     *
+     * @param permission
+     * @param username is the user's name to give the permission
+     * @throws IOException
+     */
+    public static void GivePermissionToUser(EUserPermissions permission, String username) throws IOException
+    {
+        User u = getUser(username);
+        if (u != null)
+        {
+            if (!u.HasPermission(permission))
+            {
+                u.getPermissions().add(permission);
+            }
+        }
+        UpdateUser(u);
+        Save();
+    }
+
+    /**
+     * Take a permission from a user
+     *
+     * @param permission
+     * @param username is the user's name to take the permission
+     * @throws IOException
+     */
+    public static void TakePermissionFromUser(EUserPermissions permission, String username) throws IOException
+    {
+        User u = getUser(username);
+        if (u != null)
+        {
+            if (u.HasPermission(permission))
+            {
+                u.getPermissions().remove(permission);
+            }
+        }
+        UpdateUser(u);
+        Save();
+    }
+
+    /**
      * Get a users from his username
      *
      * @param username
