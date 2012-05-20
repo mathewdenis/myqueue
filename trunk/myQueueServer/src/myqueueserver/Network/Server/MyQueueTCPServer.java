@@ -54,7 +54,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
             {
                 switch (splittedStr[0].toUpperCase())
                 {
-                    case "LOGIN":       // LOGIN <USERNAME> <PASSWORD>
+                    case "LOGIN":         // LOGIN <USERNAME> <PASSWORD>
                         if (UserAuthenticationManager.AuthenticateUser(splittedStr[1], splittedStr[2]))
                         {
                             sender.setTag(UsersManager.getUser(splittedStr[1]));
@@ -76,7 +76,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                     break;
 
                 case "CREATE":
-                    switch (splittedStr[1])
+                    switch (splittedStr[1].toUpperCase())
                     {
                         case "QUEUE":   // CREATE QUEUE <QUEUE_NAME>
                             CreateQueue(sender, strData);
@@ -101,7 +101,7 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                     }
                     break;
 
-                case "GRANT":           // GRANT Read,Write ON <Queue_Name> to <Username>
+                case "GRANT":   // GRANT Read,Write ON <QUEUE_NAME> TO <USERNAME>
                     Grant(sender, strData);
                     break;
 
@@ -129,8 +129,17 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                             }
                             break;
                     }
-
                     break;
+
+
+                case "GIVE":    // GIVE PERMISSION CREATEUSERS TO <USERNAME>
+                    GivePermission(sender, strData);
+                    break;
+
+                case "TAKE":    // TAKE PERMISSION CREATEUSERS FROM <USERNAME>
+                    TakePermission(sender, strData);
+                    break;
+
 
                 default:
                     sender.DisconnectMe();
@@ -146,6 +155,82 @@ public class MyQueueTCPServer extends ExtasysTCPServer
             catch (Exception e)
             {
             }
+        }
+    }
+
+    private void GivePermission(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException, IOException
+    {
+        // GIVE PERMISSION CREATEUSERS TO <USERNAME>
+        User senderUser = (User) sender.getTag();
+        String[] splittedStr = strData.split(" ");
+
+        if (!senderUser.CanCreateNewUsers())
+        {
+            sender.SendData("ERROR You dont have the required permissions to create users" + fETX);
+        }
+        else
+        {
+            String givenUsername = splittedStr[4];
+            String permissionName = splittedStr[2];
+
+            switch (permissionName.toUpperCase())
+            {
+                case "CREATEQUEUES":
+                    UsersManager.GivePermissionToUser(EUserPermissions.CreateQueues, givenUsername);
+                    break;
+
+                case "DROPQUEUES":
+                    UsersManager.GivePermissionToUser(EUserPermissions.DropQueues, givenUsername);
+                    break;
+
+                case "CREATEUSERS":
+                    UsersManager.GivePermissionToUser(EUserPermissions.CreateUsers, givenUsername);
+                    break;
+
+                case "DROPUSERS":
+                    UsersManager.GivePermissionToUser(EUserPermissions.DropUsers, givenUsername);
+                    break;
+            }
+
+            sender.SendData("OK" + fETX);
+        }
+    }
+
+    private void TakePermission(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException, IOException
+    {
+        // TAKE PERMISSION CREATEUSERS FROM <USERNAME>
+        User senderUser = (User) sender.getTag();
+        String[] splittedStr = strData.split(" ");
+
+        if (!senderUser.CanCreateNewUsers())
+        {
+            sender.SendData("ERROR You dont have the required permissions to create users" + fETX);
+        }
+        else
+        {
+            String givenUsername = splittedStr[4];
+            String permissionName = splittedStr[2];
+
+            switch (permissionName.toUpperCase())
+            {
+                case "CREATEQUEUES":
+                    UsersManager.TakePermissionFromUser(EUserPermissions.CreateQueues, givenUsername);
+                    break;
+
+                case "DROPQUEUES":
+                    UsersManager.TakePermissionFromUser(EUserPermissions.DropQueues, givenUsername);
+                    break;
+
+                case "CREATEUSERS":
+                    UsersManager.TakePermissionFromUser(EUserPermissions.CreateUsers, givenUsername);
+                    break;
+
+                case "DROPUSERS":
+                    UsersManager.TakePermissionFromUser(EUserPermissions.DropUsers, givenUsername);
+                    break;
+            }
+
+            sender.SendData("OK" + fETX);
         }
     }
 

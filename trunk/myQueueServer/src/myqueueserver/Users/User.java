@@ -151,7 +151,7 @@ public class User implements Serializable
      */
     public boolean CanCreateNewUsers()
     {
-        return fPermissions.contains(EUserPermissions.CreateQueues) || fPermissions.contains(EUserPermissions.All);
+        return fPermissions.contains(EUserPermissions.CreateUsers) || fPermissions.contains(EUserPermissions.All);
     }
 
     /**
