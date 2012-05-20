@@ -396,6 +396,12 @@ public class frmEditUsers extends javax.swing.JFrame
                 {
                     throw new Exception(reply.substring(5));
                 }
+                else
+                {
+                    jTextFieldNewUserUsername.setText("");
+                    jTextFieldNewUserPassword.setText("");
+                    JOptionPane.showMessageDialog(null, "User created!", "New user", JOptionPane.INFORMATION_MESSAGE);
+                }
 
                 UpdateUsersList();
             }
