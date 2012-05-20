@@ -131,7 +131,6 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                     }
                     break;
 
-
                 case "GIVE":    // GIVE PERMISSION CREATEUSERS TO <USERNAME>
                     GivePermission(sender, strData);
                     break;
@@ -139,7 +138,6 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                 case "TAKE":    // TAKE PERMISSION CREATEUSERS FROM <USERNAME>
                     TakePermission(sender, strData);
                     break;
-
 
                 default:
                     sender.DisconnectMe();
@@ -158,79 +156,27 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         }
     }
 
-    private void GivePermission(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException, IOException
+    private void SelectQueue(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
     {
-        // GIVE PERMISSION CREATEUSERS TO <USERNAME>
+        strData = strData.toUpperCase();
+        String queueName = strData.replaceAll("SELECT", "").replace(" ", "").trim();
         User senderUser = (User) sender.getTag();
-        String[] splittedStr = strData.split(" ");
 
-        if (!senderUser.CanCreateNewUsers())
+        if (!QueueManager.QueueExists(queueName)) // Check if queue exists
         {
-            sender.SendData("ERROR You dont have the required permissions to create users" + fETX);
+            sender.SendData("ERROR Queue does not exist" + fETX);
         }
         else
         {
-            String givenUsername = splittedStr[4];
-            String permissionName = splittedStr[2];
-
-            switch (permissionName.toUpperCase())
+            // Check if user has permissions for the Queue
+            if (UserAuthenticationManager.UserHasPermissionsForQueue(senderUser.getName(), queueName))
             {
-                case "CREATEQUEUES":
-                    UsersManager.GivePermissionToUser(EUserPermissions.CreateQueues, givenUsername);
-                    break;
-
-                case "DROPQUEUES":
-                    UsersManager.GivePermissionToUser(EUserPermissions.DropQueues, givenUsername);
-                    break;
-
-                case "CREATEUSERS":
-                    UsersManager.GivePermissionToUser(EUserPermissions.CreateUsers, givenUsername);
-                    break;
-
-                case "DROPUSERS":
-                    UsersManager.GivePermissionToUser(EUserPermissions.DropUsers, givenUsername);
-                    break;
+                sender.SendData("OK" + fETX);
             }
-
-            sender.SendData("OK" + fETX);
-        }
-    }
-
-    private void TakePermission(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException, IOException
-    {
-        // TAKE PERMISSION CREATEUSERS FROM <USERNAME>
-        User senderUser = (User) sender.getTag();
-        String[] splittedStr = strData.split(" ");
-
-        if (!senderUser.CanCreateNewUsers())
-        {
-            sender.SendData("ERROR You dont have the required permissions to create users" + fETX);
-        }
-        else
-        {
-            String givenUsername = splittedStr[4];
-            String permissionName = splittedStr[2];
-
-            switch (permissionName.toUpperCase())
+            else // User does not have permissions for the given Queue
             {
-                case "CREATEQUEUES":
-                    UsersManager.TakePermissionFromUser(EUserPermissions.CreateQueues, givenUsername);
-                    break;
-
-                case "DROPQUEUES":
-                    UsersManager.TakePermissionFromUser(EUserPermissions.DropQueues, givenUsername);
-                    break;
-
-                case "CREATEUSERS":
-                    UsersManager.TakePermissionFromUser(EUserPermissions.CreateUsers, givenUsername);
-                    break;
-
-                case "DROPUSERS":
-                    UsersManager.TakePermissionFromUser(EUserPermissions.DropUsers, givenUsername);
-                    break;
+                sender.SendData("ERROR You dont have any active permissions on Queue '" + queueName + "'" + fETX);
             }
-
-            sender.SendData("OK" + fETX);
         }
     }
 
@@ -389,34 +335,13 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         sender.SendData("OK" + fETX);
     }
 
-    private void SelectQueue(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
-    {
-        strData = strData.toUpperCase();
-        String queueName = strData.replace("SELECT", "").trim();
-        User senderUser = (User) sender.getTag();
-
-        if (!QueueManager.QueueExists(queueName)) // Check if queue exists
-        {
-            sender.SendData("ERROR Queue does not exist" + fETX);
-        }
-        else
-        {
-            // Check if user has permissions for the Queue
-            if (UserAuthenticationManager.UserHasPermissionsForQueue(senderUser.getName(), queueName))
-            {
-                sender.SendData("OK" + fETX);
-            }
-            else // User does not have permissions for the given Queue
-            {
-                sender.SendData("ERROR You dont have any active permissions on Queue '" + queueName + "'" + fETX);
-            }
-        }
-    }
-
     private void CreateQueue(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
     {
-        String queueName = strData.replace("CREATE QUEUE", "").trim();
+        // CREATE QUEUE <QUEUE_NAME>
         User senderUser = (User) sender.getTag();
+        String[] splittedStr = strData.split(" ");
+
+        String queueName = strData.replaceAll("CREATE QUEUE", "").trim().replace(" ", "_");
 
         // Check if user has permission to Create Queue
         if (!senderUser.CanCreateNewQueues())
@@ -446,12 +371,17 @@ public class MyQueueTCPServer extends ExtasysTCPServer
 
     private void CreateUser(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
     {
+        // CREATE USER <USERNAME> <PASSWORD>
         User senderUser = (User) sender.getTag();
         String[] splittedStr = strData.split(" ");
 
         if (!senderUser.CanCreateNewUsers())
         {
             sender.SendData("ERROR You dont have the required permissions to create users" + fETX);
+        }
+        else if (splittedStr.length != 4)
+        {
+            sender.SendData("ERROR Invalid command" + fETX);
         }
         else
         {
@@ -533,6 +463,82 @@ public class MyQueueTCPServer extends ExtasysTCPServer
     private void ShowMachineStatus(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
     {
         sender.SendData("FREE MEMORY " + MachineStatus.getFreeMemory() + "\nTOTAL MEMORY " + MachineStatus.getTotalMemory() + "\nCPU LOAD " + MachineStatus.getCPULoad() + fETX);
+    }
+
+    private void GivePermission(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException, IOException
+    {
+        // GIVE PERMISSION CREATEUSERS TO <USERNAME>
+        User senderUser = (User) sender.getTag();
+        String[] splittedStr = strData.split(" ");
+
+        if (!senderUser.CanCreateNewUsers())
+        {
+            sender.SendData("ERROR You dont have the required permissions to create users" + fETX);
+        }
+        else
+        {
+            String givenUsername = splittedStr[4];
+            String permissionName = splittedStr[2];
+
+            switch (permissionName.toUpperCase())
+            {
+                case "CREATEQUEUES":
+                    UsersManager.GivePermissionToUser(EUserPermissions.CreateQueues, givenUsername);
+                    break;
+
+                case "DROPQUEUES":
+                    UsersManager.GivePermissionToUser(EUserPermissions.DropQueues, givenUsername);
+                    break;
+
+                case "CREATEUSERS":
+                    UsersManager.GivePermissionToUser(EUserPermissions.CreateUsers, givenUsername);
+                    break;
+
+                case "DROPUSERS":
+                    UsersManager.GivePermissionToUser(EUserPermissions.DropUsers, givenUsername);
+                    break;
+            }
+
+            sender.SendData("OK" + fETX);
+        }
+    }
+
+    private void TakePermission(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException, IOException
+    {
+        // TAKE PERMISSION CREATEUSERS FROM <USERNAME>
+        User senderUser = (User) sender.getTag();
+        String[] splittedStr = strData.split(" ");
+
+        if (!senderUser.CanCreateNewUsers())
+        {
+            sender.SendData("ERROR You dont have the required permissions to create users" + fETX);
+        }
+        else
+        {
+            String givenUsername = splittedStr[4];
+            String permissionName = splittedStr[2];
+
+            switch (permissionName.toUpperCase())
+            {
+                case "CREATEQUEUES":
+                    UsersManager.TakePermissionFromUser(EUserPermissions.CreateQueues, givenUsername);
+                    break;
+
+                case "DROPQUEUES":
+                    UsersManager.TakePermissionFromUser(EUserPermissions.DropQueues, givenUsername);
+                    break;
+
+                case "CREATEUSERS":
+                    UsersManager.TakePermissionFromUser(EUserPermissions.CreateUsers, givenUsername);
+                    break;
+
+                case "DROPUSERS":
+                    UsersManager.TakePermissionFromUser(EUserPermissions.DropUsers, givenUsername);
+                    break;
+            }
+
+            sender.SendData("OK" + fETX);
+        }
     }
 
     @Override
