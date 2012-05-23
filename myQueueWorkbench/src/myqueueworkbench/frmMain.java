@@ -4,8 +4,6 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -29,6 +27,7 @@ public class frmMain extends javax.swing.JFrame
     private JPopupMenu fConnectionsPopUpMenu = null;
     public Connection fSelectedConnection;
     private Thread fUpdateUIForSelectedConnectionThread;
+    private String fSelectedUser;
 
     public frmMain()
     {
@@ -83,6 +82,7 @@ public class frmMain extends javax.swing.JFrame
         {
             UpdateQueuesList();
             UpdateRemoteMachineStatus();
+            UpdateUsersList();
         }
         else
         {
@@ -91,7 +91,6 @@ public class frmMain extends javax.swing.JFrame
             jListQueues.setModel(model);
 
             // Clear machine status
-            jLabelCPUUsage.setText("N/A");
             jLabelFreeMemory.setText("N/A");
             jLabelTotalMemory.setText("N/A");
         }
@@ -114,6 +113,36 @@ public class frmMain extends javax.swing.JFrame
         con.close();
     }
 
+    private void UpdateUsersList()
+    {
+        try
+        {
+            try (myQueueConnection con = fSelectedConnection.getQueueConnection())
+            {
+                con.Open();
+                String reply = new String(con.SendToServer("SHOW USERS").getBytes());
+
+                if (reply.startsWith("ERROR"))
+                {
+                    throw new Exception(reply);
+                }
+
+                jListUsers.removeAll();
+                DefaultListModel model = new DefaultListModel();
+                String[] users = reply.split("\n");
+                for (String user : users)
+                {
+                    model.addElement(user);
+                }
+                jListUsers.setModel(model);
+            }
+        }
+        catch (Exception ex)
+        {
+            //JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     public void UpdateRemoteMachineStatus() throws UnknownHostException, Exception
     {
         myQueueConnection con = fSelectedConnection.getQueueConnection();
@@ -124,12 +153,22 @@ public class frmMain extends javax.swing.JFrame
 
         if (!str.isEmpty())
         {
-            String[] data = str.split("\n");
-            jLabelCPUUsage.setText(data[2].replace("CPU LOAD", "") + "%");
-            jLabelFreeMemory.setText(data[0].replace("FREE MEMORY", ""));
-            jLabelTotalMemory.setText(data[1].replace("TOTAL MEMORY", ""));
-        }
+            try
+            {
+                String[] data = str.split("\n");
 
+                String loadStr = data[2].replace("CPU LOAD", "");
+                int load = Integer.parseInt(loadStr.trim());
+                
+                jProgressBarCPULoad.setValue(load);
+                jLabelFreeMemory.setText(data[0].replace("FREE MEMORY", ""));
+                jLabelTotalMemory.setText(data[1].replace("TOTAL MEMORY", ""));
+            }
+            catch (Exception ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -140,22 +179,37 @@ public class frmMain extends javax.swing.JFrame
         jTreeConnections = new javax.swing.JTree();
         jPanelMainPanel = new javax.swing.JPanel();
         jLabelSelectedConnectionName = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabelCPUUsage = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabelFreeMemory = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabelTotalMemory = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jListQueues = new javax.swing.JList();
         jButtonRefreshQueues = new javax.swing.JButton();
         jButtonCreateQueue = new javax.swing.JButton();
         jButtonDropQueue = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jListUsers = new javax.swing.JList();
+        jButtonRefreshUsers = new javax.swing.JButton();
+        jButtonDropUser = new javax.swing.JButton();
+        jLabelUserLabel = new javax.swing.JLabel();
+        jCheckBoxAll = new javax.swing.JCheckBox();
+        jCheckBoxCreateUsers = new javax.swing.JCheckBox();
+        jCheckBoxDropUsers = new javax.swing.JCheckBox();
+        jCheckBoxCreateQueues = new javax.swing.JCheckBox();
+        jCheckBoxDropQueues = new javax.swing.JCheckBox();
         jPanel4 = new javax.swing.JPanel();
-        jButtonEditUsers = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
+        jTextFieldNewUserUsername = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jTextFieldNewUserPassword = new javax.swing.JTextField();
+        jButtonCreateUser = new javax.swing.JButton();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabelFreeMemory = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabelTotalMemory = new javax.swing.JLabel();
+        jProgressBarCPULoad = new javax.swing.JProgressBar();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -176,59 +230,6 @@ public class frmMain extends javax.swing.JFrame
 
         jLabelSelectedConnectionName.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabelSelectedConnectionName.setText("....");
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Remote Machine Status"));
-        jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-        jLabel1.setText("CPU Load:");
-
-        jLabelCPUUsage.setText("0");
-
-        jLabel2.setText("Free Memory:");
-
-        jLabelFreeMemory.setText("0");
-
-        jLabel3.setText("Total Memory:");
-
-        jLabelTotalMemory.setText("0");
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabelCPUUsage, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelFreeMemory, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
-                    .addComponent(jLabelTotalMemory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabelCPUUsage))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabelFreeMemory))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabelTotalMemory))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Queues"));
-        jPanel3.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jScrollPane2.setViewportView(jListQueues);
 
@@ -253,92 +254,276 @@ public class frmMain extends javax.swing.JFrame
             }
         });
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButtonRefreshQueues, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonCreateQueue, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonDropQueue, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap(319, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonRefreshQueues)
                     .addComponent(jButtonCreateQueue)
                     .addComponent(jButtonDropQueue))
                 .addContainerGap())
         );
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
-        jPanel4.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jPanel4.setName("");
+        jTabbedPane1.addTab("Queues", jPanel1);
 
-        jButtonEditUsers.setText("...");
-        jButtonEditUsers.addActionListener(new java.awt.event.ActionListener() {
+        jListUsers.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jListUsersMouseReleased(evt);
+            }
+        });
+        jScrollPane3.setViewportView(jListUsers);
+
+        jButtonRefreshUsers.setText("Refresh");
+        jButtonRefreshUsers.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonEditUsersActionPerformed(evt);
+                jButtonRefreshUsersActionPerformed(evt);
             }
         });
 
-        jLabel4.setText("Users & Permissions");
+        jButtonDropUser.setText("Drop");
+        jButtonDropUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDropUserActionPerformed(evt);
+            }
+        });
+
+        jLabelUserLabel.setText("Permissions for user: ");
+
+        jCheckBoxAll.setText("All");
+        jCheckBoxAll.setEnabled(false);
+
+        jCheckBoxCreateUsers.setText("Create Users");
+        jCheckBoxCreateUsers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxCreateUsersActionPerformed(evt);
+            }
+        });
+
+        jCheckBoxDropUsers.setText("Drop Users");
+        jCheckBoxDropUsers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxDropUsersActionPerformed(evt);
+            }
+        });
+
+        jCheckBoxCreateQueues.setText("Create Queues");
+        jCheckBoxCreateQueues.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxCreateQueuesActionPerformed(evt);
+            }
+        });
+
+        jCheckBoxDropQueues.setText("Drop Queues");
+        jCheckBoxDropQueues.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxDropQueuesActionPerformed(evt);
+            }
+        });
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Create User"));
+        jPanel4.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        jLabel4.setText("Username:");
+
+        jLabel5.setText("Password:");
+
+        jButtonCreateUser.setText("Create");
+        jButtonCreateUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCreateUserActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButtonEditUsers)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextFieldNewUserPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                            .addComponent(jTextFieldNewUserUsername)))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jButtonCreateUser, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(23, 23, 23)
+                .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonEditUsers)
-                    .addComponent(jLabel4))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel4)
+                    .addComponent(jTextFieldNewUserUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldNewUserPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addComponent(jButtonCreateUser)
+                .addContainerGap())
         );
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(19, 19, 19)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabelUserLabel)
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addGap(10, 10, 10)
+                                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jCheckBoxCreateUsers)
+                                            .addComponent(jCheckBoxAll)
+                                            .addComponent(jCheckBoxDropUsers)
+                                            .addComponent(jCheckBoxCreateQueues)
+                                            .addComponent(jCheckBoxDropQueues)))))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jButtonRefreshUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButtonDropUser, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(271, Short.MAX_VALUE))))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabelUserLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jCheckBoxAll)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jCheckBoxCreateUsers)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jCheckBoxDropUsers)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheckBoxCreateQueues)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jCheckBoxDropQueues)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonRefreshUsers)
+                            .addComponent(jButtonDropUser))
+                        .addGap(13, 13, 13)))
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Users", jPanel5);
+
+        jLabel1.setText("CPU Load:");
+
+        jLabel2.setText("Free Memory:");
+
+        jLabelFreeMemory.setText("0");
+
+        jLabel3.setText("Total Memory:");
+
+        jLabelTotalMemory.setText("0");
+
+        jProgressBarCPULoad.setStringPainted(true);
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jProgressBarCPULoad, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabelFreeMemory, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabelTotalMemory, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(333, Short.MAX_VALUE))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jProgressBarCPULoad, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel6Layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addComponent(jLabel1)))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabelFreeMemory))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabelTotalMemory))
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Server Status", jPanel6);
 
         javax.swing.GroupLayout jPanelMainPanelLayout = new javax.swing.GroupLayout(jPanelMainPanel);
         jPanelMainPanel.setLayout(jPanelMainPanelLayout);
         jPanelMainPanelLayout.setHorizontalGroup(
             jPanelMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelMainPanelLayout.createSequentialGroup()
-                .addGroup(jPanelMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabelSelectedConnectionName)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addComponent(jLabelSelectedConnectionName)
+                .addGap(0, 575, Short.MAX_VALUE))
+            .addGroup(jPanelMainPanelLayout.createSequentialGroup()
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanelMainPanelLayout.setVerticalGroup(
             jPanelMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelMainPanelLayout.createSequentialGroup()
                 .addComponent(jLabelSelectedConnectionName)
-                .addGap(22, 22, 22)
-                .addGroup(jPanelMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTabbedPane1))
         );
 
         jMenu1.setText("File");
@@ -370,16 +555,15 @@ public class frmMain extends javax.swing.JFrame
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelMainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanelMainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addComponent(jPanelMainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -437,26 +621,29 @@ public class frmMain extends javax.swing.JFrame
 
     private void jButtonCreateQueueActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonCreateQueueActionPerformed
     {//GEN-HEADEREND:event_jButtonCreateQueueActionPerformed
-        String queueName = JOptionPane.showInputDialog(null, "Name for the new queue:");
-        try
+        String queueName = JOptionPane.showInputDialog(null, "Name for the new queue:").trim();
+        if (!queueName.equals(""))
         {
-            queueName = queueName.trim();
-            queueName = queueName.replace(" ", "_");
-            myQueueConnection con = fSelectedConnection.getQueueConnection();
-            con.Open();
-
-            String reply = new String(con.SendToServer("CREATE QUEUE " + queueName).getBytes());
-            if (reply.startsWith("ERROR"))
+            try
             {
+                queueName = queueName.trim();
+                queueName = queueName.replace(" ", "_");
+                myQueueConnection con = fSelectedConnection.getQueueConnection();
+                con.Open();
+
+                String reply = new String(con.SendToServer("CREATE QUEUE " + queueName).getBytes());
+                if (reply.startsWith("ERROR"))
+                {
+                    con.close();
+                    throw new Exception(reply);
+                }
                 con.close();
-                throw new Exception(reply);
+                UpdateQueuesList();
             }
-            con.close();
-            UpdateQueuesList();
-        }
-        catch (Exception ex)
-        {
-            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            catch (Exception ex)
+            {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_jButtonCreateQueueActionPerformed
 
@@ -491,20 +678,137 @@ public class frmMain extends javax.swing.JFrame
         }
     }//GEN-LAST:event_jButtonDropQueueActionPerformed
 
-    // Edit users
-    private void jButtonEditUsersActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonEditUsersActionPerformed
-    {//GEN-HEADEREND:event_jButtonEditUsersActionPerformed
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        frmEditUsers frm = new frmEditUsers(fSelectedConnection);
+    private void jListUsersMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_jListUsersMouseReleased
+    {//GEN-HEADEREND:event_jListUsersMouseReleased
 
-        int w = frm.getSize().width;
-        int h = frm.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
+        fSelectedUser = jListUsers.getSelectedValue().toString();
+        UpdateUserPermissions(fSelectedUser);
+    }//GEN-LAST:event_jListUsersMouseReleased
 
-        frm.setLocation(x, y);
-        frm.setVisible(true);
-    }//GEN-LAST:event_jButtonEditUsersActionPerformed
+    private void jButtonRefreshUsersActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonRefreshUsersActionPerformed
+    {//GEN-HEADEREND:event_jButtonRefreshUsersActionPerformed
+        try
+        {
+            UpdateUsersList();
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonRefreshUsersActionPerformed
+
+    private void jButtonDropUserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonDropUserActionPerformed
+    {//GEN-HEADEREND:event_jButtonDropUserActionPerformed
+        try
+        {
+            String selectedUser = jListUsers.getSelectedValue().toString().split(" ")[0];
+
+            int answer = JOptionPane.showConfirmDialog(null, "Do you want to drop user '" + selectedUser + "' ?", "Drop User", JOptionPane.WARNING_MESSAGE);
+            if (answer != JOptionPane.YES_OPTION)
+            {
+                return;
+            }
+
+            try (myQueueConnection con = fSelectedConnection.getQueueConnection())
+            {
+                con.Open();
+
+                String reply = new String(con.SendToServer("DROP USER " + selectedUser).getBytes());
+                if (reply.startsWith("ERROR"))
+                {
+                    con.close();
+                    throw new Exception(reply.substring(5));
+                }
+            }
+
+            UpdateUsersList();
+            UpdateUserPermissions(fSelectedUser);
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonDropUserActionPerformed
+
+    private void jCheckBoxCreateUsersActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jCheckBoxCreateUsersActionPerformed
+    {//GEN-HEADEREND:event_jCheckBoxCreateUsersActionPerformed
+        if (jCheckBoxCreateUsers.isSelected())
+        {
+            GivePermission("CREATEUSERS");
+        }
+        else
+        {
+            TakePermission("CREATEUSERS");
+        }
+    }//GEN-LAST:event_jCheckBoxCreateUsersActionPerformed
+
+    private void jCheckBoxDropUsersActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jCheckBoxDropUsersActionPerformed
+    {//GEN-HEADEREND:event_jCheckBoxDropUsersActionPerformed
+        if (jCheckBoxDropUsers.isSelected())
+        {
+            GivePermission("DROPUSERS");
+        }
+        else
+        {
+            TakePermission("DROPUSERS");
+        }
+    }//GEN-LAST:event_jCheckBoxDropUsersActionPerformed
+
+    private void jCheckBoxCreateQueuesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jCheckBoxCreateQueuesActionPerformed
+    {//GEN-HEADEREND:event_jCheckBoxCreateQueuesActionPerformed
+        if (jCheckBoxCreateQueues.isSelected())
+        {
+            GivePermission("CREATEQUEUES");
+        }
+        else
+        {
+            TakePermission("CREATEQUEUES");
+        }
+    }//GEN-LAST:event_jCheckBoxCreateQueuesActionPerformed
+
+    private void jCheckBoxDropQueuesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jCheckBoxDropQueuesActionPerformed
+    {//GEN-HEADEREND:event_jCheckBoxDropQueuesActionPerformed
+        if (jCheckBoxDropQueues.isSelected())
+        {
+            GivePermission("DROPQUEUES");
+        }
+        else
+        {
+            TakePermission("DROPQUEUES");
+        }
+    }//GEN-LAST:event_jCheckBoxDropQueuesActionPerformed
+
+    private void jButtonCreateUserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonCreateUserActionPerformed
+    {//GEN-HEADEREND:event_jButtonCreateUserActionPerformed
+        try
+        {
+            try (myQueueConnection con = fSelectedConnection.getQueueConnection())
+            {
+                con.Open();
+
+                String username = jTextFieldNewUserUsername.getText().trim().replace(" ", "");
+                String password = jTextFieldNewUserPassword.getText();
+
+                String reply = new String(con.SendToServer("CREATE USER " + username + " " + password).getBytes());
+                if (reply.startsWith("ERROR"))
+                {
+                    throw new Exception(reply.substring(5));
+                }
+                else
+                {
+                    jTextFieldNewUserUsername.setText("");
+                    jTextFieldNewUserPassword.setText("");
+                    JOptionPane.showMessageDialog(null, "User created!", "New user", JOptionPane.INFORMATION_MESSAGE);
+                }
+
+                UpdateUsersList();
+            }
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonCreateUserActionPerformed
 
     public void RebuildConnectionsPopUp(DefaultMutableTreeNode selectedNode)
     {
@@ -582,6 +886,108 @@ public class frmMain extends javax.swing.JFrame
         }
     }
 
+    private void UpdateUserPermissions(String selectedUser)
+    {
+        jLabelUserLabel.setText("Permissions for user: " + selectedUser);
+        jCheckBoxAll.setSelected(false);
+        jCheckBoxCreateUsers.setSelected(false);
+        jCheckBoxDropUsers.setSelected(false);
+        jCheckBoxCreateQueues.setSelected(false);
+        jCheckBoxDropQueues.setSelected(false);
+
+        try (myQueueConnection con = fSelectedConnection.getQueueConnection())
+        {
+            con.Open();
+            String reply = new String(con.SendToServer("SHOW PERMISSIONS FOR " + selectedUser).getBytes());
+
+            if (reply.startsWith("ERROR"))
+            {
+                con.close();
+                throw new Exception(reply.substring(5));
+            }
+
+
+            String[] permissions = reply.split("\\|");
+
+            for (String permission : permissions)
+            {
+                switch (permission.toUpperCase())
+                {
+                    case "ALL":
+                        jCheckBoxAll.setSelected(true);
+                        break;
+
+                    case "CREATEUSERS":
+                        jCheckBoxCreateUsers.setSelected(true);
+                        break;
+
+                    case "DROPUSERS":
+                        jCheckBoxDropUsers.setSelected(true);
+                        break;
+
+                    case "CREATEQUEUES":
+                        jCheckBoxCreateQueues.setSelected(true);
+                        break;
+
+                    case "DROPQUEUES":
+                        jCheckBoxDropQueues.setSelected(true);
+                        break;
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void GivePermission(String permission)
+    {
+        try
+        {
+            try (myQueueConnection con = fSelectedConnection.getQueueConnection())
+            {
+                con.Open();
+
+                String reply = new String(con.SendToServer("GIVE PERMISSION " + permission + " TO " + fSelectedUser).getBytes());
+                if (reply.startsWith("ERROR"))
+                {
+                    throw new Exception(reply.substring(5));
+                }
+
+                UpdateUserPermissions(fSelectedUser);
+            }
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void TakePermission(String permission)
+    {
+        try
+        {
+            try (myQueueConnection con = fSelectedConnection.getQueueConnection())
+            {
+                con.Open();
+
+                String reply = new String(con.SendToServer("TAKE PERMISSION " + permission + " FROM " + fSelectedUser).getBytes());
+                if (reply.startsWith("ERROR"))
+                {
+                    throw new Exception(reply.substring(5));
+                }
+
+                UpdateUserPermissions(fSelectedUser);
+            }
+        }
+        catch (Exception ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     public static void main(String args[])
     {
         try
@@ -604,28 +1010,43 @@ public class frmMain extends javax.swing.JFrame
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCreateQueue;
+    private javax.swing.JButton jButtonCreateUser;
     private javax.swing.JButton jButtonDropQueue;
-    private javax.swing.JButton jButtonEditUsers;
+    private javax.swing.JButton jButtonDropUser;
     private javax.swing.JButton jButtonRefreshQueues;
+    private javax.swing.JButton jButtonRefreshUsers;
+    private javax.swing.JCheckBox jCheckBoxAll;
+    private javax.swing.JCheckBox jCheckBoxCreateQueues;
+    private javax.swing.JCheckBox jCheckBoxCreateUsers;
+    private javax.swing.JCheckBox jCheckBoxDropQueues;
+    private javax.swing.JCheckBox jCheckBoxDropUsers;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    public javax.swing.JLabel jLabelCPUUsage;
+    private javax.swing.JLabel jLabel5;
     public javax.swing.JLabel jLabelFreeMemory;
     private javax.swing.JLabel jLabelSelectedConnectionName;
     public javax.swing.JLabel jLabelTotalMemory;
+    private javax.swing.JLabel jLabelUserLabel;
     public javax.swing.JList jListQueues;
+    public javax.swing.JList jListUsers;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanelMainPanel;
+    public javax.swing.JProgressBar jProgressBarCPULoad;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextField jTextFieldNewUserPassword;
+    private javax.swing.JTextField jTextFieldNewUserUsername;
     private javax.swing.JTree jTreeConnections;
     // End of variables declaration//GEN-END:variables
 }
