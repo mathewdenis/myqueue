@@ -45,7 +45,7 @@ public class UpdateUIForSelectedConnectionThread extends Thread
                 }
                 else
                 {
-                    fMainForm.jLabelCPUUsage.setText("N/A");
+                    fMainForm.jProgressBarCPULoad.setValue(0);
                     fMainForm.jLabelFreeMemory.setText("N/A");
                     fMainForm.jLabelTotalMemory.setText("N/A");
                 }
