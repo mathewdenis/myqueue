@@ -39,16 +39,7 @@ public class UpdateUIForSelectedConnectionThread extends Thread
         {
             try
             {
-                if (fMainForm.fSelectedConnection != null && fMainForm.fSelectedConnection.fConnected)
-                {
-                    fMainForm.UpdateRemoteMachineStatus();
-                }
-                else
-                {
-                    fMainForm.jProgressBarCPULoad.setValue(0);
-                    fMainForm.jLabelFreeMemory.setText("N/A");
-                    fMainForm.jLabelTotalMemory.setText("N/A");
-                }
+                
             }
             catch (Exception ex)
             {

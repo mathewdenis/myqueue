@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 import myQueueConnector.myQueueConnection;
 import myqueueworkbench.UI.ConnectionTreeNode;
 import myqueueworkbench.frmMain;
-import myqueueworkbench.frmNewConnection;
+import myqueueworkbench.UI.frmNewConnection;
 
 /**
  *
@@ -41,13 +41,13 @@ public class OpenConnectionActionListener implements ActionListener
             fConnectionNode.getConnection().fConnected = true;
             con.close();
             
-            fMainForm.SelectedConnectionChanged();
+            //fMainForm.SelectedConnectionChanged();
         }
         catch (Exception ex)
         {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
 
-        fMainForm.RebuildConnectionsPopUp(fConnectionNode);
+        //fMainForm.RebuildConnectionsPopUp(fConnectionNode);
     }
 }

@@ -25,6 +25,6 @@ public class CloseConnectionActionListener implements ActionListener
     public void actionPerformed(ActionEvent e)
     {
         fConnectionNode.getConnection().fConnected = false;
-        fMainForm.RebuildConnectionsPopUp(fConnectionNode);
+        //fMainForm.RebuildConnectionsPopUp(fConnectionNode);
     }
 }
