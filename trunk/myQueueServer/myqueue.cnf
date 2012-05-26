@@ -5,7 +5,7 @@ port 			= 	2572
 bind-address 		= 	127.0.0.1
 
 # Connections time-out in milliseconds
-connection_timeout  	=   	8000
+connection_timeout  	=   	10000
 
 # The server's read buffer size of each connection in bytes	
 read_buffer_size 	= 	32768			

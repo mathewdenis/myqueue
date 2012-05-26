@@ -1,7 +1,5 @@
 package myqueueworkbench;
 
-
-
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.IOException;
@@ -13,8 +11,6 @@ import javax.swing.tree.TreePath;
 import myQueueConnector.myQueueConnection;
 import myqueueworkbench.Connections.*;
 import myqueueworkbench.UI.*;
-
-
 
 /**
  *
@@ -63,12 +59,6 @@ public class frmMainOLD extends javax.swing.JFrame
 
     public void UpdateConnectionsList()
     {
-        // Update connections in tree
-        for (Connection con : ConnectionsManager.getConnections())
-        {
-            ConnectionTreeNode node = new ConnectionTreeNode(con.fName, con);
-            fMyQueueConnectionsParentNode.add(node);
-        }
     }
 
     /**
@@ -159,7 +149,7 @@ public class frmMainOLD extends javax.swing.JFrame
 
                 String loadStr = data[2].replace("CPU LOAD", "");
                 int load = Integer.parseInt(loadStr.trim());
-                
+
                 jProgressBarCPULoad.setValue(load);
                 jLabelFreeMemory.setText(data[0].replace("FREE MEMORY", ""));
                 jLabelTotalMemory.setText(data[1].replace("TOTAL MEMORY", ""));
@@ -581,15 +571,15 @@ public class frmMainOLD extends javax.swing.JFrame
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem1ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem1ActionPerformed
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        /*frmNewConnection frm = new frmNewConnection(this);
-
-        int w = frm.getSize().width;
-        int h = frm.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        frm.setLocation(x, y);
-        frm.setVisible(true);*/
+        /*
+         * frmNewConnection frm = new frmNewConnection(this);
+         *
+         * int w = frm.getSize().width; int h = frm.getSize().height; int x =
+         * (dim.width - w) / 2; int y = (dim.height - h) / 2;
+         *
+         * frm.setLocation(x, y);
+        frm.setVisible(true);
+         */
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     // JTree Connections selection changed
@@ -812,59 +802,6 @@ public class frmMainOLD extends javax.swing.JFrame
 
     public void RebuildConnectionsPopUp(DefaultMutableTreeNode selectedNode)
     {
-        if (selectedNode instanceof ConnectionTreeNode)
-        {
-            // Get connection
-            final ConnectionTreeNode selectedConnectionNode = (ConnectionTreeNode) selectedNode;
-            fSelectedConnection = selectedConnectionNode.getConnection();
-
-            // Update the JPopUpMenu items
-            fConnectionsPopUpMenu = new JPopupMenu();
-            fConnectionsPopUpMenu.removeAll();
-
-            fConnectionsPopUpMenu.setInvoker(jTreeConnections);
-            PopUpHandler handler = new PopUpHandler(jTreeConnections, fConnectionsPopUpMenu); // Set up a handler for the PopUp menu
-
-            // Open Connection
-            JMenuItem menuItemOpen = new JMenuItem("Open Connection");
-            //menuItemOpen.addActionListener(new OpenConnectionActionListener(this, selectedConnectionNode));
-            fConnectionsPopUpMenu.add(menuItemOpen);
-
-            // Close Connection
-            JMenuItem menuItemClose = new JMenuItem("Close Connection");
-            //menuItemClose.addActionListener(new CloseConnectionActionListener(this, selectedConnectionNode));
-            fConnectionsPopUpMenu.add(menuItemClose);
-
-            // Separator
-            fConnectionsPopUpMenu.addSeparator();
-
-            // Edit
-            JMenuItem menuItemEdit = new JMenuItem("Edit Connection");
-            //menuItemEdit.addActionListener(new EditConnectionActionListener(this, selectedConnectionNode));
-            fConnectionsPopUpMenu.add(menuItemEdit);
-
-
-            switch (selectedConnectionNode.getConnection().fConnected ? 1 : 0)
-            {
-                case 1:
-                    menuItemClose.setEnabled(true);
-                    menuItemOpen.setEnabled(false);
-                    break;
-                case 0:
-                    menuItemClose.setEnabled(false);
-                    menuItemOpen.setEnabled(true);
-                    break;
-            }
-
-        }
-        else
-        {
-            fConnectionsPopUpMenu.removeAll();
-            fConnectionsPopUpMenu.setInvoker(null);
-            fConnectionsPopUpMenu = null;
-        }
-
-        UpdateUIForSelectedConnection();
     }
 
     private void UpdateUIForSelectedConnection()
