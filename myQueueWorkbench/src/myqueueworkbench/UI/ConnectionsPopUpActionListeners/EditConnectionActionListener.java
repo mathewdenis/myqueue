@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import myqueueworkbench.UI.ConnectionTreeNode;
 import myqueueworkbench.frmMain;
-import myqueueworkbench.frmNewConnection;
+import myqueueworkbench.UI.frmNewConnection;
 
 /**
  *

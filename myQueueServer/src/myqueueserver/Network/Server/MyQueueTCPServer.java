@@ -120,11 +120,15 @@ public class MyQueueTCPServer extends ExtasysTCPServer
                             ShowGrants(sender, strData);
                             break;
 
-                        case "MACHINE":
+                        case "SERVER":
                             switch (splittedStr[2].toUpperCase())
                             {
-                                case "STATUS": // SHOW MACHINE STATUS
-                                    ShowMachineStatus(sender, strData);
+                                case "STATUS": // SHOW SERVER STATUS
+                                    ShowServerStatus(sender, strData);
+                                    break;
+
+                                case "VERSION": // SHOW SERVER VERSION
+                                    ShowServerVersion(sender, strData);
                                     break;
                             }
                             break;
@@ -460,9 +464,14 @@ public class MyQueueTCPServer extends ExtasysTCPServer
         }
     }
 
-    private void ShowMachineStatus(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
+    private void ShowServerStatus(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
     {
         sender.SendData("FREE MEMORY " + MachineStatus.getFreeMemory() + "\nTOTAL MEMORY " + MachineStatus.getTotalMemory() + "\nCPU LOAD " + MachineStatus.getCPULoad() + fETX);
+    }
+
+    private void ShowServerVersion(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException
+    {
+        sender.SendData("VERSION 1.0.0" + fETX);
     }
 
     private void GivePermission(TCPClientConnection sender, String strData) throws ClientIsDisconnectedException, OutgoingPacketFailedException, IOException

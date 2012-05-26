@@ -92,6 +92,19 @@ public class ConnectionsManager
         return null;
     }
 
+    public static void DeleteConnection(String name) throws IOException
+    {
+        for (Connection con : fConnections)
+        {
+            if (con.fName.equals(name))
+            {
+                fConnections.remove(con);
+                Save();
+                break;
+            }
+        }
+    }
+
     public static ArrayList<Connection> getConnections()
     {
         return fConnections;
