@@ -46,32 +46,25 @@ public class myQueueConnection extends Extasys.Network.TCP.Client.ExtasysTCPClie
     @Override
     public void OnDataReceive(TCPConnector connector, DataFrame data)
     {
-        synchronized (fLock)
-        {
-            fServerResponse = data;
-            fGotResponseFromServer = true;
-            fWaitCommandEvent.Set();
-        }
+        fServerResponse = data;
+        fGotResponseFromServer = true;
+        fWaitCommandEvent.Set();
     }
 
     @Override
     public void OnConnect(TCPConnector connector)
     {
-        synchronized (fLock)
-        {
-            fIsConnected = true;
-            fWaitToConnectEvent.Set();
-        }
+
+        fIsConnected = true;
+        fWaitToConnectEvent.Set();
+
     }
 
     @Override
     public void OnDisconnect(TCPConnector connector)
     {
-        synchronized (fLock)
-        {
-            fIsConnected = false;
-            fWaitToConnectEvent.Set();
-        }
+        fIsConnected = false;
+        fWaitToConnectEvent.Set();
     }
 
     /**
@@ -81,38 +74,41 @@ public class myQueueConnection extends Extasys.Network.TCP.Client.ExtasysTCPClie
      */
     public synchronized void Open() throws Exception
     {
-        synchronized (fLock)
+        fMyTCPConnector.Stop();
+        fWaitToConnectEvent = new ManualResetEvent(false);
+        fMyTCPConnector.Start();
+        if (!fIsConnected)
         {
-            fMyTCPConnector.Stop();
-            fWaitToConnectEvent = new ManualResetEvent(false);
-            fMyTCPConnector.Start();
-            if (!fIsConnected)
-            {
-                fWaitToConnectEvent.WaitOne(fResponseTimeOut);
-            }
+            fWaitToConnectEvent.WaitOne(fResponseTimeOut);
+        }
 
-            String logIn = "LOGIN " + fUsername + " " + fPassword;
-            DataFrame response = null;
-            try
-            {
-                response = SendToServer(logIn);
-                String responseStr = new String(response.getBytes());
-                if (responseStr.startsWith("Error"))
-                {
-                    throw new Exception(responseStr.substring(5).trim());
-                }
-            }
-            catch (ConnectorDisconnectedException | ConnectorCannotSendPacketException | CommandTimeOutException ex)
-            {
-                throw new Exception("Cannot contact server!");
-            }
-
+        String logIn = "LOGIN " + fUsername + " " + fPassword;
+        DataFrame response = null;
+        try
+        {
+            response = SendToServer(logIn);
             String responseStr = new String(response.getBytes());
-
-            if (responseStr.startsWith("ERROR"))
+            if (responseStr.startsWith("Error"))
             {
-                throw new Exception(responseStr);
+                throw new Exception(responseStr.substring(5).trim());
             }
+        }
+        catch (ConnectorDisconnectedException | ConnectorCannotSendPacketException ex)
+        {
+            Close();
+            throw new Exception(ex.getMessage());
+        }
+        catch (CommandTimeOutException ex)
+        {
+            Close();
+            throw new Exception("Connection time out!");
+        }
+
+        String responseStr = new String(response.getBytes());
+
+        if (responseStr.startsWith("ERROR"))
+        {
+            throw new Exception(responseStr);
         }
     }
 
@@ -121,11 +117,8 @@ public class myQueueConnection extends Extasys.Network.TCP.Client.ExtasysTCPClie
      */
     private synchronized void Close()
     {
-        synchronized (fLock)
-        {
-            super.Stop();
-            fIsConnected = false;
-        }
+        super.Stop();
+        fIsConnected = false;
     }
 
     public DataFrame SendToServer(String data) throws ConnectorDisconnectedException, ConnectorCannotSendPacketException, CommandTimeOutException
