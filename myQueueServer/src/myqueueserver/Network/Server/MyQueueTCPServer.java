@@ -553,12 +553,12 @@ public class MyQueueTCPServer extends ExtasysTCPServer
     @Override
     public void OnClientConnect(TCPClientConnection client)
     {
-        //System.out.println("Client " + client.getIPAddress() + " connected");
+        System.out.println("Client " + client.getIPAddress() + " connected");
     }
 
     @Override
     public void OnClientDisconnect(TCPClientConnection client)
     {
-        //System.out.println("Client " + client.getIPAddress() + " disconnected");
+        System.out.println("Client " + client.getIPAddress() + " disconnected");
     }
 }
