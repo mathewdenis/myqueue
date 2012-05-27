@@ -23,8 +23,8 @@ public class myQueueConnection extends Extasys.Network.TCP.Client.ExtasysTCPClie
     private InetAddress fServerIP;
     private String fUsername, fPassword;
     private int fServerPort;
-    private int fResponseTimeOut = 2000;
-    private String fETX = "<3m{X34l*Uψ7q.!]'Cξ51g47Ω],g3;7=8@2:λHB4&4_lπ#>NM{-3ς3#7k;mΠpX%(";
+    private int fResponseTimeOut = 4000;
+    private String fETX = "<1@#$)(*&yh^^3_18w43K2$009_+1##";
     // Server response
     private boolean fGotResponseFromServer = false;
     private DataFrame fServerResponse = null;
@@ -46,6 +46,7 @@ public class myQueueConnection extends Extasys.Network.TCP.Client.ExtasysTCPClie
     @Override
     public void OnDataReceive(TCPConnector connector, DataFrame data)
     {
+        System.out.println("Data received: " + new String(data.getBytes()));
         fServerResponse = data;
         fGotResponseFromServer = true;
         fWaitCommandEvent.Set();
@@ -54,10 +55,8 @@ public class myQueueConnection extends Extasys.Network.TCP.Client.ExtasysTCPClie
     @Override
     public void OnConnect(TCPConnector connector)
     {
-
         fIsConnected = true;
         fWaitToConnectEvent.Set();
-
     }
 
     @Override
@@ -75,12 +74,9 @@ public class myQueueConnection extends Extasys.Network.TCP.Client.ExtasysTCPClie
     public synchronized void Open() throws Exception
     {
         fMyTCPConnector.Stop();
-        fWaitToConnectEvent = new ManualResetEvent(false);
+        fWaitCommandEvent.Reset();
         fMyTCPConnector.Start();
-        if (!fIsConnected)
-        {
-            fWaitToConnectEvent.WaitOne(fResponseTimeOut);
-        }
+        fWaitCommandEvent.WaitOne(fResponseTimeOut);
 
         String logIn = "LOGIN " + fUsername + " " + fPassword;
         DataFrame response = null;
@@ -117,7 +113,8 @@ public class myQueueConnection extends Extasys.Network.TCP.Client.ExtasysTCPClie
      */
     private synchronized void Close()
     {
-        super.Stop();
+        super.Dispose(); // Stops and disposes the client
+        fMyTCPConnector = null;
         fIsConnected = false;
     }
 
@@ -125,10 +122,12 @@ public class myQueueConnection extends Extasys.Network.TCP.Client.ExtasysTCPClie
     {
         synchronized (fLock)
         {
+            fWaitCommandEvent.Reset();
             fGotResponseFromServer = false;
-            fWaitCommandEvent = new ManualResetEvent(false);
             fServerResponse = null;
+
             fMyTCPConnector.SendData(data + fETX);
+
             fWaitCommandEvent.WaitOne(fResponseTimeOut);
             if (!fGotResponseFromServer)
             {
