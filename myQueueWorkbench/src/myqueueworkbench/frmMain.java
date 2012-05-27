@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ComponentEvent;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -20,9 +22,31 @@ import myqueueworkbench.UI.frmConnection;
 public class frmMain extends javax.swing.JFrame
 {
 
+    private ArrayList<frmConnection> fCurrentConnectionForms = new ArrayList<>();
+
     public frmMain()
     {
         initComponents();
+
+        // Resize event
+        this.addComponentListener(new java.awt.event.ComponentAdapter()
+        {
+
+            @Override
+            public void componentResized(ComponentEvent e)
+            {
+                try
+                {
+                    for (frmConnection frm : fCurrentConnectionForms)
+                    {
+                        frm.ResizeTabs();
+                    }
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+        });
 
         jListConnections.setComponentPopupMenu(jPopupMenuConnections);
 
@@ -258,7 +282,10 @@ public class frmMain extends javax.swing.JFrame
 
             frmConnection frm = new frmConnection(con);
             this.jTabbedPaneMain.add(con.fName, frm);
+            fCurrentConnectionForms.add(frm);
+            frm.setVisible(true);
             jTabbedPaneMain.setSelectedComponent(frm);
+            frm.ResizeTabs();
         }
         catch (Exception ex)
         {

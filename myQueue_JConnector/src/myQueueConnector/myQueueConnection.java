@@ -46,7 +46,6 @@ public class myQueueConnection extends Extasys.Network.TCP.Client.ExtasysTCPClie
     @Override
     public void OnDataReceive(TCPConnector connector, DataFrame data)
     {
-        System.out.println("Data received: " + new String(data.getBytes()));
         fServerResponse = data;
         fGotResponseFromServer = true;
         fWaitCommandEvent.Set();

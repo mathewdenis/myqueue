@@ -28,7 +28,7 @@ public class frmConnection extends javax.swing.JPanel
         fTabLabels.put(0, jLabelServerStatus);
         frmServerStatus newFrmServerStatus = new frmServerStatus(this);
         fTabForms.put(0, newFrmServerStatus);
-        newFrmServerStatus.setBounds(0, 0, 400, 400);
+        newFrmServerStatus.setBounds(0, 0, 800, 600);
         jPanelMainView.add(newFrmServerStatus);
 
         // Queues
@@ -44,6 +44,16 @@ public class frmConnection extends javax.swing.JPanel
 
         // Select default Server Status Tab
         SelectTab(0);
+
+        ResizeTabs();
+    }
+
+    public void ResizeTabs()
+    {
+        for (Integer key : fTabForms.keySet())
+        {
+            fTabForms.get(key).setSize(jPanelMainView.getWidth(), jPanelMainView.getHeight());
+        }
     }
 
     private void SelectTab(int tab)
