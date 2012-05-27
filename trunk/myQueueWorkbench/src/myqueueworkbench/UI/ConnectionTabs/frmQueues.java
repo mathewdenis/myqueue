@@ -2,6 +2,7 @@ package myqueueworkbench.UI.ConnectionTabs;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import myQueueConnector.myQueueConnection;
 import myqueueworkbench.UI.frmConnection;
 
@@ -28,19 +29,30 @@ public class frmQueues extends javax.swing.JPanel
             con.Open();
             String userGrants = new String(con.SendToServer("SHOW GRANTS FOR CURRENT_USER").getBytes());
 
-            jListQueues.removeAll();
             String[] tmp = userGrants.split("\n");
-            DefaultListModel model = new DefaultListModel();
-            for (String str : tmp)
+
+            DefaultTableModel model = (DefaultTableModel) jTableQueues.getModel();
+            while (model.getRowCount() > 0)
             {
-                model.addElement(str);
+                model.removeRow(0);
             }
-            jListQueues.setModel(model);
+
+            if (!userGrants.trim().equals(""))
+            {
+                for (String str : tmp)
+                {
+                    String[] queueNameAndPermissions = str.split(" ");
+                    model.addRow(queueNameAndPermissions);
+                }
+            }
+
+            jTableQueues.setModel(model);
+            jTableQueues.updateUI();
             con.close();
         }
         catch (Exception ex)
         {
-           
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -48,15 +60,13 @@ public class frmQueues extends javax.swing.JPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jListQueues = new javax.swing.JList();
         jButtonRefreshQueues = new javax.swing.JButton();
         jButtonCreateQueue = new javax.swing.JButton();
         jButtonDropQueue = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-
-        jScrollPane2.setViewportView(jListQueues);
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableQueues = new javax.swing.JTable();
 
         jButtonRefreshQueues.setText("Refresh");
         jButtonRefreshQueues.addActionListener(new java.awt.event.ActionListener() {
@@ -84,6 +94,25 @@ public class frmQueues extends javax.swing.JPanel
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setText("Queues");
 
+        jTableQueues.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Name", "Permissions"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableQueues.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(jTableQueues);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -91,19 +120,18 @@ public class frmQueues extends javax.swing.JPanel
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jButtonRefreshQueues, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(jButtonCreateQueue, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(jButtonDropQueue, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButtonRefreshQueues, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonCreateQueue, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonDropQueue, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2)))
-                .addContainerGap(389, Short.MAX_VALUE))
+                        .addComponent(jLabel2))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(326, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -116,26 +144,19 @@ public class frmQueues extends javax.swing.JPanel
                         .addGap(25, 25, 25)
                         .addComponent(jLabel2)))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonRefreshQueues)
                     .addComponent(jButtonCreateQueue)
                     .addComponent(jButtonDropQueue))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonRefreshQueuesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonRefreshQueuesActionPerformed
     {//GEN-HEADEREND:event_jButtonRefreshQueuesActionPerformed
-        try
-        {
-            UpdateQueues();
-        }
-        catch (Exception ex)
-        {
-            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        UpdateQueues();
     }//GEN-LAST:event_jButtonRefreshQueuesActionPerformed
 
     private void jButtonCreateQueueActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonCreateQueueActionPerformed
@@ -170,7 +191,7 @@ public class frmQueues extends javax.swing.JPanel
     {//GEN-HEADEREND:event_jButtonDropQueueActionPerformed
         try
         {
-            String selectedQueue = jListQueues.getSelectedValue().toString().split(" ")[0];
+            String selectedQueue = jTableQueues.getValueAt(jTableQueues.getSelectedRow(), 0).toString().split(" ")[0];
 
             int answer = JOptionPane.showConfirmDialog(null, "Do you want to drop queue '" + selectedQueue + "' ?", "Drop Queue", JOptionPane.WARNING_MESSAGE);
             if (answer != JOptionPane.YES_OPTION)
@@ -202,7 +223,7 @@ public class frmQueues extends javax.swing.JPanel
     private javax.swing.JButton jButtonRefreshQueues;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    public javax.swing.JList jListQueues;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTableQueues;
     // End of variables declaration//GEN-END:variables
 }
