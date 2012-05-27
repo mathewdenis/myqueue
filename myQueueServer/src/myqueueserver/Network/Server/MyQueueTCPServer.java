@@ -26,7 +26,7 @@ import myqueueserver.Users.UsersManager;
 public class MyQueueTCPServer extends ExtasysTCPServer
 {
 
-    private String fETX = "<3m{X34l*Uψ7q.!]'Cξ51g47Ω],g3;7=8@2:λHB4&4_lπ#>NM{-3ς3#7k;mΠpX%(";
+    private String fETX = "<1@#$)(*&yh^^3_18w43K2$009_+1##";
 
     public MyQueueTCPServer() throws UnknownHostException
     {
@@ -554,6 +554,13 @@ public class MyQueueTCPServer extends ExtasysTCPServer
     public void OnClientConnect(TCPClientConnection client)
     {
         System.out.println("Client " + client.getIPAddress() + " connected");
+        try
+        {
+            client.SendData("WELCOME" + fETX);
+        }
+        catch (Exception ex)
+        {
+        }
     }
 
     @Override

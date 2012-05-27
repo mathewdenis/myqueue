@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import myqueueworkbench.Connections.Connection;
+import myqueueworkbench.UI.ConnectionTabs.frmQueues;
 import myqueueworkbench.UI.ConnectionTabs.frmServerStatus;
 
 /**
@@ -30,8 +31,14 @@ public class frmConnection extends javax.swing.JPanel
         newFrmServerStatus.setBounds(0, 0, 400, 400);
         jPanelMainView.add(newFrmServerStatus);
 
-
+        // Queues
         fTabLabels.put(1, jLabelQueues);
+        frmQueues newFrmQueues = new frmQueues(this);
+        fTabForms.put(1, newFrmQueues);
+        newFrmQueues.setBounds(0, 0, 800, 600);
+        jPanelMainView.add(newFrmQueues);
+
+
         fTabLabels.put(2, jLabelConfiguration);
         fTabLabels.put(3, jLabelUsersAndPriviliges);
 
